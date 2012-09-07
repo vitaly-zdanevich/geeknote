@@ -740,8 +740,9 @@ def modifyArgsByStdinStream():
 
 def main(args=None):
     try:
-        # if terminal
-        if config.IS_IN_TERMINAL:
+        # if in terminal or if there are command line parameters
+        if len(sys.argv) > 1 or config.IS_IN_TERMINAL:
+
             sys_argv = sys.argv[1:]
             if isinstance(args, list):
                 sys_argv = args
@@ -752,6 +753,11 @@ def main(args=None):
 
             aparser = argparser(sys_argv)
             ARGS = aparser.parse()
+
+            if ARGS['content'] == '-':
+                #content from stdin!
+                content = sys.stdin.read()
+                ARGS['content'] = content
 
         # if input stream
         else:
