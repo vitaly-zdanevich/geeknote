@@ -2,20 +2,23 @@ geeknote
 ========
 
 Geeknote - is a command line client for Evernote, that can be use on Linux, FreeBSD and OS X.
+
 It allows you to:
-   * create notes in your Evernote;
+   * create notes in Evernote;
    * create tags, notebooks;
-   * use Evernote search in console with different filters;
-   * edit note directly in console using any editor: nano, vim, mcedit;
-   * sync your local files, directories with Evernote;
-   * use Evernote with cron or any scripts.
+   * use Evernote search from the console using different filters;
+   * edit notes directly in the console using any editor, such as nano, vim or mcedit;
+   * synchronize your local files and directories with Evernote;
+   * use Evernote from a crontab or a scripts.
 
-Geeknote has been written on Python, so you can use open source package anywhere you have Python, even in Windows if you like.
+Geeknote is open source and written in Python. Geeknote can be used anywhere where you have Python installed (even in Windows if you like).
 
-Here we have documentation for Geeknote. We'll show basic commands how to work with notes, notebooks and tags in Evernote using Geeknote, also we'll show how to use search to find notes you want and give you some examples.
+In this document we'll show basic commands how to work with Evernote's
+notes, notebooks and tags using Geeknote and how to use Geeknote
+search.
 
 ## Installation
-You can install Geeknote as a deb package or as a python script.
+You can install Geeknote as a .deb package or as a python script.
 
 ### Downloading and installing from source
     # Download the repository.
@@ -31,16 +34,21 @@ You can install Geeknote as a deb package or as a python script.
     $ sudo dpkg -i geeknote_latest.deb
 
 ### Requirements
-Geeknote needs **Python 2.x** from **2.4 and later**.
+Geeknote needs **Python 2.4** or later (Python 3 is not supported)
 
-Geeknote **doesn't work with Ubuntu 12.04**. Unfortunately this is the problem of Evernote SDK for Python. We wrote to authors of Evernote SDK, they know about it too and promise to solve the problem in a couple of months. This is the [registered issue](https://bugs.launchpad.net/ubuntu/+source/openssl/+bug/965371). We release an updated version of Geeknote as soon as Evernote SDK for Python will get update.
+**Geeknote does currently not work with Ubuntu 12.04**. Unfortunately
+  this is the problem of Evernote SDK for Python. The Evernote SDK
+  authors have been contacted and have promised to solve the problem
+  in a couple of months. This is the [registered
+  issue](https://bugs.launchpad.net/ubuntu/+source/openssl/+bug/965371). A
+  new version of Geeknote will be released once the Evernote SDK has
+  been updated.
 
-This issue is suitable **only for Ubuntu 12.04**.
 
-## Settings
-Geeknote has some settings that you should know.
+## Geeknote Settings
 
-### Authorization in Evernote
+### Evernote Authorization
+
 First thing we have to do after installation Geeknote is authorization. To authorize your Geeknote in Evernote launch the command *login*:
 
     $ geeknote login
