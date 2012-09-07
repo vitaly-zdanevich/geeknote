@@ -754,8 +754,8 @@ def main(args=None):
             aparser = argparser(sys_argv)
             ARGS = aparser.parse()
 
-            if ARGS['content'] == '-':
-                #content from stdin!
+            if isinstance(ARGS, dict) and ARGS['content'] == '-':
+                ## content comes from stdin!
                 content = sys.stdin.read()
                 ARGS['content'] = content
 
