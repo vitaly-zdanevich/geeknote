@@ -569,7 +569,7 @@ class Notes(GeekNoteConnector):
                 break
             time.sleep(5)
         return result
-        
+
     def create(self, title, content=None, tags=None, notebook=None):
 
         self.connectToEvertone()
@@ -725,10 +725,10 @@ class Notes(GeekNoteConnector):
 
         # Reduces the count by the amount of notes already retrieved
         update_count = lambda c: max(c - len(result.notes), 0)
-        
+
         count = update_count(count)
-        
-        # Evernote api will only return so many notes in one go. Checks for more 
+
+        # Evernote api will only return so many notes in one go. Checks for more
         # notes to come whilst obeying count rules
         while ((result.totalNotes != len(result.notes)) and count != 0):
             offset = len(result.notes)
@@ -822,15 +822,14 @@ def main(args=None):
     try:
         exit_status_code = 0
 
+        sys_argv = sys.argv[1:]
+        if isinstance(args, list):
+            sys_argv = args
+
+        sys_argv = tools.decodeArgs(sys_argv)
+        COMMAND = sys_argv[0] if len(sys_argv) >= 1 else None
         # if terminal
-        if config.IS_IN_TERMINAL:
-            sys_argv = sys.argv[1:]
-            if isinstance(args, list):
-                sys_argv = args
-
-            sys_argv = tools.decodeArgs(sys_argv)
-
-            COMMAND = sys_argv[0] if len(sys_argv) >= 1 else None
+        if config.IS_IN_TERMINAL or COMMAND == 'autocomplete':
 
             aparser = argparser(sys_argv)
             ARGS = aparser.parse()
