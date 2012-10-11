@@ -765,15 +765,14 @@ def modifyArgsByStdinStream():
 
 def main(args=None):
     try:
+        sys_argv = sys.argv[1:]
+        if isinstance(args, list):
+            sys_argv = args
+
+        sys_argv = tools.decodeArgs(sys_argv)
+        COMMAND = sys_argv[0] if len(sys_argv) >= 1 else None
         # if terminal
-        if config.IS_IN_TERMINAL:
-            sys_argv = sys.argv[1:]
-            if isinstance(args, list):
-                sys_argv = args
-
-            sys_argv = tools.decodeArgs(sys_argv)
-
-            COMMAND = sys_argv[0] if len(sys_argv) >= 1 else None
+        if config.IS_IN_TERMINAL or COMMAND == 'autocomplete':
 
             aparser = argparser(sys_argv)
             ARGS = aparser.parse()
