@@ -15,7 +15,7 @@ Geeknote has been written on Python, so you can use open source package anywhere
 Here we have documentation for Geeknote. We'll show basic commands how to work with notes, notebooks and tags in Evernote using Geeknote, also we'll show how to use search to find notes you want and give you some examples.
 
 ## Installation
-You can install Geeknote as a deb package or as a python script.
+You can install Geeknote as a python script.
 
 ### Downloading and installing from source
     # Download the repository.
@@ -23,12 +23,11 @@ You can install Geeknote as a deb package or as a python script.
     
     $ cd geeknote
 
-	# Launch Geeknote and go through login procedure.
-	$ python geeknote.py login
+    # Installation
+    $ [sudo] python setup.py install
 
-### Debian/Ubuntu
-    $ wget http://www.geeknote.me/dist/geeknote_latest.deb
-    $ sudo dpkg -i geeknote_latest.deb
+	# Launch Geeknote and go through login procedure.
+	$ geeknote login
 
 ### Requirements
 Geeknote needs **Python 2.x** from **2.4 and later**.
@@ -36,6 +35,14 @@ Geeknote needs **Python 2.x** from **2.4 and later**.
 Geeknote **doesn't work with Ubuntu 12.04**. Unfortunately this is the problem of Evernote SDK for Python. We wrote to authors of Evernote SDK, they know about it too and promise to solve the problem in a couple of months. This is the [registered issue](https://bugs.launchpad.net/ubuntu/+source/openssl/+bug/965371). We release an updated version of Geeknote as soon as Evernote SDK for Python will get update.
 
 This issue is suitable **only for Ubuntu 12.04**.
+
+### Development
+Run tests
+
+    $ python setup.py test
+
+    # or for to run tests with `tox`
+    $ tox
 
 ## Settings
 Geeknote has some settings that you should know.
@@ -54,6 +61,20 @@ If you want to change Evernote user you should launch *logout* command:
     $ geeknote logout
 
 And after you can repeat authorization step.
+
+###Look your settings
+
+    $ geeknote settings
+    Geeknote
+    ******************************
+    Version: 0.1
+    App dir: /Users/username/.geeknote
+    Error log: /Users/username/.geeknote/error.log
+    Current editor: vim
+    ******************************
+    Username: username
+    Id: 11111111
+    Email: example@gmail.com
 
 ### Set up the default editor
 Geeknote allows to edit notes right in console editors in markdown format. We will show it a later in documentation.
@@ -366,3 +387,9 @@ The application *gnsync* is very usefull in system adminstration. Because of you
              --mask "*.logs"
              --logpath /home/user/logs/xmpp2evernote.log
              --notebook "XMPP logs"
+
+## Contributors
+* Vitaliy Rodnenko
+* Simon Moiseenko
+* Ivan Gureev
+* Roman Gladkov
