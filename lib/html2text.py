@@ -416,6 +416,7 @@ class _html2text(sgmllib.SGMLParser):
 def wrapwrite(text): sys.stdout.write(text.encode('utf8'))
 
 def html2text_file(html, out=wrapwrite, baseurl=''):
+    html = html.replace("<br/>", "<br>")
     h = _html2text(out, baseurl)
     h.feed(html)
     h.feed("")
