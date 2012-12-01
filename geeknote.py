@@ -183,6 +183,7 @@ class GeekNote(object):
             raise Exception("Note content must be an instanse of Note, '%s' given." % type(note))
 
         note.content = self.getNoteStore().getNoteContent(self.authToken, note.guid)
+	note.tagNames = self.getNoteStore().getNoteTagNames(self.authToken, note.guid)
 
     @EdamException
     def createNote(self, title, content, tags=None, notebook=None):
