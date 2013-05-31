@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import os, sys
@@ -376,7 +376,7 @@ class User(GeekNoteConnector):
     def changSetting(self, key, value, defaultValue):
         oldValue = value
         if value == '#GET#':
-            oldValue = self.getStorage.getUserprop(key) if not self.getStorage().getUserprop(key) else defaultValue
+            oldValue = self.getStorage().getUserprop(key) if self.getStorage().getUserprop(key) else defaultValue
         else:
             self.getStorage().setUserprop(key, value)
             out.successMessage("Changes have been saved.")
