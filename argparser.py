@@ -26,6 +26,7 @@ COMMANDS_DICT = {
         "help": "Show and edit current settings.",
         "arguments": {
             "--editor": {"help": "Set the editor, which use to edit and create notes.", "emptyValue": '#GET#'},
+            "--suffix": {"help": "Set the temp file suffix, which use to edit and create notes.", "emptyValue": '#GET#'},
         }
     },
 
@@ -219,7 +220,7 @@ class argparser(object):
                     self.INP = [firstArg, ] + self.INP
             else:
                 self.INP = [firstArg, ]
-        
+
 
         for item in self.INP:
             # Проверяем что ожидаем аргумент
@@ -315,7 +316,7 @@ class argparser(object):
 
             # фильтруем аргументы которые еще не ввели
             if self.CMD_ARGS.has_key(PREV_LAST_VAL) or self.CMD_FLAGS.has_key(LAST_VAL) :
-                self.printGrid([item for item in ARGS_FLAGS_LIST if item not in self.INP]) 
+                self.printGrid([item for item in ARGS_FLAGS_LIST if item not in self.INP])
 
             # автозаполнение для неполной команды
             elif not self.CMD_ARGS.has_key(PREV_LAST_VAL):
@@ -358,7 +359,7 @@ class argparser(object):
             out.printLine("Available arguments:")
             for arg in self.CMD_ARGS:
                 out.printLine("%s : %s%s" % (
-                    arg.rjust(tab, " "), 
+                    arg.rjust(tab, " "),
                     '[default] ' if self.COMMANDS[self.CMD].has_key('firstArg') and self.COMMANDS[self.CMD]['firstArg'] == arg else '',
                     self.CMD_ARGS[arg]['help']))
 
