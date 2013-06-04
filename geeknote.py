@@ -3,7 +3,6 @@
 
 import os, sys
 import traceback
-from out import printLine
 
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 sys.path.append( os.path.join(PROJECT_ROOT, 'lib') )
