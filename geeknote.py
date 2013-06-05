@@ -38,6 +38,35 @@ import editor
 import tools
 from log import logging
 
+def make_resource(filename):
+    try:
+        mtype = mimetypes.guess_type(filename)[0]
+            
+        if mtype.split('/')[0] == "text":
+            rmode = "r"
+        else:
+            rmode = "rb"
+
+        with open(filename, rmode) as f:
+            """ file exists """
+            resource = Types.Resource()
+            resource.data = Types.Data()
+
+            data = f.read()
+            md5 = hashlib.md5()
+            md5.update(data)
+            
+            resource.data.bodyHash = md5.hexdigest() 
+            resource.data.body = data
+            resource.data.size = len(data) 
+            resource.mime = mtype
+            resource.attributes = Types.ResourceAttributes()
+            resource.attributes.fileName = os.path.basename(filename)
+            return resource
+    except IOError:
+        msg = "The file '%s' does not exist." % filename
+        out.failureMessage(msg)
+        raise IOError(msg)
 
 # decorator to disable evernote connection on create instance of GeekNote
 def GeekNoneDBConnectOnly(func):
@@ -187,37 +216,6 @@ class GeekNote(object):
 
     @EdamException
     def createNote(self, title, content, tags=None, notebook=None, created=None, resources=None):  
-        def make_resource(filename):
-            try:
-                mtype = mimetypes.guess_type(filename)[0]
-                    
-                if mtype.split('/')[0] == "text":
-                    rmode = "r"
-                else:
-                    rmode = "rb"
-
-                with open(filename, rmode) as f:
-                    """ file exists """
-                    resource = Types.Resource()
-                    resource.data = Types.Data()
-
-                    data = f.read()
-                    md5 = hashlib.md5()
-                    md5.update(data)
-                    
-                    resource.data.bodyHash = md5.hexdigest() 
-                    resource.data.body = data
-                    resource.data.size = len(data) 
-                    resource.mime = mtype
-                    resource.attributes = Types.ResourceAttributes()
-                    resource.attributes.fileName = os.path.basename(filename)
-                    return resource
-            except IOError:
-                msg = "The file '%s' does not exist." % filename
-                out.failureMessage(msg)
-                raise IOError(msg)
-      
-
         note = Types.Note()
         note.title = title
         note.content = content
@@ -247,7 +245,7 @@ class GeekNote(object):
         return True
 
     @EdamException
-    def updateNote(self, guid, title=None, content=None, tags=None, notebook=None):
+    def updateNote(self, guid, title=None, content=None, tags=None, notebook=None, resources=None):
         note = Types.Note()
         note.guid = guid
         if title:
@@ -263,9 +261,17 @@ class GeekNote(object):
             note.notebookGuid = notebook
             
         if resources:
-            """ TODO """
-            print("Updating a note's resources is not yet supported.")
-            raise NotImplementedError()
+            """ make EverNote API resources """
+            note.resources = map(make_resource, resources)
+            
+            """ add to content """
+            resource_nodes = ""
+            
+            for resource in note.resources:
+                resource_nodes += '<en-media type="%s" hash="%s" />' % (resource.mime, resource.data.bodyHash)
+
+            note.content = note.content.replace("</en-note>", resource_nodes + "</en-note>")
+
 
         logging.debug("Update note : %s", note)
 
