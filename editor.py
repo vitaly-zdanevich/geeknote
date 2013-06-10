@@ -42,7 +42,7 @@ def textToENML(content, raise_ex=False):
     except:
         if raise_ex:
             raise Exception("Error while parsing text to html. Content must be an UTF-8 encode.")
-            
+
         logging.error("Error while parsing text to html. Content must be an UTF-8 encode.")
         out.failureMessage("Error while parsing text to html. Content must be an UTF-8 encode.")
         return tools.exit()
@@ -58,15 +58,16 @@ def edit(content=None):
     if not isinstance(content, str):
         raise Exception("Note content must be an instanse of string, '%s' given." % type(content))
 
-    (tmpFileHandler, tmpFileName) = tempfile.mkstemp()
-    
-    os.write(tmpFileHandler, ENMLtoText(content))
-    os.close(tmpFileHandler)
-    
     # Try to find default editor in the system.
     storage = Storage()
     editor = storage.getUserprop('editor')
-    
+    suffix = storage.getUserprop('suffix')
+
+    (tmpFileHandler, tmpFileName) = tempfile.mkstemp(suffix)
+
+    os.write(tmpFileHandler, ENMLtoText(content))
+    os.close(tmpFileHandler)
+
     if not editor:
         # If default editor is not finded, then use nano as a default.
         if sys.platform == 'win32':

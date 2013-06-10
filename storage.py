@@ -29,21 +29,21 @@ class Userprop(Base):
 
     def __repr__(self):
         return "<Userprop('{0}','{1})>".format(self.key, self.value)
-        
+
 class Setting(Base):
     __tablename__ = 'settings'
 
     id = Column(Integer, primary_key=True)
     key = Column(String(255))
     value = Column(String(1000))
-    
+
     def __init__(self, key, value):
         self.key = key
         self.value = value
 
     def __repr__(self):
         return "<Setting('{0}','{1})>".format(self.key, self.value)
-        
+
 class Notebook(Base):
     __tablename__ = 'notebooks'
 
@@ -59,7 +59,7 @@ class Notebook(Base):
 
     def __repr__(self):
         return "<Notebook('{0}')>".format(self.name)
-        
+
 class Tag(Base):
     __tablename__ = 'tags'
 
@@ -95,13 +95,13 @@ class Storage(object):
     Class for using database.
     """
     session = None
-    
+
     def __init__(self):
         logging.debug("Storage engine : %s", engine)
-        Base.metadata.create_all(engine) 
+        Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
-        
+
     def logging(func):
         def wrapper(*args, **kwargs):
             try:
@@ -110,8 +110,8 @@ class Storage(object):
                 logging.error("%s : %s", func.__name__, str(e))
                 return False
         return wrapper
-        
-    @logging  
+
+    @logging
     def createUser(self, oAuthToken, info_obj):
         """
         Create user. oAuthToken must be not empty string
@@ -125,16 +125,16 @@ class Storage(object):
 
         if not info_obj:
             raise Exception("Empty user info")
-            
+
         for item in self.session.query(Userprop).all():
             self.session.delete(item)
-        
+
         self.setUserprop('oAuthToken', oAuthToken)
         self.setUserprop('info', info_obj)
-        
+
         return True
 
-    @logging  
+    @logging
     def removeUser(self):
         """
         Remove user.
@@ -145,8 +145,8 @@ class Storage(object):
             self.session.delete(item)
         self.session.commit()
         return True
-    
-    @logging   
+
+    @logging
     def getUserToken(self):
         """
         Get user's oAuth token
@@ -157,7 +157,7 @@ class Storage(object):
         return self.getUserprop('oAuthToken')
 
 
-    @logging   
+    @logging
     def getUserInfo(self):
         """
         Get user's oAuth token
@@ -166,8 +166,8 @@ class Storage(object):
         return False if something wrong
         """
         return self.getUserprop('info')
-    
-    @logging   
+
+    @logging
     def getUserprops(self):
         """
         Get all user's properties
@@ -177,8 +177,8 @@ class Storage(object):
         """
         props = self.session.query(Userprop).all()
         return [{item.key: pickle.loads(item.value)} for item in props]
-    
-    @logging   
+
+    @logging
     def getUserprop(self, key):
         """
         Get user's property by key
@@ -190,8 +190,8 @@ class Storage(object):
             return pickle.loads(instance.value)
         else:
             return None
-    
-    @logging   
+
+    @logging
     def setUserprop(self, key, value):
         """
         Set single user's property. User's property must have key and value
@@ -206,11 +206,11 @@ class Storage(object):
         else:
             instance = Userprop(key, value)
             self.session.add(instance)
-        
+
         self.session.commit()
         return True
-    
-    @logging   
+
+    @logging
     def setSettings(self, settings):
         """
         Set multuple settings. Settings must be an instanse dict
@@ -219,22 +219,22 @@ class Storage(object):
         """
         if not isinstance(settings, dict):
             raise Exception("Wrong settings")
-        
+
         for key in settings.keys():
             if not settings[key]:
                 raise Exception("Wrong setting's item")
-                
+
             instance = self.session.query(Setting).filter_by(key=key).first()
             if instance:
                 instance.value = pickle.dumps(settings[key])
             else:
                 instance = Setting(key, pickle.dumps(settings[key]))
                 self.session.add(instance)
-        
+
         self.session.commit()
         return True
-    
-    @logging   
+
+    @logging
     def getSettings(self):
         """
         Get all settings
@@ -247,8 +247,8 @@ class Storage(object):
         for item in settings:
             result[item.key] = item.value
         return result
-    
-    @logging   
+
+    @logging
     def setSetting(self, key, value):
         """
         Set single setting. Settings must have key and value
@@ -261,11 +261,11 @@ class Storage(object):
         else:
             instance = Setting(key, value)
             self.session.add(instance)
-        
+
         self.session.commit()
         return True
-    
-    @logging   
+
+    @logging
     def getSetting(self, key):
         """
         Get setting by key
@@ -277,8 +277,8 @@ class Storage(object):
             return instance.value
         else:
             return None
-    
-    @logging   
+
+    @logging
     def setTags(self, tags):
         """
         Set tags. Tags must be an instanse of dict
@@ -288,21 +288,21 @@ class Storage(object):
         """
         if not isinstance(tags, dict):
             raise Exception("Wrong tags")
-            
+
         for item in self.session.query(Tag).all():
             self.session.delete(item)
-        
+
         for key in tags.keys():
             if not tags[key]:
                 raise Exception("Wrong tag's item")
-                
+
             instance = Tag(key, tags[key])
             self.session.add(instance)
-        
+
         self.session.commit()
         return True
-    
-    @logging   
+
+    @logging
     def getTags(self):
         """
         Get all tags
@@ -315,8 +315,8 @@ class Storage(object):
         for item in tags:
             result[item.guid] = item.tag
         return result
-    
-    @logging   
+
+    @logging
     def setNotebooks(self, notebooks):
         """
         Set notebooks. Notebooks must be an instanse of dict
@@ -326,21 +326,21 @@ class Storage(object):
         """
         if not isinstance(notebooks, dict):
             raise Exception("Wrong notebooks")
-            
+
         for item in self.session.query(Notebook).all():
             self.session.delete(item)
-        
+
         for key in notebooks.keys():
             if not notebooks[key]:
                 raise Exception("Wrong notebook's item")
-                
+
             instance = Notebook(key, notebooks[key])
             self.session.add(instance)
-        
+
         self.session.commit()
         return True
-    
-    @logging   
+
+    @logging
     def getNotebooks(self):
         """
         Get all notebooks
@@ -353,7 +353,7 @@ class Storage(object):
         for item in notebooks:
             result[item.guid] = item.name
         return result
-        
+
     @logging
     def setSearch(self, search_obj):
         """
@@ -361,18 +361,18 @@ class Storage(object):
         Previous searching items will be removed
         return True if all done
         return False if something wrong
-        """            
+        """
         for item in self.session.query(Search).all():
             self.session.delete(item)
-            
+
         search = pickle.dumps(search_obj)
         instance = Search(search)
         self.session.add(instance)
-        
+
         self.session.commit()
         return True
-    
-    @logging   
+
+    @logging
     def getSearch(self):
         """
         Get last searching

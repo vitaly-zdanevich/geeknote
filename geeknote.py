@@ -114,7 +114,7 @@ class GeekNote(object):
         userStoreHttpClient = THttpClient.THttpClient(self.userStoreUri)
         userStoreProtocol = TBinaryProtocol.TBinaryProtocol(userStoreHttpClient)
         GeekNote.userStore = UserStore.Client(userStoreProtocol)
-    
+
         self.checkVersion()
 
         return GeekNote.userStore
@@ -132,8 +132,8 @@ class GeekNote(object):
 
     def checkVersion(self):
         versionOK = self.getUserStore().checkVersion("Python EDAMTest",
-                                       UserStoreConstants.EDAM_VERSION_MAJOR,
-                                       UserStoreConstants.EDAM_VERSION_MINOR)
+                                                     UserStoreConstants.EDAM_VERSION_MAJOR,
+                                                     UserStoreConstants.EDAM_VERSION_MINOR)
         if not versionOK:
             logging.error("Old EDAM version")
             return tools.exit()
@@ -161,20 +161,20 @@ class GeekNote(object):
 
     def removeUser(self):
         return self.getStorage().removeUser()
-    
+
     """
     WORK WITH NOTEST
     """
     @EdamException
     def findNotes(self, keywords, count, createOrder=False):
-        
+
         noteFilter = NoteStore.NoteFilter(order=Types.NoteSortOrder.RELEVANCE)
         if createOrder:
             noteFilter.order = Types.NoteSortOrder.CREATED
 
         if keywords:
             noteFilter.words = keywords
-        return self.getNoteStore().findNotes(self.authToken, noteFilter, 0, count)
+            return self.getNoteStore().findNotes(self.authToken, noteFilter, 0, count)
 
     @EdamException
     def loadNoteContent(self, note):
@@ -336,7 +336,7 @@ class User(GeekNoteConnector):
             info = self.getEvernote().getUserInfo()
         else:
             info = self.getStorage().getUserInfo()
-        out.showUser(info, full)
+            out.showUser(info, full)
 
     @GeekNoneDBConnectOnly
     def login(self):
@@ -367,7 +367,7 @@ class User(GeekNoteConnector):
             return tools.exit()
 
     @GeekNoneDBConnectOnly
-    def settings(self, editor=None):
+    def settings(self, editor=None, suffix=None):
         if editor:
             if editor == '#GET#':
                 editor = self.getStorage().getUserprop('editor')
@@ -376,6 +376,13 @@ class User(GeekNoteConnector):
                 out.successMessage("Current editor is: %s" % editor)
             else:
                 self.getStorage().setUserprop('editor', editor)
+                out.successMessage("Changes have been saved.")
+        if suffix:
+            if suffix == '#GET#':
+                suffix = self.getStorage().getUserprop('suffix')
+                out.successMessage("Current suffix is: %s" % suffix)
+            else:
+                self.getStorage().setUserprop('suffix', suffix)
                 out.successMessage("Changes have been saved.")
 
 class Tags(GeekNoteConnector):
@@ -508,7 +515,7 @@ class Notebooks(GeekNoteConnector):
 
 class Notes(GeekNoteConnector):
     """ Work with Notes """
-    
+
     findExactOnUpdate = False
     selectFirstOnUpdate = False
     def __init__(self, findExactOnUpdate=False, selectFirstOnUpdate=False):
@@ -535,7 +542,7 @@ class Notes(GeekNoteConnector):
         note = self._searchNote(note)
 
         inputData = self._parceInput(title, content, tags, notebook, note)
-        
+
         out.preloader.setMessage("Saving note...")
         result = self.getEvernote().updateNote(guid=note.guid, **inputData)
 
@@ -565,7 +572,7 @@ class Notes(GeekNoteConnector):
         self.connectToEvertone()
 
         note = self._searchNote(note)
-        
+
         out.preloader.setMessage("Loading note...")
         self.getEvernote().loadNoteContent(note)
 
@@ -594,7 +601,7 @@ class Notes(GeekNoteConnector):
                     self.getEvernote().loadNoteContent(note)
                     content = editor.edit(note.content)
                 else:
-                   content = editor.edit()
+                    content = editor.edit()
 
             elif isinstance(content, str) and os.path.isfile(content):
                 logging.debug("Load content from the file")
@@ -613,7 +620,7 @@ class Notes(GeekNoteConnector):
             if notepadGuid is None:
                 newNotepad = Notebooks().create(notebook)
                 notepadGuid = newNotepad.guid
-            
+
             result['notebook'] = notepadGuid
             logging.debug("Search notebook")
 
@@ -642,7 +649,7 @@ class Notes(GeekNoteConnector):
                 note = result.notes[0]
 
             else:
-                logging.debug("Choose notes: %s" % str(result.notes)) 
+                logging.debug("Choose notes: %s" % str(result.notes))
                 note = out.SelectSearchResult(result.notes)
 
         logging.debug("Selected note: %s" % str(note))
@@ -697,7 +704,7 @@ class Notes(GeekNoteConnector):
                 request +='created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct)))
                 if len(date) == 2:
                     dateStruct = time.strptime(date[1]+" 00:00:00", "%d.%m.%Y %H:%M:%S")
-                request += '-created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct)+60*60*24))
+                    request += '-created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct)+60*60*24))
             except ValueError, e:
                 out.failureMessage('Incorrect date format in --date attribute. Format: %s' % time.strftime("%d.%m.%Y", time.strptime('19991231', "%Y%m%d")))
                 return tools.exit()
@@ -708,7 +715,7 @@ class Notes(GeekNoteConnector):
                 search = '"%s"' % search
 
             if content_search:
-                request += "%s" % search 
+                request += "%s" % search
             else:
                 request += "intitle:%s" % search
 
