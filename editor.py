@@ -60,13 +60,14 @@ def edit(content=None):
 
     # Try to find default editor in the system.
     storage = Storage()
-    editor = storage.getUserprop('editor')
     suffix = storage.getUserprop('suffix')
 
     (tmpFileHandler, tmpFileName) = tempfile.mkstemp(suffix)
 
     os.write(tmpFileHandler, ENMLtoText(content))
     os.close(tmpFileHandler)
+
+    editor = storage.getUserprop('editor')
 
     if not editor:
         # If default editor is not finded, then use nano as a default.

@@ -7,7 +7,7 @@ import shlex
 import time
 
 def checkIsInt(value):
-    try: 
+    try:
         int(value)
         return True
     except ValueError:
@@ -44,7 +44,7 @@ def strip(data):
 
     if isinstance(data, str):
         return data.strip(' \t\n\r\"\'')
-    
+
     raise Exception("Unexpected args type: %s. Expect list or dict" % type(data))
 
 class ExitException(Exception):
@@ -59,7 +59,7 @@ def KeyboardInterruptSignalHendler(signal, frame):
     exit()
 
 class Struct:
-    def __init__(self, **entries): 
+    def __init__(self, **entries):
         self.__dict__.update(entries)
 
 def decodeArgs(args):

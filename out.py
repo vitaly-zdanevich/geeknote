@@ -219,7 +219,7 @@ def rawInput(message, isPass=False):
     else:
         data = raw_input(message)
     return tools.stdinEncode(data)
-    
+
 
 def printDate(timestamp):
     return time.strftime("%d.%m.%Y", time.localtime(timestamp/1000))

@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os, sys
+import os
+import sys
 import traceback
 
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-sys.path.append( os.path.join(PROJECT_ROOT, 'lib') )
+sys.path.append(os.path.join(PROJECT_ROOT, 'lib'))
 
 import config
 

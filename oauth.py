@@ -61,9 +61,9 @@ class GeekNoteAuth(object):
 
         if kwargs:
             params = dict(params.items() + kwargs.items())
-        
+
         return params
-    
+
     def loadPage(self, url, uri=None, method="GET", params=""):
         if not url:
             logging.error("Request URL undefined")
@@ -129,7 +129,7 @@ class GeekNoteAuth(object):
 
 
     def getTmpOAuthToken(self):
-        response = self.loadPage(self.url['base'], self.url['token'], "GET", 
+        response = self.loadPage(self.url['base'], self.url['token'], "GET",
             self.getTokenRequestData(oauth_callback="https://"+self.url['base']))
 
         if response.status != 200:
@@ -162,7 +162,7 @@ class GeekNoteAuth(object):
         self.postData['login']['username'] = self.username
         self.postData['login']['password'] = self.password
         self.postData['login']['targetUrl'] = self.url['oauth']%self.tmpOAuthToken
-        response = self.loadPage(self.url['base'], self.url['login']+";jsessionid="+self.cookies['JSESSIONID'], "POST", 
+        response = self.loadPage(self.url['base'], self.url['login']+";jsessionid="+self.cookies['JSESSIONID'], "POST",
             self.postData['login'])
 
         if not response.location and response.status == 200:
@@ -205,7 +205,7 @@ class GeekNoteAuth(object):
         #self.getOAuthToken(verifier)
 
     def getOAuthToken(self):
-        response = self.loadPage(self.url['base'], self.url['token'], "GET",  
+        response = self.loadPage(self.url['base'], self.url['token'], "GET",
             self.getTokenRequestData(oauth_token=self.tmpOAuthToken, oauth_verifier=self.verifierToken))
 
         if response.status != 200:
