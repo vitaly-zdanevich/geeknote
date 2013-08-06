@@ -165,7 +165,7 @@ def showUser(user, fullInfo):
 
     if fullInfo:
         line('Upload limit', "%.2f" % (int(user.accounting.uploadLimit) / 1024 / 1024))
-        line('Upload limit end', time.strftime("%d.%m.%Y", time.gmtime(user.accounting.uploadLimitEnd / 1000 )) )
+        line('Upload limit end', time.strftime(config.DEF_DATE_FORMAT, time.gmtime(user.accounting.uploadLimitEnd / 1000 )) )
 
 
 @preloaderStop
@@ -234,7 +234,7 @@ def rawInput(message, isPass=False):
     
 
 def printDate(timestamp):
-    return time.strftime("%d.%m.%Y", time.localtime(timestamp/1000))
+    return time.strftime(config.DEF_DATE_FORMAT, time.localtime(timestamp/1000))
 
 def printLine(line, endLine="\n"):
     message = line+endLine

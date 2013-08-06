@@ -35,6 +35,10 @@ DEBUG = False
 # Url view the note
 NOTE_URL = "https://%domain%/Home.action?#n=%s"
 
+# Date format
+DEF_DATE_FORMAT = "%Y-%m-%d"
+DEF_DATE_AND_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 # validate config
 try:
     if not os.path.exists(APP_DIR):

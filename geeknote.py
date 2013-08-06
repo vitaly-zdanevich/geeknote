@@ -755,13 +755,13 @@ class Notes(GeekNoteConnector):
         if date:
             date = tools.strip(date.split('-'))
             try:
-                dateStruct = time.strptime(date[0]+" 00:00:00", "%d.%m.%Y %H:%M:%S")
+                dateStruct = time.strptime(date[0]+" 00:00:00", config.DEF_DATE_AND_TIME_FORMAT)
                 request +='created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct)))
                 if len(date) == 2:
-                    dateStruct = time.strptime(date[1]+" 00:00:00", "%d.%m.%Y %H:%M:%S")
+                    dateStruct = time.strptime(date[1]+" 00:00:00", config.DEF_DATE_AND_TIME_FORMAT)
                 request += '-created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct)+60*60*24))
             except ValueError:
-                out.failureMessage('Incorrect date format in --date attribute. Format: %s' % time.strftime("%d.%m.%Y", time.strptime('19991231', "%Y%m%d")))
+                out.failureMessage('Incorrect date format in --date attribute. Format: %s' % time.strftime(config.DEF_DATE_FORMAT, time.strptime('19991231', "%Y%m%d")))
                 return tools.exit()
 
         if search:
