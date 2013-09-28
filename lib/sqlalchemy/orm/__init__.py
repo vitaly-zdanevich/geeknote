@@ -22,7 +22,7 @@ from sqlalchemy.orm.mapper import (
 from sqlalchemy.orm.interfaces import (
      EXT_CONTINUE,
      EXT_STOP,
-     InstrumentationManager,
+     # InstrumentationManager,
      MapperExtension,
      PropComparator,
      SessionExtension,
@@ -58,7 +58,7 @@ from sqlalchemy import util as sa_util
 __all__ = (
     'EXT_CONTINUE',
     'EXT_STOP',
-    'InstrumentationManager',
+    # 'InstrumentationManager',
     'MapperExtension',
     'AttributeExtension',
     'PropComparator',
