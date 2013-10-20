@@ -818,21 +818,21 @@ def modifyArgsByStdinStream():
 def main(args=None):
     try:
         # if terminal
-        if config.IS_IN_TERMINAL:
-            sys_argv = sys.argv[1:]
-            if isinstance(args, list):
-                sys_argv = args
+        #if config.IS_IN_TERMINAL:
+        sys_argv = sys.argv[1:]
+        if isinstance(args, list):
+         sys_argv = args
 
-            sys_argv = tools.decodeArgs(sys_argv)
+        sys_argv = tools.decodeArgs(sys_argv)
 
-            COMMAND = sys_argv[0] if len(sys_argv) >= 1 else None
+        COMMAND = sys_argv[0] if len(sys_argv) >= 1 else None
 
-            aparser = argparser(sys_argv)
-            ARGS = aparser.parse()
+        aparser = argparser(sys_argv)
+        ARGS = aparser.parse()
 
         # if input stream
-        else:
-            COMMAND, ARGS = modifyArgsByStdinStream()
+        #else:
+         #COMMAND, ARGS = modifyArgsByStdinStream()
 
         # error or help
         if COMMAND is None or ARGS is False:
