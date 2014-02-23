@@ -1,4 +1,4 @@
-geeknote
+geeknote for 印象笔记
 ========
 
 Geeknote is a command line client for Evernote that can be use on Linux, FreeBSD and OS X.
@@ -19,7 +19,7 @@ You can install Geeknote as a python script.
 
 ### Downloading and installing from source
     # Download the repository.
-    $ git clone git://github.com/VitaliyRodnenko/geeknote.git
+    $ git clone git://github.com/gmajian/geeknote.git
     
     $ cd geeknote
 
