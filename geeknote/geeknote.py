@@ -17,6 +17,7 @@ import evernote.edam.type.ttypes as Types
 
 import config
 import mimetypes
+import hashlib
 import tools
 import out
 from editor import Editor, EditorThread
