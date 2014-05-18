@@ -16,6 +16,7 @@ import evernote.edam.error.ttypes as Errors
 import evernote.edam.type.ttypes as Types
 
 import config
+import mimetypes
 import tools
 import out
 from editor import Editor, EditorThread
@@ -24,7 +25,6 @@ from argparser import argparser
 from oauth import GeekNoteAuth
 from storage import Storage
 from log import logging
-
 
 def GeekNoneDBConnectOnly(func):
     """ operator to disable evernote connection
@@ -155,7 +155,7 @@ class GeekNote(object):
 
     @EdamException
     def findNotes(self, keywords, count, createOrder=False, offset=0):
-        """ WORK WITH NOTEST """
+        """ WORK WITH NOTES """
         noteFilter = NoteStore.NoteFilter(order=Types.NoteSortOrder.RELEVANCE)
         if createOrder:
             noteFilter.order = Types.NoteSortOrder.CREATED
@@ -169,7 +169,7 @@ class GeekNote(object):
         """ modify Note object """
         if not isinstance(note, object):
             raise Exception("Note content must be an "
-                            "instanse of Note, '%s' given." % type(note))
+                            "instance of Note, '%s' given." % type(note))
 
         note.content = self.getNoteStore().getNoteContent(self.authToken, note.guid)
         # fill the tags in
@@ -180,7 +180,38 @@ class GeekNote(object):
             note.tagNames.append(tag.name)
 
     @EdamException
-    def createNote(self, title, content, tags=None, notebook=None, created=None):
+    def createNote(self, title, content, tags=None, notebook=None, created=None, resources=None):
+        def make_resource(filename):
+            try:
+                mtype = mimetypes.guess_type(filename)[0]
+
+                if mtype.split('/')[0] == "text":
+                    rmode = "r"
+                else:
+                    rmode = "rb"
+
+                with open(filename, rmode) as f:
+                    """ file exists """
+                    resource = Types.Resource()
+                    resource.data = Types.Data()
+
+                    data = f.read()
+                    md5 = hashlib.md5()
+                    md5.update(data)
+
+                    resource.data.bodyHash = md5.hexdigest()
+                    resource.data.body = data
+                    resource.data.size = len(data)
+                    resource.mime = mtype
+                    resource.attributes = Types.ResourceAttributes()
+                    resource.attributes.fileName = os.path.basename(filename)
+                    return resource
+            except IOError:
+                msg = "The file '%s' does not exist." % filename
+                out.failureMessage(msg)
+                raise IOError(msg)
+
+
         note = Types.Note()
         note.title = title
         note.content = content
@@ -192,13 +223,24 @@ class GeekNote(object):
         if notebook:
             note.notebookGuid = notebook
 
+        if resources:
+            """ make EverNote API resources """
+            note.resources = map(make_resource, resources)
+
+            """ add to content """
+            resource_nodes = ""
+
+            for resource in note.resources:
+                resource_nodes += '<en-media type="%s" hash="%s" />' % (resource.mime, resource.data.bodyHash)
+
+            note.content = note.content.replace("</en-note>", resource_nodes + "</en-note>")
+
         logging.debug("New note : %s", note)
 
         return self.getNoteStore().createNote(self.authToken, note)
 
     @EdamException
-    def updateNote(self, guid, title=None, content=None,
-                   tags=None, notebook=None):
+    def updateNote(self, guid, title=None, content=None, tags=None, notebook=None, resources=None):
         note = Types.Note()
         note.guid = guid
         if title:
@@ -212,6 +254,11 @@ class GeekNote(object):
 
         if notebook:
             note.notebookGuid = notebook
+
+        if resources:
+            """ TODO """
+            print("Updating a note's resources is not yet supported.")
+            raise NotImplementedError()
 
         logging.debug("Update note : %s", note)
 
@@ -567,15 +614,15 @@ class Notes(GeekNoteConnector):
                 break
             time.sleep(5)
         return result
-        
-    def create(self, title, content=None, tags=None, notebook=None):
+
+    def create(self, title, content=None, tags=None, notebook=None, resource=None):
 
         self.connectToEvertone()
 
         # Optional Content.
         content = content or " "
 
-        inputData = self._parceInput(title, content, tags, notebook)
+        inputData = self._parseInput(title, content, tags, notebook, resource)
 
         if inputData['content'] == config.EDITOR_OPEN:
             result = self._editWithEditorInThread(inputData)
@@ -588,12 +635,12 @@ class Notes(GeekNoteConnector):
         else:
             out.failureMessage("Error while creating the note.")
 
-    def edit(self, note, title=None, content=None, tags=None, notebook=None):
+    def edit(self, note, title=None, content=None, tags=None, notebook=None, resource=None):
 
         self.connectToEvertone()
         note = self._searchNote(note)
 
-        inputData = self._parceInput(title, content, tags, notebook, note)
+        inputData = self._parseInput(title, content, tags, notebook, resource, note)
 
         if inputData['content'] == config.EDITOR_OPEN:
             result = self._editWithEditorInThread(inputData, note)
@@ -634,12 +681,13 @@ class Notes(GeekNoteConnector):
 
         out.showNote(note)
 
-    def _parceInput(self, title=None, content=None, tags=None, notebook=None, note=None):
+    def _parseInput(self, title=None, content=None, tags=None, notebook=None, resources=None, note=None):
         result = {
             "title": title,
             "content": content,
             "tags": tags,
             "notebook": notebook,
+            "resources": resources if resources else []
         }
         result = tools.strip(result)
 
@@ -723,10 +771,10 @@ class Notes(GeekNoteConnector):
 
         # Reduces the count by the amount of notes already retrieved
         update_count = lambda c: max(c - len(result.notes), 0)
-        
+
         count = update_count(count)
-        
-        # Evernote api will only return so many notes in one go. Checks for more 
+
+        # Evernote api will only return so many notes in one go. Checks for more
         # notes to come whilst obeying count rules
         while ((result.totalNotes != len(result.notes)) and count != 0):
             offset = len(result.notes)
@@ -771,7 +819,7 @@ class Notes(GeekNoteConnector):
                 if len(date) == 2:
                     dateStruct = time.strptime(date[1] + " 00:00:00", "%d.%m.%Y %H:%M:%S")
                 request += '-created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct) + 60 * 60 * 24))
-            except ValueError, e:
+            except ValueError:
                 out.failureMessage('Incorrect date format in --date attribute. '
                                    'Format: %s' % time.strftime("%d.%m.%Y", time.strptime('19991231', "%Y%m%d")))
                 return tools.exit()
