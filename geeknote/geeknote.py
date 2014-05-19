@@ -797,20 +797,31 @@ class Notes(GeekNoteConnector):
                              exact_entry=None, content_search=None):
 
         request = ""
+
+        def _formatExpression(label, value):
+            """Create an expression like label:value, attending to negation and quotes """
+            expression = ""
+
+            # if negated, prepend that to the expression before labe, not value
+            if value.startswith('-'):
+                expression += '-'
+                value = value[1:]
+            value = tools.strip(value)
+
+            # values with spaces must be quoted
+            if ' ' in value:
+                value = '"%s"' % value
+
+            expression += '%s:%s ' % (label, value)
+            return expression
+
         if notebooks:
             for notebook in tools.strip(notebooks.split(',')):
-                if notebook.startswith('-'):
-                    request += '-notebook:"%s" ' % tools.strip(notebook[1:])
-                else:
-                    request += 'notebook:"%s" ' % tools.strip(notebook)
+                request += _formatExpression('notebook', notebook)
 
         if tags:
             for tag in tools.strip(tags.split(',')):
-
-                if tag.startswith('-'):
-                    request += '-tag:"%s" ' % tag[1:]
-                else:
-                    request += 'tag:"%s" ' % tag
+                request += _formatExpression('tag', tag)
 
         if date:
             date = tools.strip(date.split('-'))
