@@ -733,7 +733,7 @@ class Notes(GeekNoteConnector):
             "content": content,
             "tags": tags,
             "notebook": notebook,
-            "resources": resources if resources else []
+            "resources": resources if resources else [],
             "reminder": reminder,
         }
         result = tools.strip(result)
