@@ -20,10 +20,10 @@ You can install Geeknote as a python script.
 ### Downloading and installing from source
     # Install dependencies. (This example for Debian-based systems):
     $ [sudo] apt-get update; [sudo] apt-get -y install python-setuptools
-    
+
     # Download the repository.
     $ git clone git://github.com/VitaliyRodnenko/geeknote.git
-    
+
     $ cd geeknote
 
     # Installation
@@ -89,7 +89,7 @@ To change the default editor call:
       Current editor is: nano
 
     $ geeknote settings --editor vim
-      Editor successfully saved  
+      Editor successfully saved
 
     $ geeknote settings --editor
       Current editor is: vim
@@ -102,6 +102,7 @@ The main functionality that we need is creating notes in Evernote.
                       [--content <content>]
                       [--tags <list of tags>]
                       [--notebook <notebook where to save>]
+       	              [--reminder <date and time>]
 ### Options
 
 --title &lt;title&gt;
@@ -115,6 +116,10 @@ The main functionality that we need is creating notes in Evernote.
 
 --tags &lt;list of tags, like: tag1, tag2&gt;
 :   Specify tags that our note will have. It can accept multiple tags, separated with comma.
+
+--reminder &lt;dd.mm.yy-HH:MM&gt;
+: Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed.
+
 
 ### Description
 This command allows us to create a new note in Evernote. Geeknote has designed for using in console, so we have some restrictions like inability to use double quotes in **--content** option. But there is a method to avoid it - use stdin stream or file synchronization, we show it later in documentation.
@@ -134,6 +139,7 @@ With Geeknote you can edit your notes in Evernote using any editor you like. It 
                     [--title <the new title>]
                     [--tags <new list of data>]
                     [--notebook <new notebook>]
+       	            [--reminder <date and time>]
 
 ### Options
 
@@ -151,6 +157,9 @@ With Geeknote you can edit your notes in Evernote using any editor you like. It 
 
 --tags &lt;list of tags, like: tag1, tag2&gt;
 :   The same for tags - you can set a new list of tags for your note.
+
+--reminder &lt;dd.mm.yy-HH:MM&gt;
+: Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note.
 
 ### Examples
 Simple editing:
@@ -176,6 +185,8 @@ You can easily search notes in Evernote with Geeknote and get results in console
                     [--exact-entry]
                     [--content-search]
                     [--url-only]
+                    [--reminders-only]
+                    [--ignore-completed]
 ### Description
 With **find** you can make a search through your Evernote. It has an usefull options that allow you to make search more detail. Important notice, that Geeknote remembers the result of the last search. So, you can use the number of the note's position to make some actions that Geeknote can.
 For example:
@@ -185,7 +196,7 @@ For example:
     Total found: 2
       1 : Shopping list 22.04.2012
       2 : Shopping list 25.04.2012
-    
+
     $ geeknote show 2
 That will show you the note "Shopping list 25.04.2012".
 
@@ -215,6 +226,14 @@ That will show you the note "Shopping list 25.04.2012".
 --url-only
 :   Show results as a list of URLs to the every note in Evernote's web-client.
 
+--reminders-only
+: Include only notes with a reminder.
+
+--ignore-completed
+: Include only unfinished reminders.
+
+
+
 ### Examples
     $ geeknote find --search "How to patch KDE2" --notebooks "jokes" --date 25.03.2012-25.06.2012
     $ geeknote find --search "apt-get install apache nginx" --content-search --notebooks "manual"
@@ -228,7 +247,7 @@ That is really simple, so doesn't need any descriptions. Just some examples:
 ### Examples
     $ geeknote show "Shop*"
 
-      Total found: 2                          
+      Total found: 2
         1 : Shopping list 22.04.2012
         2 : Shopping list 25.04.2012
         0 : -Cancel-
@@ -237,11 +256,11 @@ That is really simple, so doesn't need any descriptions. Just some examples:
 As we mentioned before, *show* can use the results of previous search, so if you have already done the search, just call *show* with number of previous search results.
 
     $ geeknote find --search "Shop*"
-    
-      Total found: 2                          
+
+      Total found: 2
       1 : Shopping list 22.04.2012
       2 : Shopping list 25.04.2012
-    
+
     $ geeknote show 2
 
 
