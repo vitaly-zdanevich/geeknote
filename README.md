@@ -1,5 +1,5 @@
-geeknote
-========
+geeknote for evernote (or 印象笔记)
+==================================
 
 Geeknote is a command line client for Evernote that can be use on Linux, FreeBSD and OS X.
 It allows you to:
@@ -22,9 +22,19 @@ You can install Geeknote as a python script.
     $ [sudo] apt-get update; [sudo] apt-get -y install python-setuptools
 
     # Download the repository.
-    $ git clone git://github.com/VitaliyRodnenko/geeknote.git
+    $ git clone git://github.com/jeffkowalski/geeknote.git
+
+    (or
+     $ git clone git://github.com/VitaliyRodnenko/geeknote.git  # original author
+     or
+     $ git clone git://github.com/gmajian/geeknote.git  # added 印象笔记 )
+
 
     $ cd geeknote
+
+    # Configuration
+    For Yinxiang 印象笔记, set USE_YINZIANG to True in geeknote/config.py
+    By default, the False setting will enable Evernote servers
 
     # Installation
     $ [sudo] python[2] setup.py install
@@ -410,4 +420,7 @@ The application *gnsync* is very useful in system adminstration, because you can
 * Ivan Gureev
 * Roman Gladkov
 * Greg V
+<<<<<<< HEAD
 * Ilya Shmygol
+=======
+>>>>>>> bf2edad061964991f318d75c6c2209e98757af5d

@@ -3,9 +3,15 @@
 import os
 import sys
 
+USE_YINXIANG = False # for 印象笔记, set to True
 # !!! DO NOT EDIT !!! >>>
-USER_BASE_URL = "www.evernote.com"
-USER_STORE_URI = "https://www.evernote.com/edam/user"
+if USE_YINXIANG:
+    USER_BASE_URL = "app.yinxiang.com"
+    USER_STORE_URI = "https://app.yinxiang.com/edam/user"
+else:
+    USER_BASE_URL = "www.evernote.com"
+    USER_STORE_URI = "https://www.evernote.com/edam/user"
+
 CONSUMER_KEY = "skaizer-5314"
 CONSUMER_SECRET = "6f4f9183b3120801"
 
