@@ -111,6 +111,7 @@ The main functionality that we need is creating notes in Evernote.
     $ geeknote create --title <title>
                       [--content <content>]
                       [--tags <list of tags>]
+                      [--resource <attachment filename>]
                       [--notebook <notebook where to save>]
        	              [--reminder <date and time>]
 ### Options
@@ -121,11 +122,14 @@ The main functionality that we need is creating notes in Evernote.
 --content &lt;content&gt;
 :   Specifying the content of new note. The content must not contains double quotes.
 
---notebook &lt;notebook where to save&gt;
-:   Specify the notebook where new note should be saved. This option is not required. If it isn't given, the note will be saved in default notebook. If notebook doesn't exist Geeknote will create it automatically.
-
 --tags &lt;list of tags, like: tag1, tag2&gt;
 :   Specify tags that our note will have. It can accept multiple tags, separated with comma.
+
+--resource &lt;attachment filename, like: document.pdf&gt;
+:   Specify file to be attached to the note.  May be repeated.
+
+--notebook &lt;notebook where to save&gt;
+:   Specify the notebook where new note should be saved. This option is not required. If it isn't given, the note will be saved in default notebook. If notebook doesn't exist Geeknote will create it automatically.
 
 --reminder &lt;dd.mm.yy-HH:MM&gt;
 : Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed.
@@ -137,6 +141,7 @@ This command allows us to create a new note in Evernote. Geeknote has designed f
 ### Examples
     $ geeknote create --title "Shopping list 22.04.2012"
                       --content "Don't forget to buy milk, turkey and chips."
+                      --resource shoppinglist.pdf
                       --notebook "Family"
                       --tags "shop, holiday, important"
 
@@ -148,6 +153,7 @@ With Geeknote you can edit your notes in Evernote using any editor you like. It 
                     [--content <a new content or "WRITE">]
                     [--title <the new title>]
                     [--tags <new list of data>]
+                    [--resource <attachment filename>]
                     [--notebook <new notebook>]
        	            [--reminder <date and time>]
 
@@ -162,11 +168,14 @@ With Geeknote you can edit your notes in Evernote using any editor you like. It 
 --content &lt;a new content or "WRITE"&gt;
 :   Enter the new content of your notes in text, or write instead the option "WRITE". In the first case the old content on the note will be replaced with new one. In the second case Geeknote will get the current content and open it in Markdown in a text editor.
 
---notebook &lt;notebook where to save&gt;
-:   With this option you can change the notebook which containes your note.
+--resource &lt;attachment filename, like: document.pdf&gt;
+:   Specify file to be attached to the note.  May be repeated.  Will replace existing resources.  TODO: NOT YET IMPLEMENTED
 
 --tags &lt;list of tags, like: tag1, tag2&gt;
 :   The same for tags - you can set a new list of tags for your note.
+
+--notebook &lt;notebook where to save&gt;
+:   With this option you can change the notebook which containes your note.
 
 --reminder &lt;dd.mm.yy-HH:MM&gt;
 : Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note.
@@ -420,7 +429,4 @@ The application *gnsync* is very useful in system adminstration, because you can
 * Ivan Gureev
 * Roman Gladkov
 * Greg V
-<<<<<<< HEAD
 * Ilya Shmygol
-=======
->>>>>>> bf2edad061964991f318d75c6c2209e98757af5d
