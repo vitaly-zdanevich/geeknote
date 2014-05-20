@@ -181,7 +181,7 @@ class GeekNote(object):
             note.tagNames.append(tag.name)
 
     @EdamException
-    def createNote(self, title, content, tags=None, notebook=None, created=None, resources=None):
+    def createNote(self, title, content, tags=None, notebook=None, created=None, resources=None, reminder=None):
         def make_resource(filename):
             try:
                 mtype = mimetypes.guess_type(filename)[0]
