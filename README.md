@@ -5,14 +5,17 @@ Geeknote is a command line client for Evernote that can be use on Linux, FreeBSD
 It allows you to:
    * create notes in your Evernote account;
    * create tags, notebooks;
-   * use Evernote search in console with different filters;
+   * use Evernote search from the console using different filters;
+   * edit notes directly in the console using any editor, such as nano, vim or mcedit;
    * edit notes directly in console using any editor: nano, vim, emacs, mcedit;
-   * sync your local files, directories with Evernote;
-   * use Evernote with cron or any scripts.
+   * synchronize your local files and directories with Evernote;
+   * use Evernote from a crontab or a script.
 
-Geeknote is written in Python, so you can use the open source package anywhere you have Python, even in Windows if you like.
+Geeknote is open source and written in Python. Geeknote can be used anywhere where you have Python installed (even in Windows if you like).
 
-Here we have documentation for Geeknote. We'll show basic commands how to work with notes, notebooks and tags in Evernote using Geeknote, also we'll show how to use search to find notes you want and give you some examples.
+In this document we'll show basic commands how to work with Evernote's
+notes, notebooks and tags using Geeknote and how to use Geeknote
+search.
 
 ## Installation
 You can install Geeknote as a python script.
@@ -22,13 +25,9 @@ You can install Geeknote as a python script.
     $ [sudo] apt-get update; [sudo] apt-get -y install python-setuptools
 
     # Download the repository.
-    $ git clone git://github.com/jeffkowalski/geeknote.git
-
-    (or
-     $ git clone git://github.com/VitaliyRodnenko/geeknote.git  # original author
-     or
-     $ git clone git://github.com/gmajian/geeknote.git  # added 印象笔记 )
-
+    $ git clone git://github.com/jeffkowalski/geeknote.git  # this repository
+    # -or-
+    $ git clone git://github.com/VitaliyRodnenko/geeknote.git  # original author's repository
 
     $ cd geeknote
 
@@ -47,14 +46,13 @@ Run tests
 
     $ python[2] setup.py test
 
-    # or for to run tests with `tox`
+    # or, to run tests with `tox`
     $ tox
 
-## Settings
-Geeknote has some settings that you should know.
+## Geeknote Settings
 
-### Authorization in Evernote
-First thing we have to do after installation Geeknote is authorization. To authorize your Geeknote in Evernote launch the command *login*:
+### Evernote Authorization
+After installation, Geeknote must be authorized with Evernote prior to use. To authorize your Geeknote in Evernote launch the command *login*:
 
     $ geeknote login
 
@@ -83,9 +81,9 @@ And after you can repeat authorization step.
     Email: example@gmail.com
 
 ### Set up the default editor
-Geeknote allows to edit notes right in console editors in markdown format. We will show it a later in documentation.
+You can edit notes within console editors in plain text or markdown format.
 
-And you can setup the default editor you want to use. To check which editor is now set up as a default call:
+You can setup the default editor you want to use. To check which editor is now set up as a default call:
 
     $ geeknote settings --editor
 
