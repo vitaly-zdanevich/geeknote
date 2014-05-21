@@ -468,6 +468,10 @@ class User(GeekNoteConnector):
             if editor == '#GET#':
                 editor = storage.getUserprop('editor')
                 if not editor:
+                    editor = os.environ.get("editor")
+                if not editor:
+                    editor = os.environ.get("EDITOR")
+                if not editor:
                     editor = config.DEF_WIN_EDITOR if sys.platform == 'win32' else config.DEF_UNIX_EDITOR
                 out.successMessage("Current editor is: %s" % editor)
             else:
