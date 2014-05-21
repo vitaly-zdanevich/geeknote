@@ -786,12 +786,12 @@ class Notes(GeekNoteConnector):
             elif reminder not in [config.REMINDER_NONE, config.REMINDER_DONE, config.REMINDER_DELETE]:
                 reminder = tools.strip(reminder.split('-'))
                 try:
-                    dateStruct = time.strptime(reminder[0] + " "  + reminder[1] + ":00", "%d.%m.%Y %H:%M:%S")
+                    dateStruct = time.strptime(reminder[0] + " "  + reminder[1] + ":00", config.DEF_DATE_AND_TIME_FORMAT)
                     reminderTime = int(round(time.mktime(dateStruct) * 1000))
                     result['reminder'] = reminderTime
                 except (ValueError, IndexError), e:
                     out.failureMessage('Incorrect date format in --reminder attribute. '
-                                       'Format: %s' % time.strftime("%d.%m.%Y-%H:%M", time.strptime('199912311422', "%Y%m%d%H%M")))
+                                       'Format: %s' % time.strftime(config.DEF_DATE_FORMAT, time.strptime('199912311422', "%Y%m%d%H%M")))
                     return tools.exit()
 
         return result
@@ -901,14 +901,14 @@ class Notes(GeekNoteConnector):
         if date:
             date = tools.strip(date.split('-'))
             try:
-                dateStruct = time.strptime(date[0] + " 00:00:00", "%d.%m.%Y %H:%M:%S")
+                dateStruct = time.strptime(date[0] + " 00:00:00", config.DEF_DATE_FORMAT)
                 request += 'created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct)))
                 if len(date) == 2:
-                    dateStruct = time.strptime(date[1] + " 00:00:00", "%d.%m.%Y %H:%M:%S")
+                    dateStruct = time.strptime(date[1] + " 00:00:00", config.DEF_DATE_AND_TIME_FORMAT)
                 request += '-created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct) + 60 * 60 * 24))
             except ValueError:
                 out.failureMessage('Incorrect date format in --date attribute. '
-                                   'Format: %s' % time.strftime("%d.%m.%Y", time.strptime('19991231', "%Y%m%d")))
+                                   'Format: %s' % time.strftime(config.DEF_DATE_FORMAT, time.strptime('19991231', "%Y%m%d")))
                 return tools.exit()
 
         if search:
