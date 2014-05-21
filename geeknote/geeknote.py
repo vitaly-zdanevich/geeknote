@@ -27,6 +27,7 @@ from oauth import GeekNoteAuth
 from storage import Storage
 from log import logging
 
+
 def GeekNoneDBConnectOnly(func):
     """ operator to disable evernote connection
     or create instance of GeekNote """
@@ -34,6 +35,37 @@ def GeekNoneDBConnectOnly(func):
         GeekNote.skipInitConnection = True
         return func(*args, **kwargs)
     return wrapper
+
+
+def make_resource(filename):
+    try:
+        mtype = mimetypes.guess_type(filename)[0]
+
+        if mtype and mtype.split('/')[0] == "text":
+            rmode = "r"
+        else:
+            rmode = "rb"
+
+        with open(filename, rmode) as f:
+            """ file exists """
+            resource = Types.Resource()
+            resource.data = Types.Data()
+
+            data = f.read()
+            md5 = hashlib.md5()
+            md5.update(data)
+
+            resource.data.bodyHash = md5.hexdigest()
+            resource.data.body = data
+            resource.data.size = len(data)
+            resource.mime = mtype
+            resource.attributes = Types.ResourceAttributes()
+            resource.attributes.fileName = os.path.basename(filename)
+            return resource
+    except IOError:
+        msg = "The file '%s' does not exist." % filename
+        out.failureMessage(msg)
+        raise IOError(msg)
 
 
 class GeekNote(object):
@@ -182,37 +214,6 @@ class GeekNote(object):
 
     @EdamException
     def createNote(self, title, content, tags=None, notebook=None, created=None, resources=None, reminder=None):
-        def make_resource(filename):
-            try:
-                mtype = mimetypes.guess_type(filename)[0]
-
-                if mtype.split('/')[0] == "text":
-                    rmode = "r"
-                else:
-                    rmode = "rb"
-
-                with open(filename, rmode) as f:
-                    """ file exists """
-                    resource = Types.Resource()
-                    resource.data = Types.Data()
-
-                    data = f.read()
-                    md5 = hashlib.md5()
-                    md5.update(data)
-
-                    resource.data.bodyHash = md5.hexdigest()
-                    resource.data.body = data
-                    resource.data.size = len(data)
-                    resource.mime = mtype
-                    resource.attributes = Types.ResourceAttributes()
-                    resource.attributes.fileName = os.path.basename(filename)
-                    return resource
-            except IOError:
-                msg = "The file '%s' does not exist." % filename
-                out.failureMessage(msg)
-                raise IOError(msg)
-
-
         note = Types.Note()
         note.title = title
         note.content = content
@@ -236,22 +237,23 @@ class GeekNote(object):
 
             note.content = note.content.replace("</en-note>", resource_nodes + "</en-note>")
 
-	# allowing to create a completed reminder, i.e for task tracking purposes, skip reminder creation steps if we have a DELETE
-	if reminder and reminder != config.REMINDER_DELETE:
-     		now = int(round(time.time() * 1000))
-     		note.attributes = Types.NoteAttributes()
-     		if reminder == config.REMINDER_NONE:
-          		note.attributes.reminderOrder = now
-     		elif reminder == config.REMINDER_DONE:
-          		note.attributes.reminderOrder = now
-          		note.attributes.reminderDoneTime = now
-     		else:  # we have an actual reminder timestamp
-                	if reminder > now: # future reminder only
-          			note.attributes.reminderOrder = now
-                		note.attributes.reminderTime = reminder
-                	else:
-                		out.failureMessage("Sorry, reminder must be in the future.")
-             			tools.exit()
+        # Allow creating a completed reminder (for task tracking purposes),
+        # skip reminder creation steps if we have a DELETE
+        if reminder and reminder != config.REMINDER_DELETE:
+            now = int(round(time.time() * 1000))
+            note.attributes = Types.NoteAttributes()
+            if reminder == config.REMINDER_NONE:
+                note.attributes.reminderOrder = now
+            elif reminder == config.REMINDER_DONE:
+                note.attributes.reminderOrder = now
+                note.attributes.reminderDoneTime = now
+            else:  # we have an actual reminder time stamp
+                if reminder > now:  # future reminder only
+                    note.attributes.reminderOrder = now
+                    note.attributes.reminderTime = reminder
+                else:
+                    out.failureMessage("Sorry, reminder must be in the future.")
+                    tools.exit()
 
         logging.debug("New note : %s", note)
 
@@ -275,37 +277,46 @@ class GeekNote(object):
             note.notebookGuid = notebook
 
         if resources:
-            """ TODO """
-            print("Updating a note's resources is not yet supported.")
-            raise NotImplementedError()
+            """ make EverNote API resources """
+            note.resources = map(make_resource, resources)
+
+            """ add to content """
+            resource_nodes = ""
+
+            for resource in note.resources:
+                resource_nodes += '<en-media type="%s" hash="%s" />' % (resource.mime, resource.data.bodyHash)
+
+            if not note.content:
+                note.content = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note></en-note>'
+            note.content = note.content.replace("</en-note>", resource_nodes + "</en-note>")
 
         if reminder:
-                now = int(round(time.time() * 1000))
-                if not note.attributes: #in case no attributes available
-			note.attributes = Types.NoteAttributes()
-                if reminder == config.REMINDER_NONE:
-                	note.attributes.reminderDoneTime = None
-			note.attributes.reminderTime = None
-			if not note.attributes.reminderOrder: #new reminder
-                       		note.attributes.reminderOrder = now
-                elif reminder == config.REMINDER_DONE:
-                        note.attributes.reminderDoneTime = now
-			if not note.attributes.reminderOrder: #catch adding DONE to non-reminder
-				note.attributes.reminderOrder = now
-				note.attributes.reminderTime = None
-		elif reminder == config.REMINDER_DELETE:
-                        note.attributes.reminderOrder = None
-			note.attributes.reminderTime = None
-                        note.attributes.reminderDoneTime = None
-                else:  # we have an actual reminder timestamp
-                        if reminder > now: # future reminder only
-                                note.attributes.reminderTime = reminder
-                        	note.attributes.reminderDoneTime = None
-				if not note.attributes.reminderOrder: #catch adding time to non-reminder
-                                	note.attributes.reminderOrder = now
-                        else:
-                                out.failureMessage("Sorry, reminder must be in the future.")
-                                tools.exit()
+            now = int(round(time.time() * 1000))
+            if not note.attributes:  # in case no attributes available
+                note.attributes = Types.NoteAttributes()
+            if reminder == config.REMINDER_NONE:
+                note.attributes.reminderDoneTime = None
+                note.attributes.reminderTime = None
+                if not note.attributes.reminderOrder:  # new reminder
+                    note.attributes.reminderOrder = now
+            elif reminder == config.REMINDER_DONE:
+                note.attributes.reminderDoneTime = now
+                if not note.attributes.reminderOrder: # catch adding DONE to non-reminder
+                    note.attributes.reminderOrder = now
+                    note.attributes.reminderTime = None
+            elif reminder == config.REMINDER_DELETE:
+                note.attributes.reminderOrder = None
+                note.attributes.reminderTime = None
+                note.attributes.reminderDoneTime = None
+            else:  # we have an actual reminder timestamp
+                if reminder > now:  # future reminder only
+                    note.attributes.reminderTime = reminder
+                    note.attributes.reminderDoneTime = None
+                    if not note.attributes.reminderOrder:  # catch adding time to non-reminder
+                        note.attributes.reminderOrder = now
+                else:
+                    out.failureMessage("Sorry, reminder must be in the future.")
+                    tools.exit()
         logging.debug("Update note : %s", note)
 
         self.getNoteStore().updateNote(self.authToken, note)
@@ -626,7 +637,7 @@ class Notes(GeekNoteConnector):
         self.findExactOnUpdate = bool(findExactOnUpdate)
         self.selectFirstOnUpdate = bool(selectFirstOnUpdate)
 
-    def _editWithEditorInThread(self, inputData, note = None):
+    def _editWithEditorInThread(self, inputData, note=None):
         if note:
             self.getEvernote().loadNoteContent(note)
             editor = Editor(note.content)
@@ -767,21 +778,21 @@ class Notes(GeekNoteConnector):
             result['notebook'] = notepadGuid
             logging.debug("Search notebook")
 
-	if reminder:
-		then = config.REMINDER_SHORTCUTS.get(reminder)
-		if then:
-			now = int(round(time.time() * 1000))
-			result['reminder'] = now + then
-		elif  reminder not in [config.REMINDER_NONE,config.REMINDER_DONE,config.REMINDER_DELETE]:
-			reminder = tools.strip(reminder.split('-'))
-          		try:
-               				dateStruct = time.strptime(reminder[0] + " "  + reminder[1] + ":00", "%d.%m.%Y %H:%M:%S")
-               				reminderTime = int(round(time.mktime(dateStruct) * 1000))
-               				result['reminder'] = reminderTime
-          		except (ValueError,IndexError), e:
-                			out.failureMessage('Incorrect date format in --reminder attribute. '
-                                   	'Format: %s' % time.strftime("%d.%m.%Y-%H:%M", time.strptime('199912311422', "%Y%m%d%H%M")))
-                			return tools.exit()
+        if reminder:
+            then = config.REMINDER_SHORTCUTS.get(reminder)
+            if then:
+                now = int(round(time.time() * 1000))
+                result['reminder'] = now + then
+            elif reminder not in [config.REMINDER_NONE, config.REMINDER_DONE, config.REMINDER_DELETE]:
+                reminder = tools.strip(reminder.split('-'))
+                try:
+                    dateStruct = time.strptime(reminder[0] + " "  + reminder[1] + ":00", "%d.%m.%Y %H:%M:%S")
+                    reminderTime = int(round(time.mktime(dateStruct) * 1000))
+                    result['reminder'] = reminderTime
+                except (ValueError, IndexError), e:
+                    out.failureMessage('Incorrect date format in --reminder attribute. '
+                                       'Format: %s' % time.strftime("%d.%m.%Y-%H:%M", time.strptime('199912311422', "%Y%m%d%H%M")))
+                    return tools.exit()
 
         return result
 
@@ -910,10 +921,10 @@ class Notes(GeekNoteConnector):
             else:
                 request += "intitle:%s" % search
 
-	if reminders_only:
-		request += ' reminderOrder:* '
-	if ignore_completed:
-		request += ' -reminderDoneTime:* '
+        if reminders_only:
+            request += ' reminderOrder:* '
+        if ignore_completed:
+            request += ' -reminderDoneTime:* '
 
         logging.debug("Search request: %s", request)
         return request
