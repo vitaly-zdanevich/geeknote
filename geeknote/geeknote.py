@@ -934,6 +934,11 @@ class Notes(GeekNoteConnector):
         return request
 
 
+# Special handling of arguments passed via piped stream.
+# Will return the create command, with two arguments:
+#     title:   the first 50 chars worth of the first 5 words
+#              of the stream
+#     content: the entire stream
 def modifyArgsByStdinStream():
     """Parse the stdin stream for arguments"""
     content = sys.stdin.read()
@@ -941,13 +946,13 @@ def modifyArgsByStdinStream():
 
     if not content:
         out.failureMessage("Input stream is empty.")
-        return tools.exit()
+        return (None, None)
 
     title = ' '.join(content.split(' ', 5)[:-1])
     title = re.sub(r'(\r\n|\r|\n)', r' ', title)
     if not title:
         out.failureMessage("Error while creating title of note from stream.")
-        return tools.exit()
+        return (None, None)
     elif len(title) > 50:
         title = title[0:50] + '...'
 
@@ -961,22 +966,24 @@ def modifyArgsByStdinStream():
 
 def main(args=None):
     try:
-        # if terminal
-        if config.IS_IN_TERMINAL:
-            sys_argv = sys.argv[1:]
-            if isinstance(args, list):
-                sys_argv = args
+        sys_argv = sys.argv[1:]
+        if isinstance(args, list):
+            sys_argv = args
 
-            sys_argv = tools.decodeArgs(sys_argv)
+        sys_argv = tools.decodeArgs(sys_argv)
 
-            COMMAND = sys_argv[0] if len(sys_argv) >= 1 else None
+        COMMAND = sys_argv[0] if len(sys_argv) >= 1 else None
+        aparser = argparser(sys_argv)
+        ARGS = aparser.parse()
 
-            aparser = argparser(sys_argv)
-            ARGS = aparser.parse()
-
-        # if input stream
-        else:
+        # Didn't read any command line arguments, and not attached
+        # to an interactive tty?
+        # If so, look for input on piped stream
+        if COMMAND is None and not config.IS_IN_TERMINAL:
             COMMAND, ARGS = modifyArgsByStdinStream()
+
+        if COMMAND is None:
+            out.printAbout()
 
         # error or help
         if COMMAND is None or ARGS is False:

@@ -243,7 +243,6 @@ class argparser(object):
         self.INP_DATA = {}
 
         if self.CMD is None:
-            out.printAbout()
             return False
 
         if self.CMD == "autocomplete":
