@@ -16,6 +16,7 @@ from storage import Storage
 from log import logging
 from xml.sax.saxutils import escape, unescape
 
+
 class EditorThread(threading.Thread):
 
     def __init__(self, editor):
@@ -53,7 +54,7 @@ class Editor(object):
         soup = BeautifulSoup(contentENML.decode('utf-8'))
 
         for section in soup.select('li > p'):
-            section.replace_with( section.contents[0] )
+            section.replace_with(section.contents[0])
 
         for section in soup.select('li > br'):
             if section.next_sibling:
@@ -71,8 +72,8 @@ class Editor(object):
     @staticmethod
     def wrapENML(contentHTML):
         body = '<?xml version="1.0" encoding="UTF-8"?>\n'\
-           '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">\n'\
-           '<en-note>%s</en-note>' % contentHTML
+               '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">\n'\
+               '<en-note>%s</en-note>' % contentHTML
         return body
 
     @staticmethod
@@ -86,12 +87,12 @@ class Editor(object):
             content = unicode(content, "utf-8")
             # add 2 space before new line in paragraph for creating br tags
             content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
-            if format=='markdown':
-              contentHTML = markdown.markdown(content).encode("utf-8")
-              # Non-Pretty HTML output
-              contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
+            if format == 'markdown':
+                contentHTML = markdown.markdown(content).encode("utf-8")
+                # Non-Pretty HTML output
+                contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
             else:
-              contentHTML = Editor.HTMLEscape(content)
+                contentHTML = Editor.HTMLEscape(content)
             return Editor.wrapENML(contentHTML)
         except:
             if raise_ex:
@@ -108,11 +109,11 @@ class Editor(object):
         if not isinstance(content, str):
             raise Exception("Note content must be an instance "
                             "of string, '%s' given." % type(content))
-            
+
         (tempfileHandler, tempfileName) = tempfile.mkstemp(suffix=".markdown")
         os.write(tempfileHandler, self.ENMLtoText(content))
         os.close(tempfileHandler)
-        
+
         self.content = content
         self.tempfile = tempfileName
 

@@ -226,7 +226,7 @@ class GNSync:
         # strip unprintable characters
         content = ''.join(s for s in content if s in string.printable)
         content = Editor.textToENML(content=content, raise_ex=True, format=self.format)
-        
+
         if content is None:
             logger.warning("File {0}. Content must be " \
                            "an UTF-8 encode.".format(path))
