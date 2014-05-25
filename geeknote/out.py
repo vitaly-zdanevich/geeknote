@@ -208,13 +208,13 @@ def separator(symbol="", title=""):
 
 @preloaderStop
 def printList(listItems, title="", showSelector=False,
-              showByStep=20, showUrl=False):
+              showByStep=0, showUrl=False):
 
     if title:
         separator("=", title)
 
     total = len(listItems)
-    printLine("Total found: %d" % total)
+    printLine("Found %d item%s" % (total, ('s' if total != 1 else '')))
     for key, item in enumerate(listItems):
         key += 1
 
@@ -224,7 +224,7 @@ def printList(listItems, title="", showSelector=False,
             item.title if hasattr(item, 'title') else item.name,
             " " + (">>> " + config.NOTE_URL % item.guid) if showUrl else '',))
 
-        if key % showByStep == 0 and key < total:
+        if showByStep != 0 and key % showByStep == 0 and key < total:
             printLine("-- More --", "\r")
             tools.getch()
             printLine(" " * 12, "\r")
