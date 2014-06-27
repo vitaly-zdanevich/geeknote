@@ -57,10 +57,18 @@ class ExitException(Exception):
     pass
 
 
-def exit(message='exit'):
-    out.preloader.exit()
+def _exit(message, code):
+    out.preloader.exit(code)
     time.sleep(0.33)
     raise ExitException(message)
+
+
+def exit(message='exit', code=0):
+    _exit(message, code)
+
+
+def exitErr(message='exit', code=1):
+    _exit(message, code)
 
 
 def KeyboardInterruptSignalHendler(signal, frame):
