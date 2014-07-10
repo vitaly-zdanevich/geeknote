@@ -360,6 +360,10 @@ class User(GeekNoteConnector):
     @GeekNoneDBConnectOnly
     def settings(self, editor=None):
         storage = self.getStorage()
+        noteExtension = storage.getUserprop('note_ext')
+        if not noteExtension:
+            noteExtension = config.DEF_NOTE_EXT
+            storage.setUserprop('note_ext', noteExtension)
         if editor:
             if editor == '#GET#':
                 editor = storage.getUserprop('editor')
@@ -375,7 +379,8 @@ class User(GeekNoteConnector):
                         'Version: %s' % config.VERSION,
                         'App dir: %s' % config.APP_DIR,
                         'Error log: %s' % config.ERROR_LOG,
-                        'Current editor: %s' % storage.getUserprop('editor'))
+                        'Current editor: %s' % storage.getUserprop('editor'),
+                        'Note extension: %s' % storage.getUserprop('note_ext'))
 
             user_settings = storage.getUserprops()
 

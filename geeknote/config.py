@@ -31,6 +31,9 @@ DEF_UNIX_EDITOR = "nano"
 DEF_WIN_EDITOR = "notepad.exe"
 EDITOR_OPEN = "WRITE"
 
+# Default file extension for editing
+DEF_NOTE_EXT = ".org"
+
 DEV_MODE = False
 DEBUG = False
 
