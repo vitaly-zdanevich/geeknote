@@ -86,12 +86,15 @@ class Editor(object):
             content = unicode(content, "utf-8")
             # add 2 space before new line in paragraph for creating br tags
             content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
-            if format=='markdown':
-              contentHTML = markdown.markdown(content).encode("utf-8")
-              # Non-Pretty HTML output
-              contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
+            if format == 'markdown':
+                contentHTML = markdown.markdown(content).encode("utf-8")
+                # Non-Pretty HTML output
+                contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
+            elif format == 'html':
+                # Html to ENML
+                contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
             else:
-              contentHTML = Editor.HTMLEscape(content)
+                contentHTML = Editor.HTMLEscape(content)
             return Editor.wrapENML(contentHTML)
         except:
             if raise_ex:

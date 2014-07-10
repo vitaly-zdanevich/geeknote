@@ -99,6 +99,8 @@ class GNSync:
 
         if format == "markdown":
             self.extension = ".md"
+        elif format == "html":
+            self.extension = ".html"
         else:
             self.extension = ".txt"
 
