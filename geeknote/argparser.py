@@ -50,6 +50,12 @@ COMMANDS_DICT = {
                                      " will be added to the note."},
             "--notebook":   {"altName": "-nb",
                              "help": "Set the notebook where to save note."}
+        },
+        "flags": {
+            "--raw":        {"altName": "-r",
+                             "help": "Edit note with raw ENML",
+                             "value": True,
+                             "default": False}
         }
     },
     "edit": {
@@ -67,6 +73,13 @@ COMMANDS_DICT = {
                              "help": "Set new list o tags for the note."},
             "--notebook":   {"altName": "-nb",
                              "help": "Assign new notebook for the note."}
+            
+        },
+        "flags": {
+            "--raw":        {"altName": "-r",
+                             "help": "Edit note with raw ENML",
+                             "value": True,
+                             "default": False}
         }
     },
     "remove": {

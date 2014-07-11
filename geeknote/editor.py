@@ -79,6 +79,7 @@ class Editor(object):
     def textToENML(content, raise_ex=False, format='markdown'):
         """
         Create an ENML format of note.
+        TODO: add media support
         """
         if not isinstance(content, str):
             content = ""
@@ -92,7 +93,7 @@ class Editor(object):
                 contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
             elif format == 'html':
                 # Html to ENML
-                contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
+                contentHTML = str(BeautifulSoup(content, 'html.parser'))
             else:
                 contentHTML = Editor.HTMLEscape(content)
             return Editor.wrapENML(contentHTML)
@@ -105,9 +106,10 @@ class Editor(object):
                           "Content must be an UTF-8 encode.")
             out.failureMessage("Error while parsing text to html. "
                                "Content must be an UTF-8 encode.")
+
             return tools.exit()
 
-    def __init__(self, content):
+    def __init__(self, content, raw = False):
         if not isinstance(content, str):
             raise Exception("Note content must be an instance "
                             "of string, '%s' given." % type(content))
@@ -115,7 +117,7 @@ class Editor(object):
         if not noteExtension:
             noteExtension = config.DEF_NOTE_EXT
         (tempfileHandler, tempfileName) = tempfile.mkstemp(suffix = noteExtension)
-        os.write(tempfileHandler, self.ENMLtoText(content))
+        os.write(tempfileHandler, content if raw else self.ENMLtoText(content))
         os.close(tempfileHandler)
         
         self.content = content
