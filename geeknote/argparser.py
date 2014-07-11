@@ -31,6 +31,8 @@ COMMANDS_DICT = {
             "--editor": {"help": "Set the editor, which use to "
                                  "edit and create notes.",
                          "emptyValue": '#GET#'},
+            "--note_ext": {"help": "Set default note's extension.",
+                           "emptyValue": '#GET#'}
         }
     },
 

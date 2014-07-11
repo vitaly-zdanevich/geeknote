@@ -358,12 +358,9 @@ class User(GeekNoteConnector):
             return tools.exit()
 
     @GeekNoneDBConnectOnly
-    def settings(self, editor=None):
+    def settings(self, editor=None, note_ext=None):
         storage = self.getStorage()
-        noteExtension = storage.getUserprop('note_ext')
-        if not noteExtension:
-            noteExtension = config.DEF_NOTE_EXT
-            storage.setUserprop('note_ext', noteExtension)
+        
         if editor:
             if editor == '#GET#':
                 editor = storage.getUserprop('editor')
@@ -373,7 +370,17 @@ class User(GeekNoteConnector):
             else:
                 storage.setUserprop('editor', editor)
                 out.successMessage("Changes have been saved.")
-        else:
+        if note_ext:
+            if note_ext == '#GET#':
+                note_ext = storage.getUserprop('note_ext')
+                if not note_ext or not storage.getUserprop('note_ext'):
+                    note_ext = config.DEF_NOTE_EXT
+                out.successMessage("Default note extension is: %s" % note_ext)
+            else:
+                storage.setUserprop('note_ext', note_ext)
+                out.successMessage("Changes have been saved.")
+                
+        if all([not editor, not note_ext]):
             settings = ('Geeknote',
                         '*' * 30,
                         'Version: %s' % config.VERSION,
