@@ -25,7 +25,7 @@ logger.addHandler(handler)
 
 # http://stackoverflow.com/a/93029
 CONTROL_CHARS = ''.join(c for c in (unichr(i) for i in xrange(0x110000)) \
-                if c not in string.printable and unicodedata.category(c) == 'Cc')
+                        if c not in string.printable and unicodedata.category(c) == 'Cc')
 CONTROL_CHARS_RE = re.compile('[%s]' % re.escape(CONTROL_CHARS))
 def remove_control_characters(s):
     return CONTROL_CHARS_RE.sub('', s)
@@ -106,6 +106,8 @@ class GNSync:
 
         if format == "markdown":
             self.extension = ".md"
+        elif format == "html":
+            self.extension = ".html"
         else:
             self.extension = ".txt"
 

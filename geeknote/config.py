@@ -43,6 +43,9 @@ REMINDER_DELETE = "DELETE"
 # Shortcuts have a word and a number of seconds to add to the current time
 REMINDER_SHORTCUTS = {'TOMORROW': 86400000, 'WEEK': 604800000}
 
+# Default file extension for editing
+DEF_NOTE_EXT = ".org"
+
 DEV_MODE = False
 DEBUG = False
 

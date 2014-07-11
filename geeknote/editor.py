@@ -110,7 +110,10 @@ class Editor(object):
             raise Exception("Note content must be an instance "
                             "of string, '%s' given." % type(content))
 
-        (tempfileHandler, tempfileName) = tempfile.mkstemp(suffix=".markdown")
+        noteExtension = Storage().getUserprop('note_ext')
+        if not noteExtension:
+            noteExtension = config.DEF_NOTE_EXT
+        (tempfileHandler, tempfileName) = tempfile.mkstemp(suffix = noteExtension)
         os.write(tempfileHandler, self.ENMLtoText(content))
         os.close(tempfileHandler)
 
