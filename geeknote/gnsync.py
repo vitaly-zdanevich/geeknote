@@ -7,11 +7,16 @@ import glob
 import logging
 import string
 import unicodedata, re
+import hashlib, binascii, mimetypes
+
+import evernote.edam.type.ttypes as Types
+from bs4 import BeautifulSoup
 
 from geeknote import GeekNote
 from storage import Storage
 from editor import Editor
 import tools
+
 
 # set default logger (write log to file)
 def_logpath = os.path.join(os.getenv('USERPROFILE') or os.getenv('HOME'),  'GeekNoteSync.log')
@@ -141,17 +146,32 @@ class GNSync:
             title = f['name'] if 'title' not in meta else meta['title'].strip()
             tags = None if 'tags' not in meta else meta['tags'] \
                    .replace('[', '').replace(']','').split(',')
-            tags = map(lambda x:x.strip(), tags)
-
+            tags = None if tags == '' else map(lambda x:x.strip(), tags)
+            note = None
+            if self.format == 'html':
+                meta['mtime'] = f['mtime']
+                note = self._html2note(meta)
+                
             for n in notes:
                 if title == n.title:
                     has_note = True
                     if f['mtime'] > n.updated:
-                        self._update_note(f, n, title, meta['content'], tags)
+                        if self.format == 'html':
+                            gn = GeekNote()
+                            note.guid = n.guid
+                            gn.getNoteStore().updateNote(gn.authToken, note)                            
+                            logger.info('Note "{0}" was updated'.format(note.title))
+                        else:
+                            self._update_note(f, n, title, meta['content'], tags)
                         break
 
             if not has_note:
-                self._create_note(f, title, meta['content'], tags)
+                if self.format == 'html':
+                    gn = GeekNote()
+                    gn.getNoteStore().createNote(gn.authToken, note)
+                    logger.info('Note "{0}" was created'.format(note.title))
+                else:
+                    self._create_note(f, title, meta['content'], tags)
 
         if self.twoway:
             for n in notes:
@@ -193,6 +213,52 @@ class GNSync:
             ret['content'] = metaBlock.sub('', content)
             return ret
             
+    @log        
+    def _html2note(self, meta):
+        """
+        parse html to note
+        TODO: check if evernote need upload media evertime when update
+        """
+        note = Types.Note()
+        note.title = meta['title'].strip() if 'title' in meta else None
+        tags = None if 'tags' not in meta else meta['tags'] \
+                   .replace('[', '').replace(']','').split(',')
+        tags = None if tags == '' else map(lambda x:x.strip(), tags)
+        note.tagNames = tags
+        note.created = meta['mtime']
+        note.resources = []
+        soup = BeautifulSoup(meta['content'], 'html.parser')
+        for tag in soup.findAll('img'): #image support is enough
+            if 'src' in tag.attrs and len(tag.attrs['src']) > 0:
+                img = None
+                with open(tag.attrs['src'], 'rb') as f:
+                    img = f.read()    
+                md5 = hashlib.md5()
+                md5.update(img)
+                hash = md5.digest()
+                hexHash = binascii.hexlify(hash)
+                mime = mimetypes.guess_type(tag['src'])[0]
+
+                data = Types.Data()
+                data.size = len(img)
+                data.bodyHash = hash
+                data.body = img
+
+                resource = Types.Resource()
+                resource.mime = mime
+                resource.data = data
+                
+                tag.name = 'en-media'
+                tag.attrs['type'] = mime
+                tag.attrs['hash'] = hexHash
+                tag.attrs.pop('src', None)
+
+                note.resources.append(resource)
+        note.notebookGuid = self.notebook_guid
+        note.content = str(soup)
+        return note
+                
+        
     @log
     def _update_note(self, file_note, note, title = None, content = None, tags = None):
         """
