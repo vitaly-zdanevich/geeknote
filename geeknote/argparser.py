@@ -31,6 +31,8 @@ COMMANDS_DICT = {
             "--editor": {"help": "Set the editor, which use to "
                                  "edit and create notes.",
                          "emptyValue": '#GET#'},
+            "--note_ext": {"help": "Set default note's extension.",
+                           "emptyValue": '#GET#'}
         }
     },
 
@@ -53,6 +55,12 @@ COMMANDS_DICT = {
                              "help": "Set the notebook where to save note."},
 	    "--reminder":   {"altName": "-r",
                              "help": "Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed."},
+        },
+        "flags": {
+            "--raw":        {"altName": "-r",
+                             "help": "Edit note with raw ENML",
+                             "value": True,
+                             "default": False}
         }
     },
     "edit": {
@@ -75,6 +83,12 @@ COMMANDS_DICT = {
                              "help": "Assign new notebook for the note."},
 	    "--reminder":   {"altName": "-r",
                              "help": " Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note."},
+        },
+        "flags": {
+            "--raw":        {"altName": "-r",
+                             "help": "Edit note with raw ENML",
+                             "value": True,
+                             "default": False}
         }
     },
     "remove": {

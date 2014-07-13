@@ -462,12 +462,9 @@ class User(GeekNoteConnector):
             return tools.exitErr()
 
     @GeekNoneDBConnectOnly
-    def settings(self, editor=None):
+    def settings(self, editor=None, note_ext=None):
         storage = self.getStorage()
-        noteExtension = storage.getUserprop('note_ext')
-        if not noteExtension:
-            noteExtension = config.DEF_NOTE_EXT
-            storage.setUserprop('note_ext', noteExtension)
+
         if editor:
             if editor == '#GET#':
                 editor = storage.getUserprop('editor')
@@ -481,7 +478,17 @@ class User(GeekNoteConnector):
             else:
                 storage.setUserprop('editor', editor)
                 out.successMessage("Changes have been saved.")
-        else:
+        if note_ext:
+            if note_ext == '#GET#':
+                note_ext = storage.getUserprop('note_ext')
+                if not note_ext or not storage.getUserprop('note_ext'):
+                    note_ext = config.DEF_NOTE_EXT
+                out.successMessage("Default note extension is: %s" % note_ext)
+            else:
+                storage.setUserprop('note_ext', note_ext)
+                out.successMessage("Changes have been saved.")
+
+        if all([not editor, not note_ext]):
             settings = ('Geeknote',
                         '*' * 30,
                         'Version: %s' % config.VERSION,
@@ -648,12 +655,12 @@ class Notes(GeekNoteConnector):
         self.findExactOnUpdate = bool(findExactOnUpdate)
         self.selectFirstOnUpdate = bool(selectFirstOnUpdate)
 
-    def _editWithEditorInThread(self, inputData, note=None):
+    def _editWithEditorInThread(self, inputData, note = None, raw = None):
         if note:
             self.getEvernote().loadNoteContent(note)
-            editor = Editor(note.content)
+            editor = Editor(note.content, raw)
         else:
-            editor = Editor('')
+            editor = Editor('', raw)
         thread = EditorThread(editor)
         thread.start()
 
@@ -662,7 +669,15 @@ class Notes(GeekNoteConnector):
         while True:
             if prevChecksum != editor.getTempfileChecksum() and result:
                 newContent = open(editor.tempfile, 'r').read()
-                inputData['content'] = Editor.textToENML(newContent)
+                ext = os.path.splitext(editor.tempfile)[1]
+                mapping = {'markdown': ['.md', '.markdown'],
+                           'html': ['.html', '.org']}
+                fmt = filter(lambda k:ext in mapping[k], mapping)
+                if fmt:
+                    fmt = fmt[0]
+
+                inputData['content'] = newContent if raw \
+                                       else Editor.textToENML(newContent, format = fmt)
                 if not note:
                     result = self.getEvernote().createNote(**inputData)
                     # TODO: log error if result is False or None
@@ -683,8 +698,7 @@ class Notes(GeekNoteConnector):
             time.sleep(5)
         return result
 
-    def create(self, title, content=None, tags=None, notebook=None, resource=None, reminder=None):
-
+    def create(self, title, content=None, tags=None, notebook=None, resource=None, reminder=None, raw=None):
         self.connectToEvertone()
 
         # Optional Content.
@@ -693,7 +707,7 @@ class Notes(GeekNoteConnector):
         inputData = self._parseInput(title, content, tags, notebook, resource, reminder=reminder)
 
         if inputData['content'] == config.EDITOR_OPEN:
-            result = self._editWithEditorInThread(inputData)
+            result = self._editWithEditorInThread(inputData, raw = raw)
         else:
             out.preloader.setMessage("Creating note...")
             result = bool(self.getEvernote().createNote(**inputData))
@@ -704,15 +718,14 @@ class Notes(GeekNoteConnector):
             out.failureMessage("Error while creating the note.")
             return tools.exitErr()
 
-    def edit(self, note, title=None, content=None, tags=None, notebook=None, resource=None, reminder=None):
-
+    def edit(self, note, title=None, content=None, tags=None, notebook=None, resource=None, reminder=None, raw=None):
         self.connectToEvertone()
         note = self._searchNote(note)
 
         inputData = self._parseInput(title, content, tags, notebook, resource, note, reminder=reminder)
 
         if inputData['content'] == config.EDITOR_OPEN:
-            result = self._editWithEditorInThread(inputData, note)
+            result = self._editWithEditorInThread(inputData, note, raw = raw)
         else:
             out.preloader.setMessage("Saving note...")
             result = bool(self.getEvernote().updateNote(guid=note.guid, **inputData))

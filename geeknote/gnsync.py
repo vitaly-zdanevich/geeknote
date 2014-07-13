@@ -126,6 +126,8 @@ class GNSync:
     def sync(self):
         """
         Synchronize files to notes
+        TODO: add two way sync with meta support
+        TODO: add specific notebook support
         """
         if not self.all_set:
             return
@@ -135,15 +137,21 @@ class GNSync:
 
         for f in files:
             has_note = False
+            meta = self._parse_meta(self._get_file_content(f['path']))
+            title = f['name'] if 'title' not in meta else meta['title'].strip()
+            tags = None if 'tags' not in meta else meta['tags'] \
+                   .replace('[', '').replace(']','').split(',')
+            tags = map(lambda x:x.strip(), tags)
+
             for n in notes:
-                if f['name'] == n.title:
+                if title == n.title:
                     has_note = True
                     if f['mtime'] > n.updated:
-                        self._update_note(f, n)
+                        self._update_note(f, n, title, meta['content'], tags)
                         break
 
             if not has_note:
-                self._create_note(f)
+                self._create_note(f, title, meta['content'], tags)
 
         if self.twoway:
             for n in notes:
@@ -161,16 +169,42 @@ class GNSync:
         logger.info('Sync Complete')
 
     @log
-    def _update_note(self, file_note, note):
+    def _parse_meta(self, content):
+        """
+        Parse jekyll metadata of note, eg:
+        ---
+        layout: post
+        title: draw uml with emacs
+        tags: [uml, emacs]
+        categories: [dev]
+        ---
+        and substitute meta from content.
+
+        Caution: meta data will only work in one way
+        mode! And I will never use two way mode, so
+        two way sync will need your additional work!
+        """
+        metaBlock = re.compile("---(.*?)---", re.DOTALL)
+        metaInfo = re.compile("(\w+):\s*?(.*)")
+        block = metaBlock.search(content)
+        if block is not None:
+            info = metaInfo.findall(block.group(0))
+            ret = dict(info)
+            ret['content'] = metaBlock.sub('', content)
+            return ret
+
+    @log
+    def _update_note(self, file_note, note, title = None, content = None, tags = None):
         """
         Updates note from file
         """
-        content = self._get_file_content(file_note['path'])
+        #content = self._get_file_content(file_note['path']) if content is None else content
 
         result = GeekNote().updateNote(
             guid=note.guid,
-            title=note.title,
-            content=content,
+            title=title or note.title,
+            content=content or self._get_file_content(file_note['path']),
+            tags = tags or note.tagNames,
             notebook=self.notebook_guid)
 
         if result:
@@ -190,27 +224,28 @@ class GNSync:
         open(file_note['path'], "w").write(content)
 
     @log
-    def _create_note(self, file_note):
+    def _create_note(self, file_note, title = None, content = None, tags = None):
         """
         Creates note from file
         """
 
-        content = self._get_file_content(file_note['path'])
+        content = content or self._get_file_content(file_note['path'])
 
         if content is None:
             return
 
         result = GeekNote().createNote(
-            title=file_note['name'],
+            title=title or file_note['name'],
             content=content,
             notebook=self.notebook_guid,
+            tags = tags or None,
             created=file_note['mtime'])
 
         if result:
-            logger.info('Note "{0}" was created'.format(file_note['name']))
+            logger.info('Note "{0}" was created'.format(title or file_note['name']))
         else:
             raise Exception('Note "{0}" was not' \
-                            ' created'.format(file_note['name']))
+                            ' created'.format(title or file_note['name']))
 
         return result
 
@@ -307,7 +342,7 @@ def main():
         parser = argparse.ArgumentParser()
         parser.add_argument('--path', '-p', action='store', help='Path to synchronize directory')
         parser.add_argument('--mask', '-m', action='store', help='Mask of files to synchronize. Default is "*.*"')
-        parser.add_argument('--format', '-f', action='store', default='plain', choices=['plain', 'markdown'], help='The format of the file contents. Default is "plain". Valid values are "plain" and "markdown"')
+        parser.add_argument('--format', '-f', action='store', default='plain', choices=['plain', 'markdown', 'html'], help='The format of the file contents. Default is "plain". Valid values are "plain" "html" and "markdown"')
         parser.add_argument('--notebook', '-n', action='store', help='Notebook name for synchronize. Default is default notebook')
         parser.add_argument('--logpath', '-l', action='store', help='Path to log file. Default is GeekNoteSync in home dir')
         parser.add_argument('--two-way', '-t', action='store', help='Two-way sync')

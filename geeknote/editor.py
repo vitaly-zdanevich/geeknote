@@ -80,6 +80,7 @@ class Editor(object):
     def textToENML(content, raise_ex=False, format='markdown'):
         """
         Create an ENML format of note.
+        TODO: add media support
         """
         if not isinstance(content, str):
             content = ""
@@ -91,6 +92,25 @@ class Editor(object):
                 contentHTML = markdown.markdown(content).encode("utf-8")
                 # Non-Pretty HTML output
                 contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
+            elif format == 'html':
+                # Html to ENML http://dev.evernote.com/doc/articles/enml.php
+                ATTR_2_REMOVE = ["id"
+                                 , "class"
+                                 #, "on*"
+                                 , "accesskey"
+                                 , "data"
+                                 , "dynsrc"
+                                 , "tabindex"
+                ];
+                soup = BeautifulSoup(content, 'html.parser')
+
+                for tag in soup.findAll():
+                    if hasattr(tag, 'attrs'):
+                        map(lambda x: tag.attrs.pop(x, None), \
+                            [k for k in tag.attrs.keys() \
+                             if k in ATTR_2_REMOVE \
+                             or k.find('on') == 0])
+                contentHTML = str(soup)
             else:
                 contentHTML = Editor.HTMLEscape(content)
             return Editor.wrapENML(contentHTML)
@@ -105,7 +125,7 @@ class Editor(object):
                                "Content must be an UTF-8 encode.")
             return tools.exitErr()
 
-    def __init__(self, content):
+    def __init__(self, content, raw = False):
         if not isinstance(content, str):
             raise Exception("Note content must be an instance "
                             "of string, '%s' given." % type(content))
@@ -114,7 +134,7 @@ class Editor(object):
         if not noteExtension:
             noteExtension = config.DEF_NOTE_EXT
         (tempfileHandler, tempfileName) = tempfile.mkstemp(suffix = noteExtension)
-        os.write(tempfileHandler, self.ENMLtoText(content))
+        os.write(tempfileHandler, content if raw else self.ENMLtoText(content))
         os.close(tempfileHandler)
 
         self.content = content
