@@ -92,8 +92,24 @@ class Editor(object):
                 # Non-Pretty HTML output
                 contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
             elif format == 'html':
-                # Html to ENML
-                contentHTML = str(BeautifulSoup(content, 'html.parser'))
+                # Html to ENML http://dev.evernote.com/doc/articles/enml.php
+                ATTR_2_REMOVE = ["id"
+                                 , "class"
+                                 #, "on*"
+                                 , "accesskey"
+                                 , "data"
+                                 , "dynsrc"
+                                 , "tabindex"
+                ];
+                soup = BeautifulSoup(content, 'html.parser')
+                
+                for tag in soup.findAll():
+                    if hasattr(tag, 'attrs'):
+                        map(lambda x: tag.attrs.pop(x, None), \
+                            [k for k in tag.attrs.keys() \
+                             if k in ATTR_2_REMOVE \
+                             or k.find('on') == 0])
+                contentHTML = str(soup)
             else:
                 contentHTML = Editor.HTMLEscape(content)
             return Editor.wrapENML(contentHTML)
