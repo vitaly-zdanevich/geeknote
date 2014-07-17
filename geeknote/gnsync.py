@@ -146,12 +146,15 @@ class GNSync:
             title = f['name'] if 'title' not in meta else meta['title'].strip()
             tags = None if 'tags' not in meta else meta['tags'] \
                    .replace('[', '').replace(']','').split(',')
-            tags = None if tags == '' else map(lambda x:x.strip(), tags)
+            tags = None if not tags else map(lambda x:x.strip(), tags)
+            meta['tags'] = tags
+            meta['title'] = title            
             note = None
+
             if self.format == 'html':
                 meta['mtime'] = f['mtime']
                 note = self._html2note(meta)
-                
+
             for n in notes:
                 if title == n.title:
                     has_note = True
@@ -212,6 +215,8 @@ class GNSync:
             ret = dict(info)
             ret['content'] = metaBlock.sub('', content)
             return ret
+        else:
+            return {'content' : content}
             
     @log        
     def _html2note(self, meta):
@@ -221,10 +226,7 @@ class GNSync:
         """
         note = Types.Note()
         note.title = meta['title'].strip() if 'title' in meta else None
-        tags = None if 'tags' not in meta else meta['tags'] \
-                   .replace('[', '').replace(']','').split(',')
-        tags = None if tags == '' else map(lambda x:x.strip(), tags)
-        note.tagNames = tags
+        note.tagNames = meta['tags']
         note.created = meta['mtime']
         note.resources = []
         soup = BeautifulSoup(meta['content'], 'html.parser')
