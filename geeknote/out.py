@@ -234,9 +234,10 @@ def printList(listItems, title="", showSelector=False,
     for key, item in enumerate(listItems):
         key += 1
 
-        printLine("%s : %s%s%s" % (
+        printLine("%s : %s%s%s%s" % (
             str(key).rjust(3, " "),
             printDate(item.created).ljust(18, " ") if hasattr(item, 'created') else '',
+	    printDate(item.updated).ljust(18, " ") if hasattr(item, 'updated') else '',
             item.title if hasattr(item, 'title') else item.name,
             " " + (">>> " + config.NOTE_URL % item.guid) if showUrl else '',))
 
