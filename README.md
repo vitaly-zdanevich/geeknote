@@ -387,12 +387,12 @@ And you can remove tag from your Evernote
     $ geeknote tag-remove --tagname "College" --force
 
 ## gnsync - synchronization app
-gnsync - is an additional application, that is install with Geeknote. gnsync allows to synchronize files in local directories with Evernote. It works only with text data.
+gnsync - is an additional application, that is install with Geeknote. gnsync allows to synchronize files in local directories with Evernote. It works with text data and html with picture attachement support.
 
 ### Synopsis
     $ gnsync --path <path to directory which to sync>
             [--mask <unix shell-style wildcards to select the files, like *.* or *.txt or *.log>]
-            [--format <in what format to save the note - plain or markdown>]
+            [--format <in what format to save the note - plain, markdown or html>]
             [--logpath <path to logfile>]
             [--notebook <notebook, which will be used>]
 ### Options
