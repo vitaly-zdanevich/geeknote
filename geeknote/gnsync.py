@@ -71,6 +71,9 @@ def reset_logpath(logpath):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
+def all_notebooks():
+    geeknote = GeekNote()
+    return [notebook.name for notebook in geeknote.findNotebooks()]
 
 class GNSync:
 
@@ -410,9 +413,10 @@ def main():
         parser.add_argument('--path', '-p', action='store', help='Path to synchronize directory')
         parser.add_argument('--mask', '-m', action='store', help='Mask of files to synchronize. Default is "*.*"')
         parser.add_argument('--format', '-f', action='store', default='plain', choices=['plain', 'markdown', 'html'], help='The format of the file contents. Default is "plain". Valid values are "plain" "html" and "markdown"')
-        parser.add_argument('--notebook', '-n', action='store', help='Notebook name for synchronize. Default is default notebook')
+        parser.add_argument('--notebook', '-n', action='store', help='Notebook name for synchronize. Default is default notebook unless all is selected')
         parser.add_argument('--logpath', '-l', action='store', help='Path to log file. Default is GeekNoteSync in home dir')
-        parser.add_argument('--two-way', '-t', action='store', help='Two-way sync')
+        parser.add_argument('--two-way', '-t', action='store_true', help='Two-way sync', default=False)
+        parser.add_argument('--all', '-a', action='store_true', help='Synchronize all notebooks', default=False)
 
         args = parser.parse_args()
 
@@ -421,12 +425,20 @@ def main():
         format = args.format if args.format else None
         notebook = args.notebook if args.notebook else None
         logpath = args.logpath if args.logpath else None
-        twoway = True if args.two_way else False
+        twoway = args.two_way
 
         reset_logpath(logpath)
 
-        GNS = GNSync(notebook, path, mask, format, twoway)
-        GNS.sync()
+        if args.all:
+            for notebook in all_notebooks():
+                notebook_path = os.path.join(path, notebook)
+                if not os.path.exists(notebook_path):
+                    os.mkdir(notebook_path)
+                GNS = GNSync(notebook, notebook_path, mask, format, twoway)
+                GNS.sync()
+        else:
+            GNS = GNSync(notebook, path, mask, format, twoway)
+            GNS.sync()
 
     except (KeyboardInterrupt, SystemExit, tools.ExitException):
         pass
