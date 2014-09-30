@@ -49,10 +49,27 @@ class Editor(object):
         return unescape(text, Editor.getHtmlUnescapeTable())
 
     @staticmethod
-    def ENMLtoText(contentENML):
+    def ENMLtoText(contentENML, format='default'):
         html2text.BODY_WIDTH = 0
         soup = BeautifulSoup(contentENML.decode('utf-8'))
 
+        if format == 'pre':
+            #
+            # Expect to find at least one 'pre' section. Otherwise, the note
+            # was not created using the format='pre' option. In that case,
+            # revert back the defaults. When found, form the note from the
+            # first 'pre' section only. The others were added by the user.
+            #
+            sections = soup.select('pre')
+            if len(sections) >= 1:
+                content = ''
+                for c in sections[0].contents:
+                    content = u''.join((content, c))
+                pass
+            else:
+                format = 'default'
+        
+        if format == 'default':
         for section in soup.select('li > p'):
             section.replace_with(section.contents[0])
 
@@ -92,6 +109,12 @@ class Editor(object):
                 contentHTML = markdown.markdown(content).encode("utf-8")
                 # Non-Pretty HTML output
                 contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
+            elif format=='pre':
+                #
+                # For the 'pre' format, simply wrap the content with a 'pre' tag. Do
+                # perform any parsing/mutation.
+                #
+                contentHTML = u''.join(('<pre>', content, '</pre>')).encode("utf-8")
             elif format == 'html':
                 # Html to ENML http://dev.evernote.com/doc/articles/enml.php
                 ATTR_2_REMOVE = ["id"
