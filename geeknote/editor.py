@@ -107,6 +107,10 @@ class Editor(object):
             content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
             if format == 'markdown':
                 contentHTML = markdown.markdown(content).encode("utf-8")
+                storage = Storage()
+                extras = storage.getUserprop('markdown2_extras')
+                #contentHTML = markdown.markdown(content).encode("utf-8")
+                contentHTML = markdown.markdown(content, extras=extras).encode("utf-8")
                 # Non-Pretty HTML output
                 contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
             elif format=='pre':
