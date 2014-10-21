@@ -31,11 +31,6 @@ COMMANDS_DICT = {
             "--editor": {"help": "Set the editor, which use to "
                                  "edit and create notes.",
                          "emptyValue": '#GET#'},
-            "--extras": {"help": "Set the markdown2 extra syntax, which use "
-                                 "to convert markdown text to HTML.  "
-                                 "Please visit http://tinyurl.com/q459lur "
-                                 "to get detail.",
-                         "emptyValue": '#GET#'},
             "--note_ext": {"help": "Set default note's extension.",
                            "emptyValue": '#GET#'}
         }

@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 import threading
 import hashlib
 import html2text as html2text
-import markdown2 as markdown
+import markdown as markdown
 import tools
 import out
 import re
@@ -106,11 +106,7 @@ class Editor(object):
             # add 2 space before new line in paragraph for creating br tags
             content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
             if format == 'markdown':
-                contentHTML = markdown.markdown(content).encode("utf-8")
-                storage = Storage()
-                extras = storage.getUserprop('markdown2_extras')
-                #contentHTML = markdown.markdown(content).encode("utf-8")
-                contentHTML = markdown.markdown(content, extras=extras).encode("utf-8")
+                contentHTML = markdown.markdown(content, extensions=['markdown.extensions.extra']).encode("utf-8")
                 # Non-Pretty HTML output
                 contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
             elif format=='pre':

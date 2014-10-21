@@ -478,15 +478,6 @@ class User(GeekNoteConnector):
             else:
                 storage.setUserprop('editor', editor)
                 out.successMessage("Changes have been saved.")
-        if extras:
-            if extras == '#GET#':
-                extras = storage.getUserprop('markdown2_extras')
-                if not extras:
-                    extras = None
-                out.successMessage("Current markdown2 extras is : %s" % extras)
-            else:
-                storage.setUserprop('markdown2_extras', extras.split(','))
-                out.successMessage("Changes have been saved.")
         if note_ext:
             if note_ext == '#GET#':
                 note_ext = storage.getUserprop('note_ext')
@@ -504,7 +495,6 @@ class User(GeekNoteConnector):
                         'App dir: %s' % config.APP_DIR,
                         'Error log: %s' % config.ERROR_LOG,
                         'Current editor: %s' % storage.getUserprop('editor'),
-                        'Markdown2 Extras: %s' % ','.join(storage.getUserprop('markdown2_extras')),
                         'Note extension: %s' % storage.getUserprop('note_ext'))
 
             user_settings = storage.getUserprops()
