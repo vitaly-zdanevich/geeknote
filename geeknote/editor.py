@@ -33,7 +33,8 @@ class Editor(object):
     def getHtmlEscapeTable():
         return {'"': "&quot;",
                 "'": "&apos;",
-                '\n': "<br />"}
+                '\n': "<br />",
+                " ": "&nbsp;"}
 
     @staticmethod
     def getHtmlUnescapeTable():
@@ -51,6 +52,11 @@ class Editor(object):
     def ENMLtoText(contentENML):
         html2text.BODY_WIDTH = 0
         soup = BeautifulSoup(contentENML.decode('utf-8'))
+
+        # In ENML, each line in paragraph have <div> tag.
+        for section in soup.find_all('div'):
+            section.append(soup.new_tag("br"))
+            section.unwrap()
 
         for section in soup.select('li > p'):
             section.replace_with( section.contents[0] )
@@ -86,12 +92,20 @@ class Editor(object):
             content = unicode(content, "utf-8")
             # add 2 space before new line in paragraph for creating br tags
             content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
+
+            content = re.sub(r'\r\n', '\n', content)
+
             if format=='markdown':
-              contentHTML = markdown.markdown(content).encode("utf-8")
-              # Non-Pretty HTML output
-              contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
+                contentHTML = markdown.markdown(content).encode("utf-8")
+                # Non-Pretty HTML output
+                contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
             else:
-              contentHTML = Editor.HTMLEscape(content)
+                contentHTML = Editor.HTMLEscape(content)
+                tmpstr = ''
+                for l in contentHTML.split('\n'):
+                    tmpstr = tmpstr + u'<div>' + l + u'</div>'
+                contentHTML = tmpstr.encode("utf-8")
+
             return Editor.wrapENML(contentHTML)
         except:
             if raise_ex:
