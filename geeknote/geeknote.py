@@ -547,7 +547,7 @@ class Notes(GeekNoteConnector):
         while True:
             if prevChecksum != editor.getTempfileChecksum() and result:
                 newContent = open(editor.tempfile, 'r').read()
-                inputData['content'] = Editor.textToENML(newContent)
+                inputData['content'] = Editor.textToENML(newContent, format='text')
                 if not note:
                     result = self.getEvernote().createNote(**inputData)
                     # TODO: log error if result is False or None
@@ -657,7 +657,7 @@ class Notes(GeekNoteConnector):
                     content = open(content, "r").read()
 
                 logging.debug("Convert content")
-                content = Editor.textToENML(content)
+                content = Editor.textToENML(content, format='text')
             result['content'] = content
 
         if tags:
@@ -817,6 +817,8 @@ def modifyArgsByStdinStream():
 
 
 def main(args=None):
+    os.environ['TMP'] = '/tmp'
+    os.environ['TEMP'] = '/tmp'
     try:
         exit_status_code = 0
 
