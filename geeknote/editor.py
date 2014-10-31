@@ -82,7 +82,14 @@ class Editor(object):
                     else:
                         section.extract()
 
+            for section in soup.findAll('en-todo', checked='true'):
+                section.replace_with('[x]')
+
+            for section in soup.findAll('en-todo'):
+                section.replace_with('[ ]')
+
             content = html2text.html2text(soup.prettify())
+
         content = re.sub(r' *\n', os.linesep, content)
         return content.encode('utf-8')
 
@@ -136,6 +143,10 @@ class Editor(object):
                 contentHTML = str(soup)
             else:
                 contentHTML = Editor.HTMLEscape(content)
+
+            contentHTML = contentHTML.replace('[x]','<en-todo checked="true"></en-todo>')
+            contentHTML = contentHTML.replace('[ ]','<en-todo></en-todo>')
+
             return Editor.wrapENML(contentHTML)
         except:
             if raise_ex:
