@@ -23,10 +23,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
-# http://stackoverflow.com/a/93029
-CONTROL_CHARS = ''.join(c for c in (unichr(i) for i in xrange(0x110000)) \
-                if c not in string.printable and unicodedata.category(c) == 'Cc')
-CONTROL_CHARS_RE = re.compile('[%s]' % re.escape(CONTROL_CHARS))
+# http://en.wikipedia.org/wiki/Unicode_control_characters
+CONTROL_CHARS_RE = re.compile(u'[\x00-\x08\x0e-\x1f\x7f-\x9f]')
 def remove_control_characters(s):
     return CONTROL_CHARS_RE.sub('', s)
 
