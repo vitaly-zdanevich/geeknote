@@ -31,10 +31,7 @@ class Editor(object):
 
     @staticmethod
     def getHtmlEscapeTable():
-        return {'"': "&quot;",
-                "'": "&apos;",
-                '\n': "<br />",
-                " ": "&nbsp;"}
+        return {" ": "&nbsp;"}
 
     @staticmethod
     def getHtmlUnescapeTable():
@@ -55,7 +52,8 @@ class Editor(object):
 
         # In ENML, each line in paragraph have <div> tag.
         for section in soup.find_all('div'):
-            section.append(soup.new_tag("br"))
+            if not section.br:
+                section.append(soup.new_tag("br"))
             section.unwrap()
 
         for section in soup.select('li > p'):
@@ -70,8 +68,9 @@ class Editor(object):
                 else:
                     section.extract()
 
-        content = html2text.html2text(soup.prettify())
+        content = html2text.html2text(soup.decode())
         content = re.sub(r' *\n', os.linesep, content)
+        content = content.replace(unichr(160), " ")
         return content.encode('utf-8')
 
     @staticmethod
@@ -91,7 +90,7 @@ class Editor(object):
         try:
             content = unicode(content, "utf-8")
             # add 2 space before new line in paragraph for creating br tags
-            content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
+            #content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
 
             content = re.sub(r'\r\n', '\n', content)
 
@@ -101,9 +100,14 @@ class Editor(object):
                 contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
             else:
                 contentHTML = Editor.HTMLEscape(content)
+
                 tmpstr = ''
                 for l in contentHTML.split('\n'):
-                    tmpstr = tmpstr + u'<div>' + l + u'</div>'
+                    if l == '':
+                        tmpstr = tmpstr + u'<div><br/></div>'
+                    else:
+                        tmpstr = tmpstr + u'<div>' + l + u'</div>'
+
                 contentHTML = tmpstr.encode("utf-8")
 
             return Editor.wrapENML(contentHTML)
