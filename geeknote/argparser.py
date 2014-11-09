@@ -126,6 +126,41 @@ COMMANDS_DICT = {
                                  "default": False},
         }
     },
+    "dedup": {
+        "help": "Search notes in Evernote.",
+        "firstArg": "--search",
+        "arguments": {
+            "--search":     {"altName": "-s",
+                             "help": "Text to search.",
+                             "emptyValue": "*"},
+            "--tags":       {"altName": "-tg",
+                             "help": "Notes with which tag/tags to search."},
+            "--notebooks":  {"altName": "-nb",
+                             "help": "In which notebook search the note."},
+            "--date":       {"altName": "-d",
+                             "help": "Set date in format dd.mm.yyyy or "
+                                     "date range dd.mm.yyyy-dd.mm.yyyy."},
+            "--count":      {"altName": "-cn",
+                             "help": "How many notes show in the result list.",
+                             "type": int},
+        },
+        "flags": {
+            "--with-url":       {"altName": "-wu",
+                                 "help": "Add direct url of each note "
+                                         "in results to Evernote web-version.",
+                                 "value": True,
+                                 "default": False},
+            "--exact-entry":    {"altName": "-ee",
+                                 "help": "Search for exact "
+                                         "entry of the request.",
+                                 "value": True,
+                                 "default": False},
+            "--content-search": {"altName": "-cs",
+                                 "help": "Search by content, not by title.",
+                                 "value": True,
+                                 "default": False},
+        }
+    },
 
     # Notebooks
     "notebook-list": {

@@ -567,7 +567,7 @@ class Notes(GeekNoteConnector):
                 break
             time.sleep(5)
         return result
-        
+
     def create(self, title, content=None, tags=None, notebook=None):
 
         self.connectToEvertone()
@@ -723,10 +723,10 @@ class Notes(GeekNoteConnector):
 
         # Reduces the count by the amount of notes already retrieved
         update_count = lambda c: max(c - len(result.notes), 0)
-        
+
         count = update_count(count)
-        
-        # Evernote api will only return so many notes in one go. Checks for more 
+
+        # Evernote api will only return so many notes in one go. Checks for more
         # notes to come whilst obeying count rules
         while ((result.totalNotes != len(result.notes)) and count != 0):
             offset = len(result.notes)
@@ -743,6 +743,73 @@ class Notes(GeekNoteConnector):
         self.getStorage().setSearch(result)
 
         out.SearchResult(result.notes, request, showUrl=with_url)
+
+    def dedup(self, search=None, tags=None, notebooks=None,
+                  date=None, exact_entry=None, content_search=None,
+                  with_url=None, count=None, ):
+
+        request = self._createSearchRequest(search, tags, notebooks,
+                                            date, exact_entry,
+                                            content_search)
+
+        if not count:
+            count = 20
+        else:
+            count = int(count)
+
+        logging.debug("Search count: %s", count)
+
+        createFilter = True if search == "*" else False
+
+        notes = []
+        evernote = self.getEvernote()
+        stillDownloadingResults = True
+        while stillDownloadingResults:
+            offset = len(notes)
+            result = evernote.findNotes(request, count, createFilter, offset)
+            notes += result.notes
+            total = result.totalNotes
+            limit = min(total,count)
+            stillDownloadingResults = len(notes) < total and len(notes) < count
+            out.printLine("Downloaded metadata for "
+                          + `len(result.notes)` + " notes ("
+                          + `len(notes)` + "/" + `limit`
+                          + " of " +`count`+ ")")
+
+        if total == 0:
+            out.failureMessage("Notes have not been found.")
+            return tools.exitErr()
+
+        notes_dict = {}
+
+        for note in notes:
+            noteId = note.title + ":" + note.contentHash
+            if noteId in notes_dict:
+                notes_dict[noteId].append(note)
+                out.printLine("found dup! \"" + note.title
+                              + "\" with guid " + note.guid
+                              + ", duplicated " + `len(notes_dict[noteId])`)
+            else:
+                notes_dict[noteId] = [note]
+                out.printLine("new note \"" + note.title + "\" with guid " + note.guid)
+
+        all_dups = [dups for id, dups in notes_dict.iteritems() if len(dups) > 1] # list of lists
+        total_dups = sum(map(len, all_dups))  # count total
+        removed_total = 0
+
+        for dup_group in all_dups:
+            group_size = len(dup_group)
+            out.printLine("Deleting " + `group_size` + " notes titled \"" + dup_group[0].title + "\"")
+            for note in dup_group:
+                removed_total+=1
+                out.printLine("Deleting \"" + note.title
+                              + "\" created "+ out.printDate(note.created)
+                              +" with guid " + note.guid
+                              + " (" + `removed_total` + "/" + `total_dups` + ")")
+                evernote.removeNote(note.guid)
+
+        out.printLine("removed " + `removed_total` + "duplicates")
+
 
     def _createSearchRequest(self, search=None, tags=None,
                              notebooks=None, date=None,
@@ -871,6 +938,9 @@ def main(args=None):
 
         if COMMAND == 'find':
             Notes().find(**ARGS)
+
+        if COMMAND == 'dedup':
+            Notes().dedup(**ARGS)
 
         # Notebooks
         if COMMAND == 'notebook-list':
