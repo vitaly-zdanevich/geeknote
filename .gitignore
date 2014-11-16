@@ -13,8 +13,8 @@ sdist
 develop-eggs
 .installed.cfg
 .idea
-.DS_Store
 .venv
+/venv/
 
 # Installer logs
 pip-log.txt
@@ -28,6 +28,5 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
-
 #Mac files
 .DS_Store
