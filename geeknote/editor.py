@@ -47,7 +47,7 @@ class Editor(object):
 
     @staticmethod
     def ENMLtoText(contentENML):
-        html2text.BODY_WIDTH = 0
+
         soup = BeautifulSoup(contentENML.decode('utf-8'))
 
         # In ENML, each line in paragraph have <div> tag.
@@ -68,7 +68,9 @@ class Editor(object):
                 else:
                     section.extract()
 
-        content = html2text.html2text(soup.decode())
+        h2t = html2text.HTML2Text()
+        h2t.body_width = 0
+        content = h2t.handle(soup.decode())
         content = re.sub(r' *\n', os.linesep, content)
         content = content.replace(unichr(160), " ")
         return content.encode('utf-8')
