@@ -28,5 +28,11 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
 #Mac files
 .DS_Store
+
+# virtualenv
+include/
+lib/
+local/
