@@ -99,9 +99,9 @@ setup(
             'gnsync = geeknote.gnsync:main'
         ]
     },
-#    cmdclass={
-#        'install': full_install
-#    },
+    cmdclass={
+        'install': full_install
+    },
     platforms='Any',
     test_suite='tests',
     zip_safe=False,
