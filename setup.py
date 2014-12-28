@@ -55,7 +55,9 @@ class full_install(install):
         else:
             self.userhome = '/home/{0}/.bash_completion'.format(os.getlogin())
 
-        if not BASH_COMPLETION in open(self.userhome, 'r').read():
+
+        if not os.path.exists(self.userhome) or \
+           not BASH_COMPLETION in open(self.userhome, 'r').read():
             with open(self.userhome, 'a') as completion:
                 print('Autocomplete was written to {0}'.format(self.userhome))
                 completion.write(BASH_COMPLETION)
@@ -99,9 +101,9 @@ setup(
             'gnsync = geeknote.gnsync:main'
         ]
     },
-#    cmdclass={
-#        'install': full_install
-#    },
+    cmdclass={
+        'install': full_install
+    },
     platforms='Any',
     test_suite='tests',
     zip_safe=False,
