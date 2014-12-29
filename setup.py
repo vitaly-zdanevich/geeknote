@@ -10,14 +10,16 @@ import codecs
 import geeknote
 from setuptools import setup
 from setuptools.command.install import install
+from setuptools.command.bdist_egg import bdist_egg
 
 
 def read(fname):
     return codecs.open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
 class full_install(install):
 
-    user_options = install.user_options + [
+    extra_options = [
         ('bash-completion-dir', None,
          "(Linux only) Set bash completion directory (default: /etc/bash_completion.d)"
         ),
@@ -26,10 +28,17 @@ class full_install(install):
         )
     ]
 
-    def initialize_options(self):
-        install.initialize_options(self)
+    user_options = install.user_options + extra_options
+
+
+    def initialize_extra_options(self):
         self.bash_completion_dir = '/etc/bash_completion.d'
         self.zsh_completion_dir = '/usr/local/share/zsh/site-functions'
+
+    def initialize_options(self):
+        install.initialize_options(self)
+        self.initialize_extra_options()
+        
 
     def run(self):
         if sys.platform.startswith('linux'):
@@ -46,9 +55,6 @@ class full_install(install):
         print "installing autocomplete"
         copy_autocomplete('completion/bash_completion/_geeknote',self.bash_completion_dir)
         copy_autocomplete('completion/zsh_completion/_geeknote',self.zsh_completion_dir)
-
-
-
 
 
 setup(
@@ -90,7 +96,7 @@ setup(
         ]
     },
     cmdclass={
-        'install': full_install
+        'install': full_install,
     },
     platforms='Any',
     test_suite='tests',
