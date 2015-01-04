@@ -3,3 +3,5 @@ html2text
 sqlalchemy
 markdown2
 thrift
+GitPython
+PyOrgMode
