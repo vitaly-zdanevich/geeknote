@@ -119,6 +119,14 @@ class GeekNote(object):
                     out.failureMessage("Sorry, you do not have permissions "
                                        "to do this operation.")
 
+                # Rate limited
+                # Patched because otherwise if you get rate limited you still keep
+                # hammering the server on scripts
+                elif errorCode == 19:
+                    print("\nRate Limit Hit: Please wait %s seconds before continuing" %
+                          str(e.rateLimitDuration))
+                    tools.exitErr()
+
                 else:
                     return False
 
