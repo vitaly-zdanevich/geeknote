@@ -53,7 +53,7 @@ class full_install(install):
         if self.userhome:
             self.userhome = '{0}/.bash_completion'.format(self.userhome)
         else:
-            self.userhome = '/home/{0}/.bash_completion'.format(os.getlogin())
+            self.userhome = '/home/{0}/.bash_completion'.format(getpass.getuser())
 
         if not BASH_COMPLETION in open(self.userhome, 'r').read():
             with open(self.userhome, 'a') as completion:
@@ -99,9 +99,9 @@ setup(
             'gnsync = geeknote.gnsync:main'
         ]
     },
-#    cmdclass={
-#        'install': full_install
-#    },
+    cmdclass={
+        'install': full_install
+    },
     platforms='Any',
     test_suite='tests',
     zip_safe=False,
