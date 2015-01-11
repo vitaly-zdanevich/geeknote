@@ -181,6 +181,9 @@ def showNote(note):
 
     printLine(Editor.ENMLtoText(note.content))
 
+@preloaderStop
+def showNoteRaw(note):
+    printLine(Editor.ENMLtoText(note.content, 'pre'))
 
 @preloaderStop
 def showUser(user, fullInfo):

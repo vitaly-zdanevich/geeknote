@@ -766,7 +766,7 @@ class Notes(GeekNoteConnector):
             out.failureMessage("Error while deleting the note.")
             return tools.exitErr()
 
-    def show(self, note):
+    def show(self, note, raw=None):
 
         self.connectToEvertone()
 
@@ -775,7 +775,10 @@ class Notes(GeekNoteConnector):
         out.preloader.setMessage("Loading note...")
         self.getEvernote().loadNoteContent(note)
 
-        out.showNote(note)
+        if raw:
+          out.showNoteRaw(note)
+        else:
+          out.showNote(note)
 
     def _parseInput(self, title=None, content=None, tags=None, notebook=None, resources=None, note=None, reminder=None):
         result = {
