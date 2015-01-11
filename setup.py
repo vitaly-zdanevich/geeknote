@@ -55,7 +55,8 @@ class full_install(install):
         else:
             self.userhome = '/home/{0}/.bash_completion'.format(getpass.getuser())
 
-        if not BASH_COMPLETION in open(self.userhome, 'r').read():
+        if not os.path.exists(self.userhome) or \
+           not BASH_COMPLETION in open(self.userhome, 'r').read():
             with open(self.userhome, 'a') as completion:
                 print('Autocomplete was written to {0}'.format(self.userhome))
                 completion.write(BASH_COMPLETION)
@@ -112,17 +113,12 @@ setup(
 import time
 import os
 from setuptools import setup, find_packages
-
 # local
 import config
-
 os.system('rm -rf geeknote')
-
 packages = ['geeknote.' + x for x in find_packages()] + ['geeknote']
-
 # This is to properly encapsulate the library during egg generation
 os.system('mkdir .geeknote && cp -pr * .geeknote/ && mv .geeknote geeknote')
-
 setup(
     name = "geeknote",
     version = time.strftime(str(config.VERSION) + '.%Y%m%d.%H%M'),
