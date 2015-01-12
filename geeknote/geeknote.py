@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 import traceback
@@ -119,6 +119,14 @@ class GeekNote(object):
                     out.failureMessage("Sorry, you do not have permissions "
                                        "to do this operation.")
 
+                # Rate limited
+                # Patched because otherwise if you get rate limited you still keep
+                # hammering the server on scripts
+                elif errorCode == 19:
+                    print("\nRate Limit Hit: Please wait %s seconds before continuing" %
+                          str(e.rateLimitDuration))
+                    tools.exitErr()
+
                 else:
                     return False
 
@@ -189,6 +197,15 @@ class GeekNote(object):
         return self.getStorage().removeUser()
 
     @EdamException
+    def getNote(self, guid, withContent=False, withResourcesData=False,
+                withResourcesRecognition=False, withResourcesAlternateData=False):
+        """ GET A COMPLETE NOTE OBJECT """
+        #Don't include data
+        return self.getNoteStore().getNote(self.authToken, guid, withContent,
+                                    withResourcesData, withResourcesRecognition,
+                                    withResourcesAlternateData)
+
+    @EdamException
     def findNotes(self, keywords, count, createOrder=False, offset=0):
         """ WORK WITH NOTES """
         noteFilter = NoteStore.NoteFilter(order=Types.NoteSortOrder.RELEVANCE)
@@ -206,6 +223,7 @@ class GeekNote(object):
         meta.includeUpdated = True
         meta.includeNotebookGuid = True
         meta.includeAttributes = True
+        meta.includeTagGuids = True
 
         return self.getNoteStore().findNotesMetadata(self.authToken, noteFilter, offset, count, meta)
 
@@ -865,6 +883,7 @@ class Notes(GeekNoteConnector):
                 note = out.SelectSearchResult(result.notes)
 
         logging.debug("Selected note: %s" % str(note))
+        note = self.getEvernote().getNote(note.guid)
         return note
 
     def find(self, search=None, tags=None, notebooks=None,
