@@ -38,7 +38,7 @@ COMMANDS_DICT = {
 
     # Notes
     "create": {
-        "help": "Create note in evernote.",
+        "help": "Create note in Evernote.",
         "arguments": {
             "--title":      {"altName": "-t",
                              "help": "The note title.",
