@@ -35,7 +35,7 @@ def read(fname):
 class full_install(install):
 
     user_options = install.user_options + [
-        ('userhome', None, "(Linux only) Set user home directory for"
+        ('userhome=', None, "(Linux only) Set user home directory for"
                            " bash completion (/home/{0})"
                            .format(getpass.getuser()))
     ]
