@@ -7,9 +7,8 @@ It allows you to:
    * create tags, notebooks;
    * use Evernote search from the console using different filters;
    * edit notes directly in the console using any editor, such as nano, vim or mcedit;
-   * edit notes directly in console using any editor: nano, vim, emacs, mcedit;
    * synchronize your local files and directories with Evernote;
-   * use Evernote from a crontab or a script.
+   * use Evernote with cron or any scripts.
 
 Geeknote is open source and written in Python. Geeknote can be used anywhere where you have Python installed (even in Windows if you like).
 
@@ -32,8 +31,8 @@ You can install Geeknote as a python script.
     $ cd geeknote
 
     # Configuration
-    For Yinxiang 印象笔记, set USE_YINZIANG to True in geeknote/config.py
-    By default, the False setting will enable Evernote servers
+    #   For Yinxiang 印象笔记, set USE_YINZIANG to True in geeknote/config.py
+    #   By default, the False setting will enable Evernote servers
 
     # Installation
     $ [sudo] python[2] setup.py install
@@ -64,9 +63,9 @@ If you want to change Evernote user you should launch *logout* command:
 
     $ geeknote logout
 
-And after you can repeat authorization step.
+Afterward, you can repeat the authorization step.
 
-###Look your settings
+### Examine your settings
 
     $ geeknote settings
     Geeknote
@@ -118,7 +117,7 @@ The main functionality that we need is creating notes in Evernote.
 :   With this option we specify the title of new note we want to create.
 
 --content &lt;content&gt;
-:   Specifying the content of new note. The content must not contains double quotes.
+:   Specify the content of new note. The content must not contain double quotes.
 
 --tags &lt;list of tags, like: tag1, tag2&gt;
 :   Specify tags that our note will have. It can accept multiple tags, separated with comma.
@@ -130,7 +129,7 @@ The main functionality that we need is creating notes in Evernote.
 :   Specify the notebook where new note should be saved. This option is not required. If it isn't given, the note will be saved in default notebook. If notebook doesn't exist Geeknote will create it automatically.
 
 --reminder &lt;dd.mm.yy-HH:MM&gt;
-: Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed.
+:   Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed.
 
 
 ### Description
@@ -148,7 +147,7 @@ With Geeknote you can edit your notes in Evernote using any editor you like. It 
 
 ### Synopsis
     $ geeknote edit --note <title of note which to edit>
-                    [--content <a new content or "WRITE">]
+                    [--content <new content or "WRITE">]
                     [--title <the new title>]
                     [--tags <new list of data>]
                     [--resource <attachment filename>]
@@ -167,16 +166,16 @@ With Geeknote you can edit your notes in Evernote using any editor you like. It 
 :   Enter the new content of your notes in text, or write instead the option "WRITE". In the first case the old content on the note will be replaced with new one. In the second case Geeknote will get the current content and open it in Markdown in a text editor.
 
 --resource &lt;attachment filename, like: document.pdf&gt;
-:   Specify file to be attached to the note.  May be repeated.  Will replace existing resources.  TODO: NOT YET IMPLEMENTED
+:   Specify file to be attached to the note.  May be repeated.  Will replace existing resources.
 
 --tags &lt;list of tags, like: tag1, tag2&gt;
 :   The same for tags - you can set a new list of tags for your note.
 
 --notebook &lt;notebook where to save&gt;
-:   With this option you can change the notebook which containes your note.
+:   With this option you can change the notebook which contains your note.
 
 --reminder &lt;dd.mm.yy-HH:MM&gt;
-: Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note.
+:   Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note.
 
 ### Examples
 Simple editing:
@@ -387,12 +386,12 @@ And you can remove tag from your Evernote
     $ geeknote tag-remove --tagname "College" --force
 
 ## gnsync - synchronization app
-gnsync - is an additional application, that is install with Geeknote. gnsync allows to synchronize files in local directories with Evernote. It works with text data and html with picture attachement support.
+gnsync - is an additional application, that is install with Geeknote. gnsync allows to synchronize files in local directories with Evernote. It works with text data and html with picture attachment support.
 
 ### Synopsis
     $ gnsync --path <path to directory which to sync>
             [--mask <unix shell-style wildcards to select the files, like *.* or *.txt or *.log>]
-            [--format <in what format to save the note - plain, markdown or html>]
+            [--format <in what format to save the note - plain, markdown, or html>]
             [--logpath <path to logfile>]
             [--notebook <notebook, which will be used>]
 ### Options

@@ -1073,6 +1073,11 @@ def main(args=None):
         aparser = argparser(sys_argv)
         ARGS = aparser.parse()
 
+        if isinstance(ARGS, dict) and ARGS['content'] == '-':
+            #content from stdin!
+            content = sys.stdin.read()
+            ARGS['content'] = content
+
         # error or help
         if COMMAND is None or ARGS is False:
             return tools.exitErr()
