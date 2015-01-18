@@ -3,11 +3,11 @@
 import os
 import sys
 import tempfile
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
 import threading
 import hashlib
 import html2text as html2text
-import markdown as markdown
+import markdown2 as markdown
 import tools
 import out
 import re
@@ -49,6 +49,33 @@ class Editor(object):
         return unescape(text, Editor.getHtmlUnescapeTable())
 
     @staticmethod
+    def checklistInENMLtoSoup(soup):
+        '''
+        Transforms Evernote checklist elements to github `* [ ]` task list style
+        '''
+        transform_tags = ['p','div']
+
+        # soup.select cant be used with dashes: https://bugs.launchpad.net/beautifulsoup/+bug/1276211
+        for todo in soup.find_all('en-todo'):
+            parent = todo.parent
+            transform = parent.find() == todo and parent.name in transform_tags
+
+            checked = todo.attrs.get('checked',None) == "true"
+            todo.replace_with("[x] " if checked else "[ ] ")
+
+            # EN checklist can appear anywhere, but if they appear at the beggining
+            # of a block element, transform it so it ressembles github markdown syntax
+            if transform:
+                content = ''.join(unicode(child) for child in parent.children
+                    if isinstance(child, NavigableString)
+                ).strip()
+
+                new_tag = soup.new_tag("li")
+                new_tag.string = content
+                parent.replace_with(new_tag)
+
+
+    @staticmethod
     def ENMLtoText(contentENML, format='default'):
         html2text.BODY_WIDTH = 0
         soup = BeautifulSoup(contentENML.decode('utf-8'))
@@ -82,13 +109,17 @@ class Editor(object):
                     else:
                         section.extract()
 
+            Editor.checklistInENMLtoSoup(soup)
+
             for section in soup.findAll('en-todo', checked='true'):
                 section.replace_with('[x]')
 
             for section in soup.findAll('en-todo'):
                 section.replace_with('[ ]')
 
-            content = html2text.html2text(unicode(soup))
+#       content = html2text.html2text(soup.prettify())
+#       content = html2text.html2text(str(soup))
+        content = html2text.html2text(unicode(soup))
 
         content = re.sub(r' *\n', os.linesep, content)
         return content.encode('utf-8')
@@ -99,6 +130,52 @@ class Editor(object):
                '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">\n'\
                '<en-note>%s</en-note>' % contentHTML
         return body
+
+    @staticmethod
+    def checklistInSoupToENML(soup):
+        '''
+        Transforms github style checklists `* [ ]` in the BeautifulSoup tree to
+        enml.
+        '''
+
+        checktodo_re = re.compile(r'\[(.)\]')
+
+        # To be more github compatible, if in a list all elements begins with `[ ]``
+        # transform it to normal `[ ]` evernote elements
+        for ul in soup.find_all('ul'):
+            tasks = []; istodo = True
+
+            for li in ul.find_all('li'):
+                task = soup.new_tag('div')
+                todo_tag = soup.new_tag('en-todo')
+
+                reg = checktodo_re.match(li.get_text())
+                istodo = istodo and reg
+                character = reg.group(1) if reg else None
+
+                if character == "x": todo_tag['checked']="true"
+
+                task.append(todo_tag)
+                if reg: task.append(NavigableString(li.get_text()[3:].strip()))
+                tasks.append(task)
+
+            if istodo:
+                for task in tasks: ul.insert_after(task)
+                ul.extract()
+
+        # For the rest of elements just replace `[ ]` with the appropriate element
+        for todo in soup.find_all(text=checktodo_re):
+            str_re = re.match(r'(.*)\[(.)\](.*)',todo)
+            pre = str_re.group(1)
+            post = str_re.group(3)
+
+            todo_tag = soup.new_tag('en-todo')
+            if str_re.group(2) == "x": todo_tag['checked']="true"
+
+            todo.replace_with(todo_tag)
+            todo_tag.insert_before(pre)
+            todo_tag.insert_after(post)
+
 
     @staticmethod
     def textToENML(content, raise_ex=False, format='markdown'):
@@ -114,8 +191,12 @@ class Editor(object):
             content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
             if format == 'markdown':
                 contentHTML = markdown.markdown(content, extensions=['markdown.extensions.extra'])
+
+                soup = BeautifulSoup(contentHTML, 'html.parser')
+                Editor.checklistInSoupToENML(soup)
+
                 # Non-Pretty HTML output
-                contentHTML = str(BeautifulSoup(contentHTML, 'html.parser'))
+                contentHTML = str(soup)
             elif format=='pre':
                 #
                 # For the 'pre' format, simply wrap the content with a 'pre' tag. Do
@@ -149,6 +230,8 @@ class Editor(object):
 
             return Editor.wrapENML(contentHTML)
         except:
+            import traceback
+            traceback.print_exc()
             if raise_ex:
                 raise Exception("Error while parsing text to html."
                                 " Content must be an UTF-8 encode.")

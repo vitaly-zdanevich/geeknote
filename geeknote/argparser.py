@@ -53,7 +53,7 @@ COMMANDS_DICT = {
                              "repetitive": True},
             "--notebook":   {"altName": "-nb",
                              "help": "Set the notebook where to save note."},
-	    "--reminder":   {"altName": "-r",
+            "--reminder":   {"altName": "-r",
                              "help": "Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed."},
         },
         "flags": {
@@ -81,8 +81,8 @@ COMMANDS_DICT = {
                              "help": "Set new list o tags for the note."},
             "--notebook":   {"altName": "-nb",
                              "help": "Assign new notebook for the note."},
-	    "--reminder":   {"altName": "-r",
-                             "help": " Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note."},
+            "--reminder":   {"altName": "-r",
+                             "help": "Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note."},
         },
         "flags": {
             "--raw":        {"altName": "-r",
@@ -154,7 +154,7 @@ COMMANDS_DICT = {
                                  "help": "Search by content, not by title.",
                                  "value": True,
                                  "default": False},
- 	    "--reminders-only": {"altName": "-R",
+            "--reminders-only": {"altName": "-R",
                                  "help": "Include only notes with a reminder.",
                                  "value": True,
                                  "default": False},
@@ -298,6 +298,7 @@ class argparser(object):
         self.INP_DATA = {}
 
         if self.CMD is None:
+            out.printAbout()
             return False
 
         if self.CMD == "autocomplete":

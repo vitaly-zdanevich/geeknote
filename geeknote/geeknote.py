@@ -6,6 +6,7 @@ import time
 import sys
 import os
 import re
+import mimetypes
 
 import thrift.protocol.TBinaryProtocol as TBinaryProtocol
 import thrift.transport.THttpClient as THttpClient
@@ -17,7 +18,6 @@ import evernote.edam.error.ttypes as Errors
 import evernote.edam.type.ttypes as Types
 
 import config
-import mimetypes
 import hashlib
 import tools
 import out
@@ -919,7 +919,8 @@ class Notes(GeekNoteConnector):
             count = update_count(count)
 
         if result.totalNotes == 0:
-            out.successMessage("Notes have not been found.")
+            out.failureMessage("Notes have not been found.")
+            return tools.exitErr()
 
         # save search result
         # print result
@@ -1057,36 +1058,6 @@ class Notes(GeekNoteConnector):
         return request
 
 
-# Special handling of arguments passed via piped stream.
-# Will return the create command, with two arguments:
-#     title:   the first 50 chars worth of the first 5 words
-#              of the stream
-#     content: the entire stream
-def modifyArgsByStdinStream():
-    """Parse the stdin stream for arguments"""
-    content = sys.stdin.read()
-    content = tools.stdinEncode(content)
-
-    if not content:
-        out.failureMessage("Input stream is empty.")
-        return (None, None)
-
-    title = ' '.join(content.split(' ', 5)[:-1])
-    title = re.sub(r'(\r\n|\r|\n)', r' ', title)
-    if not title:
-        out.failureMessage("Error while creating title of note from stream.")
-        return (None, None)
-    elif len(title) > 50:
-        title = title[0:50] + '...'
-
-    ARGS = {
-        'title': title,
-        'content': content
-    }
-
-    return ('create', ARGS)
-
-
 def main(args=None):
     try:
         exit_status_code = 0
@@ -1098,17 +1069,9 @@ def main(args=None):
         sys_argv = tools.decodeArgs(sys_argv)
 
         COMMAND = sys_argv[0] if len(sys_argv) >= 1 else None
+
         aparser = argparser(sys_argv)
         ARGS = aparser.parse()
-
-        # Didn't read any command line arguments, and not attached
-        # to an interactive tty?
-        # If so, look for input on piped stream
-        if COMMAND is None and not config.IS_IN_TERMINAL:
-            COMMAND, ARGS = modifyArgsByStdinStream()
-
-        if COMMAND is None:
-            out.printAbout()
 
         # error or help
         if COMMAND is None or ARGS is False:
