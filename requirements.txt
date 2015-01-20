@@ -4,5 +4,3 @@ sqlalchemy
 markdown2
 thrift
 beautifulsoup4
-GitPython
-PyOrgMode
