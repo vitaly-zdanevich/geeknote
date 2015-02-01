@@ -279,6 +279,7 @@ def rawInput(message, isPass=False):
 def printDate(timestamp):
     return datetime.datetime.fromtimestamp(timestamp/1000).strftime("%d.%m.%Y")
 
+
 def printLine(line, endLine="\n", out=sys.stdout):
     message = line + endLine
     message = tools.stdoutEncode(message)

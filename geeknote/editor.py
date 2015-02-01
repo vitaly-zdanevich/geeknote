@@ -119,6 +119,7 @@ class Editor(object):
 
 #       content = html2text.html2text(soup.prettify())
 #       content = html2text.html2text(str(soup))
+#       content = html2text.html2text(str(soup).decode('utf-8'))
         content = html2text.html2text(unicode(soup))
 
         content = re.sub(r' *\n', os.linesep, content)
