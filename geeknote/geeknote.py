@@ -798,13 +798,13 @@ class Notes(GeekNoteConnector):
         else:
           out.showNote(note)
 
-    def _parseInput(self, title=None, content=None, tags=None, notebook=None, resources=None, note=None, reminder=None):
+    def _parseInput(self, title=None, content=None, tags=None, notebook=None, resources=[], note=None, reminder=None):
         result = {
             "title": title,
             "content": content,
             "tags": tags,
             "notebook": notebook,
-            "resources": resources if resources else [],
+            "resources": resources,
             "reminder": reminder,
         }
         result = tools.strip(result)
