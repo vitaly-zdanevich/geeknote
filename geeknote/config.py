@@ -68,7 +68,7 @@ try:
     if not os.path.exists(APP_DIR):
         os.mkdir(APP_DIR)
 except Exception, e:
-    sys.stdout.write("Can not create application dirictory : %s" % APP_DIR)
+    sys.stdout.write("Cannot create application directory : %s" % APP_DIR)
     exit(1)
 
 if DEV_MODE:
