@@ -370,7 +370,7 @@ class argparser(object):
                     # active argument is "emptyValue"
                     if "emptyValue" in ACTIVE_CMD:
                         activeArgTmp = item # remember the new "active" argument
-                        item = ACTIVE_CMD['emptyValue']  # set the active atgument to emptyValue
+                        item = ACTIVE_CMD['emptyValue']  # set the active argument to emptyValue
                     # Error, "active" argument has no values
                     else:
                         self.printErrorArgument(activeArg, item)
@@ -381,7 +381,6 @@ class argparser(object):
                     if convType not in (int, str):
                         logging.error("Unsupported argument type: %s", convType)
                         return False
-
                     try:
                         item = convType(item)
                     except:
@@ -389,11 +388,15 @@ class argparser(object):
                         return False
 
                 if (activeArg in self.INP_DATA):
-                    """ append """
-                    self.INP_DATA[activeArg] += [item]
+                    if 'repetitive' in ACTIVE_CMD and (ACTIVE_CMD['repetitive']):
+                        """ append """
+                        self.INP_DATA[activeArg] += [item]
+                    else:
+                        """ replace """
+                        self.INP_DATA[activeArg] = item
                 else:
                     """ set """
-                    if ACTIVE_CMD.has_key('repetitive') and (ACTIVE_CMD['repetitive']) :
+                    if 'repetitive' in ACTIVE_CMD and (ACTIVE_CMD['repetitive']):
                         self.INP_DATA[activeArg] = [item]
                     else:
                         self.INP_DATA[activeArg] = item
