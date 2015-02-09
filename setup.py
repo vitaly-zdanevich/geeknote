@@ -29,15 +29,18 @@ _geeknote_command()
 complete -F _geeknote_command geeknote
 '''
 
+
 def read(fname):
     return codecs.open(os.path.join(os.path.dirname(__file__), fname)).read()
+
 
 class full_install(install):
 
     user_options = install.user_options + [
-        ('userhome=', None, "(Linux only) Set user home directory for"
-                           " bash completion (/home/{0})"
-                           .format(getpass.getuser()))
+        ('userhome=', None,
+         "(Linux only) Set user home directory for"
+         " bash completion (/home/{0})"
+         .format(getpass.getuser()))
     ]
 
     def initialize_options(self):
@@ -56,7 +59,7 @@ class full_install(install):
             self.userhome = '/home/{0}/.bash_completion'.format(getpass.getuser())
 
         if not os.path.exists(self.userhome) or \
-           not BASH_COMPLETION in open(self.userhome, 'r').read():
+           BASH_COMPLETION not in open(self.userhome, 'r').read():
             with open(self.userhome, 'a') as completion:
                 print('Autocomplete was written to {0}'.format(self.userhome))
                 completion.write(BASH_COMPLETION)
