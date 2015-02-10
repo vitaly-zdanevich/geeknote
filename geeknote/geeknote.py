@@ -192,11 +192,11 @@ class GeekNote(object):
 
     @EdamException
     def createNote(self, title, content, tags=None, notebook=None, created=None, resources=None):
-        
+
         def make_resource(filename):
             try:
                 mtype = mimetypes.guess_type(filename)[0]
-                    
+
                 if mtype.split('/')[0] == "text":
                     rmode = "r"
                 else:
@@ -210,10 +210,10 @@ class GeekNote(object):
                     data = f.read()
                     md5 = hashlib.md5()
                     md5.update(data)
-                    
-                    resource.data.bodyHash = md5.hexdigest() 
+
+                    resource.data.bodyHash = md5.hexdigest()
                     resource.data.body = data
-                    resource.data.size = len(data) 
+                    resource.data.size = len(data)
                     resource.mime = mtype
                     resource.attributes = Types.ResourceAttributes()
                     resource.attributes.fileName = os.path.basename(filename)
@@ -237,10 +237,10 @@ class GeekNote(object):
         if resources:
             """ make EverNote API resources """
             note.resources = map(make_resource, resources)
-            
+
             """ add to content """
             resource_nodes = ""
-            
+
             for resource in note.resources:
                 resource_nodes += '<en-media type="%s" hash="%s" />' % (resource.mime, resource.data.bodyHash)
 
@@ -696,7 +696,7 @@ class Notes(GeekNoteConnector):
         else:
           out.showNote(note)
 
-    def _parseInput(self, title=None, content=None, tags=None, notebook=None, note=None):
+    def _parseInput(self, title=None, content=None, tags=None, notebook=None, resources=None, note=None):
         result = {
             "title": title,
             "content": content,
