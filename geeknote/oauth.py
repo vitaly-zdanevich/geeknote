@@ -19,12 +19,12 @@ class GeekNoteAuth(object):
     consumerSecret = config.CONSUMER_SECRET
 
     url = {
-        "base": config.USER_BASE_URL,
-        "oauth": "/OAuth.action?oauth_token=%s",
+        "base":   config.USER_BASE_URL,
+        "oauth":  "/OAuth.action?oauth_token=%s",
         "access": "/OAuth.action",
-        "token" : "/oauth",
-        "login" : "/Login.action",
-        "tfa"   : "/OTCAuth.action",
+        "token":  "/oauth",
+        "login":  "/Login.action",
+        "tfa":    "/OTCAuth.action",
     }
 
     cookies = {}
@@ -118,8 +118,8 @@ class GeekNoteAuth(object):
             self.cookies[key] = sk[key].value
         # delete cookies whose content is "deleteme"
         for key in self.cookies.keys():
-             if self.cookies[key] == "deleteme":
-                 del self.cookies[key]
+            if self.cookies[key] == "deleteme":
+                del self.cookies[key]
 
         return result
 
@@ -139,7 +139,7 @@ class GeekNoteAuth(object):
         out.preloader.setMessage('Getting Token...')
         self.getOAuthToken()
 
-        #out.preloader.stop()
+        # out.preloader.stop()
         return self.OAuthToken
 
     def getTmpOAuthToken(self):
@@ -147,8 +147,7 @@ class GeekNoteAuth(object):
                                  self.url['token'],
                                  "GET",
                                  self.getTokenRequestData(
-                                     oauth_callback="https://" + self.url['base']
-                                 ))
+                                     oauth_callback="https://" + self.url['base']))
 
         if response.status != 200:
             logging.error("Unexpected response status on get "
@@ -167,7 +166,7 @@ class GeekNoteAuth(object):
     def handleTwoFactor(self):
         self.code = out.GetUserAuthCode()
         self.postData['tfa']['code'] = self.code
-        response = self.loadPage(self.url['base'], self.url['tfa']+";jsessionid="+self.cookies['JSESSIONID'], "POST", self.postData['tfa'])
+        response = self.loadPage(self.url['base'], self.url['tfa'] + ";jsessionid=" + self.cookies['JSESSIONID'], "POST", self.postData['tfa'])
         if not response.location and response.status == 200:
             if self.incorrectCode < 3:
                 out.preloader.stop()
@@ -226,10 +225,9 @@ class GeekNoteAuth(object):
             # the user has enabled two factor auth
             return self.handleTwoFactor()
 
-
         logging.debug("Success authorize, redirect to access page")
 
-        #self.allowAccess(response.location)
+        # self.allowAccess(response.location)
 
     def allowAccess(self):
         access = self.postData['access']
@@ -253,7 +251,7 @@ class GeekNoteAuth(object):
 
         logging.debug("OAuth verifier token take")
 
-        #self.getOAuthToken(verifier)
+        # self.getOAuthToken(verifier)
 
     def getOAuthToken(self):
         response = self.loadPage(self.url['base'],

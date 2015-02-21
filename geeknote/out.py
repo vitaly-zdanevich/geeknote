@@ -114,13 +114,14 @@ def GetUserCredentials():
 
     return (login, password)
 
+
 @preloaderPause
 def GetUserAuthCode():
     """Prompts the user for a two factor auth code."""
     try:
         code = None
         if code is None:
-          code = rawInput("Two-Factor Authentication Code: ")
+            code = rawInput("Two-Factor Authentication Code: ")
     except (KeyboardInterrupt, SystemExit), e:
         if e.message:
             tools.exit(e.message)
@@ -128,6 +129,7 @@ def GetUserAuthCode():
             tools.exit
 
     return code
+
 
 @preloaderStop
 def SearchResult(listItems, request, **kwargs):
@@ -171,19 +173,21 @@ def showNote(note):
     printLine("Updated: %s" %
               (printDate(note.updated).ljust(15, " ")))
     for key, value in note.attributes.__dict__.items():
-        if value and not key in ('reminderOrder', 'reminderTime', 'reminderDone'):
-          printLine("%s: %s" % (key, value))
+        if value and key not in ('reminderOrder', 'reminderTime', 'reminderDone'):
+            printLine("%s: %s" % (key, value))
     separator("|", "REMINDERS")
-    printLine("Order: %s Time: %s Done: %s" % (str(note.attributes.reminderOrder),str(note.attributes.reminderTime),str(note.attributes.reminderDoneTime)))
+    printLine("Order: %s Time: %s Done: %s" % (str(note.attributes.reminderOrder), str(note.attributes.reminderTime), str(note.attributes.reminderDoneTime)))
     separator("-", "CONTENT")
     if note.tagNames:
         printLine("Tags: %s" % ', '.join(note.tagNames))
 
     printLine(Editor.ENMLtoText(note.content))
 
+
 @preloaderStop
 def showNoteRaw(note):
     printLine(Editor.ENMLtoText(note.content, 'pre'))
+
 
 @preloaderStop
 def showUser(user, fullInfo):
@@ -213,6 +217,7 @@ def successMessage(message):
 def failureMessage(message):
     """ Displaying a message."""
     printLine(message, "\n", sys.stderr)
+
 
 def separator(symbol="", title=""):
     size = 40

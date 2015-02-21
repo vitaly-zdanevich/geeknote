@@ -49,7 +49,7 @@ class storageTest(unittest.TestCase):
 
     def test_get_user_props_exists_success(self):
         self.assertEquals(self.storage.getUserprop('info'),
-                             self.userinfo)
+                          self.userinfo)
 
     def test_get_user_prop_not_exists(self):
         self.assertFalse(self.storage.getUserprop('some_prop'))
@@ -71,7 +71,7 @@ class storageTest(unittest.TestCase):
     def test_set_settings_success(self):
         self.storage.setSettings({'editor': 'vim'})
         self.assertEquals(self.storage.getSettings(),
-                             {u'editor': u"S'vim'\np0\n."})
+                          {u'editor': u"S'vim'\np0\n."})
 
     def test_set_setting_error_type_fail(self):
         self.assertFalse(self.storage.setSettings('editor'))
@@ -83,7 +83,7 @@ class storageTest(unittest.TestCase):
         self.storage.setSettings({'editor': 'vim'})
         self.assertTrue(self.storage.setSettings({'editor': 'nano'}))
         self.assertEquals(self.storage.getSettings(),
-                             {u'editor': u"S'nano'\np0\n."})
+                          {u'editor': u"S'nano'\np0\n."})
 
     def test_get_setting_exist_success(self):
         self.storage.setSettings({'editor': 'vim'})
@@ -153,19 +153,19 @@ class modelsTest(unittest.TestCase):
         userprop = storage.Userprop(key='test',
                                     value='value')
         self.assertEquals(userprop.__repr__(),
-                         "<Userprop('test','value)>")
+                          "<Userprop('test','value)>")
 
     def test_repr_setting(self):
         setting = storage.Setting(key='test',
                                   value='value')
         self.assertEquals(setting.__repr__(),
-                         "<Setting('test','value)>")
+                          "<Setting('test','value)>")
 
     def test_repr_notebook(self):
         notebook = storage.Notebook(name='notebook',
                                     guid='testguid')
         self.assertEquals(notebook.__repr__(),
-                         "<Notebook('notebook')>")
+                          "<Notebook('notebook')>")
 
     def test_repr_tag(self):
         tag = storage.Tag(tag='testtag',
@@ -175,4 +175,4 @@ class modelsTest(unittest.TestCase):
     def test_repr_search(self):
         search = storage.Search(search_obj='query')
         self.assertEquals(search.__repr__(),
-                         "<Search('%s')>" % search.timestamp)
+                          "<Search('%s')>" % search.timestamp)

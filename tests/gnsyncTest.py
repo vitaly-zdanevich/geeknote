@@ -1,6 +1,7 @@
-#-*- encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 import unittest
 from geeknote.gnsync import remove_control_characters
+
 
 class testGnsync(unittest.TestCase):
     def setUp(self):
@@ -29,7 +30,7 @@ _한국어 입력입니다. 잘 되나요?_
     def test_strip_eng(self):
         self.assertEqual(remove_control_characters(self.given_eng.decode('utf-8')).encode('utf-8'),
                          self.expected_eng)
-                         
+
     def test_strip_kor(self):
         self.assertEqual(remove_control_characters(self.given_kor.decode('utf-8')).encode('utf-8'),
                          self.expected_kor)

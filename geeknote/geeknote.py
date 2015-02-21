@@ -5,7 +5,6 @@ import traceback
 import time
 import sys
 import os
-import re
 import mimetypes
 
 import thrift.protocol.TBinaryProtocol as TBinaryProtocol
@@ -14,7 +13,6 @@ import thrift.transport.THttpClient as THttpClient
 import evernote.edam.userstore.constants as UserStoreConstants
 import evernote.edam.notestore.NoteStore as NoteStore
 from evernote.edam.notestore.ttypes import NotesMetadataResultSpec
-import evernote.edam.error.ttypes as Errors
 import evernote.edam.type.ttypes as Types
 
 import config
@@ -166,8 +164,8 @@ class GeekNote(object):
 
     def checkVersion(self):
         versionOK = self.getUserStore().checkVersion("Python EDAMTest",
-                                       UserStoreConstants.EDAM_VERSION_MAJOR,
-                                       UserStoreConstants.EDAM_VERSION_MINOR)
+                                                     UserStoreConstants.EDAM_VERSION_MAJOR,
+                                                     UserStoreConstants.EDAM_VERSION_MINOR)
         if not versionOK:
             logging.error("Old EDAM version")
             return tools.exitErr()
@@ -200,10 +198,10 @@ class GeekNote(object):
     def getNote(self, guid, withContent=False, withResourcesData=False,
                 withResourcesRecognition=False, withResourcesAlternateData=False):
         """ GET A COMPLETE NOTE OBJECT """
-        #Don't include data
+        # Don't include data
         return self.getNoteStore().getNote(self.authToken, guid, withContent,
-                                    withResourcesData, withResourcesRecognition,
-                                    withResourcesAlternateData)
+                                           withResourcesData, withResourcesRecognition,
+                                           withResourcesAlternateData)
 
     @EdamException
     def findNotes(self, keywords, count, createOrder=False, offset=0):
@@ -237,10 +235,10 @@ class GeekNote(object):
         note.content = self.getNoteStore().getNoteContent(self.authToken, note.guid)
         # fill the tags in
         if note.tagGuids and not note.tagNames:
-          note.tagNames = [];
-          for guid in note.tagGuids:
-            tag = self.getNoteStore().getTag(self.authToken,guid)
-            note.tagNames.append(tag.name)
+            note.tagNames = []
+            for guid in note.tagGuids:
+                tag = self.getNoteStore().getTag(self.authToken, guid)
+                note.tagNames.append(tag.name)
 
     @EdamException
     def createNote(self, title, content, tags=None, notebook=None, created=None, resources=None, reminder=None):
@@ -331,7 +329,7 @@ class GeekNote(object):
                     note.attributes.reminderOrder = now
             elif reminder == config.REMINDER_DONE:
                 note.attributes.reminderDoneTime = now
-                if not note.attributes.reminderOrder: # catch adding DONE to non-reminder
+                if not note.attributes.reminderOrder:  # catch adding DONE to non-reminder
                     note.attributes.reminderOrder = now
                     note.attributes.reminderTime = None
             elif reminder == config.REMINDER_DELETE:
@@ -447,6 +445,7 @@ class GeekNoteConnector(object):
 
         self.storage = self.getEvernote().getStorage()
         return self.storage
+
 
 class User(GeekNoteConnector):
     """ Work with auth User """
@@ -685,7 +684,7 @@ class Notes(GeekNoteConnector):
         self.findExactOnUpdate = bool(findExactOnUpdate)
         self.selectFirstOnUpdate = bool(selectFirstOnUpdate)
 
-    def _editWithEditorInThread(self, inputData, note = None, raw = None):
+    def _editWithEditorInThread(self, inputData, note=None, raw=None):
         if note:
             self.getEvernote().loadNoteContent(note)
             editor = Editor(note.content, raw)
@@ -702,12 +701,12 @@ class Notes(GeekNoteConnector):
                 ext = os.path.splitext(editor.tempfile)[1]
                 mapping = {'markdown': ['.md', '.markdown'],
                            'html': ['.html', '.org']}
-                fmt = filter(lambda k:ext in mapping[k], mapping)
+                fmt = filter(lambda k: ext in mapping[k], mapping)
                 if fmt:
                     fmt = fmt[0]
 
                 inputData['content'] = newContent if raw \
-                                       else Editor.textToENML(newContent, format = fmt)
+                    else Editor.textToENML(newContent, format=fmt)
                 if not note:
                     result = self.getEvernote().createNote(**inputData)
                     # TODO: log error if result is False or None
@@ -737,7 +736,7 @@ class Notes(GeekNoteConnector):
         inputData = self._parseInput(title, content, tags, notebook, resource, reminder=reminder)
 
         if inputData['content'] == config.EDITOR_OPEN:
-            result = self._editWithEditorInThread(inputData, raw = raw)
+            result = self._editWithEditorInThread(inputData, raw=raw)
         else:
             out.preloader.setMessage("Creating note...")
             result = bool(self.getEvernote().createNote(**inputData))
@@ -755,7 +754,7 @@ class Notes(GeekNoteConnector):
         inputData = self._parseInput(title, content, tags, notebook, resource, note, reminder=reminder)
 
         if inputData['content'] == config.EDITOR_OPEN:
-            result = self._editWithEditorInThread(inputData, note, raw = raw)
+            result = self._editWithEditorInThread(inputData, note, raw=raw)
         else:
             out.preloader.setMessage("Saving note...")
             result = bool(self.getEvernote().updateNote(guid=note.guid, **inputData))
@@ -794,9 +793,9 @@ class Notes(GeekNoteConnector):
         self.getEvernote().loadNoteContent(note)
 
         if raw:
-          out.showNoteRaw(note)
+            out.showNoteRaw(note)
         else:
-          out.showNote(note)
+            out.showNote(note)
 
     def _parseInput(self, title=None, content=None, tags=None, notebook=None, resources=[], note=None, reminder=None):
         result = {
@@ -846,10 +845,10 @@ class Notes(GeekNoteConnector):
             elif reminder not in [config.REMINDER_NONE, config.REMINDER_DONE, config.REMINDER_DELETE]:
                 reminder = tools.strip(reminder.split('-'))
                 try:
-                    dateStruct = time.strptime(reminder[0] + " "  + reminder[1] + ":00", config.DEF_DATE_AND_TIME_FORMAT)
+                    dateStruct = time.strptime(reminder[0] + " " + reminder[1] + ":00", config.DEF_DATE_AND_TIME_FORMAT)
                     reminderTime = int(round(time.mktime(dateStruct) * 1000))
                     result['reminder'] = reminderTime
-                except (ValueError, IndexError), e:
+                except (ValueError, IndexError):
                     out.failureMessage('Incorrect date format in --reminder attribute. '
                                        'Format: %s' % time.strftime(config.DEF_DATE_FORMAT, time.strptime('199912311422', "%Y%m%d%H%M")))
                     return tools.exitErr()
@@ -906,17 +905,15 @@ class Notes(GeekNoteConnector):
         result = self.getEvernote().findNotes(request, count, createFilter)
 
         # Reduces the count by the amount of notes already retrieved
-        update_count = lambda c: max(c - len(result.notes), 0)
-
-        count = update_count(count)
+        count = max(count - len(result.notes), 0)
 
         # Evernote api will only return so many notes in one go. Checks for more
         # notes to come whilst obeying count rules
         while ((result.totalNotes != len(result.notes)) and count != 0):
             offset = len(result.notes)
             result.notes += self.getEvernote().findNotes(request, count,
-                    createFilter, offset).notes
-            count = update_count(count)
+                                                         createFilter, offset).notes
+            count = max(count - len(result.notes), 0)
 
         if result.totalNotes == 0:
             out.failureMessage("Notes have not been found.")
@@ -929,8 +926,8 @@ class Notes(GeekNoteConnector):
         out.SearchResult(result.notes, request, showUrl=with_url)
 
     def dedup(self, search=None, tags=None, notebooks=None,
-                  date=None, exact_entry=None, content_search=None,
-                  with_url=None, count=None, ):
+              date=None, exact_entry=None, content_search=None,
+              with_url=None, count=None, ):
 
         request = self._createSearchRequest(search, tags, notebooks,
                                             date, exact_entry,
@@ -953,12 +950,12 @@ class Notes(GeekNoteConnector):
             result = evernote.findNotes(request, count, createFilter, offset)
             notes += result.notes
             total = result.totalNotes
-            limit = min(total,count)
+            limit = min(total, count)
             stillDownloadingResults = len(notes) < total and len(notes) < count
             out.printLine("Downloaded metadata for "
-                          + `len(result.notes)` + " notes ("
-                          + `len(notes)` + "/" + `limit`
-                          + " of " +`count`+ ")")
+                          + len(result.notes) + " notes ("
+                          + len(notes) + "/" + limit
+                          + " of " + count + ")")
 
         if total == 0:
             out.failureMessage("Notes have not been found.")
@@ -972,27 +969,27 @@ class Notes(GeekNoteConnector):
                 notes_dict[noteId].append(note)
                 out.printLine("found dup! \"" + note.title
                               + "\" with guid " + note.guid
-                              + ", duplicated " + `len(notes_dict[noteId])`)
+                              + ", duplicated " + len(notes_dict[noteId]))
             else:
                 notes_dict[noteId] = [note]
                 out.printLine("new note \"" + note.title + "\" with guid " + note.guid)
 
-        all_dups = [dups for id, dups in notes_dict.iteritems() if len(dups) > 1] # list of lists
+        all_dups = [dups for id, dups in notes_dict.iteritems() if len(dups) > 1]  # list of lists
         total_dups = sum(map(len, all_dups))  # count total
         removed_total = 0
 
         for dup_group in all_dups:
             group_size = len(dup_group)
-            out.printLine("Deleting " + `group_size` + " notes titled \"" + dup_group[0].title + "\"")
+            out.printLine("Deleting " + group_size + " notes titled \"" + dup_group[0].title + "\"")
             for note in dup_group:
-                removed_total+=1
+                removed_total += 1
                 out.printLine("Deleting \"" + note.title
-                              + "\" created "+ out.printDate(note.created)
-                              +" with guid " + note.guid
-                              + " (" + `removed_total` + "/" + `total_dups` + ")")
+                              + "\" created " + out.printDate(note.created)
+                              + " with guid " + note.guid
+                              + " (" + removed_total + "/" + total_dups + ")")
                 evernote.removeNote(note.guid)
 
-        out.printLine("removed " + `removed_total` + "duplicates")
+        out.printLine("removed " + removed_total + "duplicates")
 
     def _createSearchRequest(self, search=None, tags=None,
                              notebooks=None, date=None,
@@ -1074,7 +1071,7 @@ def main(args=None):
         ARGS = aparser.parse()
 
         if isinstance(ARGS, dict) and ARGS.get('content') == '-':
-            #content from stdin!
+            # content from stdin!
             content = sys.stdin.read()
             ARGS['content'] = content
 

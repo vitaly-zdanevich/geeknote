@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import os
-import sys
 import unittest
 
-#PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-#sys.path.append(os.path.join(PROJECT_ROOT, 'lib'))
+# PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# sys.path.append(os.path.join(PROJECT_ROOT, 'lib'))
 
 from geeknote import tools
 

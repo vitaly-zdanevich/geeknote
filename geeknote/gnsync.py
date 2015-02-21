@@ -5,9 +5,10 @@ import os
 import argparse
 import glob
 import logging
-import string
-import unicodedata, re
-import hashlib, binascii, mimetypes
+import re
+import hashlib
+import binascii
+import mimetypes
 
 import evernote.edam.type.ttypes as Types
 from bs4 import BeautifulSoup
@@ -19,7 +20,7 @@ import tools
 
 
 # set default logger (write log to file)
-def_logpath = os.path.join(os.getenv('HOME') or os.getenv('USERPROFILE'),  'GeekNoteSync.log')
+def_logpath = os.path.join(os.getenv('HOME') or os.getenv('USERPROFILE'), 'GeekNoteSync.log')
 formatter = logging.Formatter('%(asctime)-15s : %(message)s')
 handler = logging.FileHandler(def_logpath)
 handler.setFormatter(formatter)
@@ -30,8 +31,11 @@ logger.addHandler(handler)
 
 # http://en.wikipedia.org/wiki/Unicode_control_characters
 CONTROL_CHARS_RE = re.compile(u'[\x00-\x08\x0e-\x1f\x7f-\x9f]')
+
+
 def remove_control_characters(s):
     return CONTROL_CHARS_RE.sub('', s)
+
 
 def log(func):
     def wrapper(*args, **kwargs):
@@ -69,9 +73,11 @@ def reset_logpath(logpath):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
+
 def all_notebooks():
     geeknote = GeekNote()
     return [notebook.name for notebook in geeknote.findNotebooks()]
+
 
 class GNSync:
 
@@ -89,7 +95,7 @@ class GNSync:
         if not Storage().getUserToken():
             raise Exception("Auth error. There is not any oAuthToken.")
 
-        #set path
+        # set path
         if not path:
             raise Exception("Path to sync directories does not select.")
 
@@ -98,13 +104,13 @@ class GNSync:
 
         self.path = path
 
-        #set mask
+        # set mask
         if not mask:
             mask = "*.*"
 
         self.mask = mask
 
-        #set format
+        # set format
         if not format:
             format = "plain"
 
@@ -121,9 +127,9 @@ class GNSync:
 
         logger.info('Sync Start')
 
-        #set notebook
+        # set notebook
         self.notebook_guid,\
-        self.notebook_name = self._get_notebook(notebook_name, path)
+            self.notebook_name = self._get_notebook(notebook_name, path)
 
         # all is Ok
         self.all_set = True
@@ -146,8 +152,8 @@ class GNSync:
             meta = self._parse_meta(self._get_file_content(f['path']))
             title = f['name'] if 'title' not in meta else meta['title'].strip()
             tags = None if 'tags' not in meta else meta['tags'] \
-                   .replace('[', '').replace(']','').split(',')
-            tags = None if not tags else map(lambda x:x.strip(), tags)
+                .replace('[', '').replace(']', '').split(',')
+            tags = None if not tags else map(lambda x: x.strip(), tags)
             meta['tags'] = tags
             meta['title'] = title
             note = None
@@ -217,7 +223,7 @@ class GNSync:
             ret['content'] = metaBlock.sub('', content)
             return ret
         else:
-            return {'content' : content}
+            return {'content': content}
 
     @log
     def _html2note(self, meta):
@@ -231,7 +237,7 @@ class GNSync:
         note.created = meta['mtime']
         note.resources = []
         soup = BeautifulSoup(meta['content'], 'html.parser')
-        for tag in soup.findAll('img'): #image support is enough
+        for tag in soup.findAll('img'):  # image support is enough
             if 'src' in tag.attrs and len(tag.attrs['src']) > 0:
                 img = None
                 with open(tag.attrs['src'], 'rb') as f:
@@ -262,17 +268,17 @@ class GNSync:
         return note
 
     @log
-    def _update_note(self, file_note, note, title = None, content = None, tags = None):
+    def _update_note(self, file_note, note, title=None, content=None, tags=None):
         """
         Updates note from file
         """
-        #content = self._get_file_content(file_note['path']) if content is None else content
+        # content = self._get_file_content(file_note['path']) if content is None else content
 
         result = GeekNote().updateNote(
             guid=note.guid,
             title=title or note.title,
             content=content or self._get_file_content(file_note['path']),
-            tags = tags or note.tagNames,
+            tags=tags or note.tagNames,
             notebook=self.notebook_guid)
 
         if result:
@@ -292,7 +298,7 @@ class GNSync:
         open(file_note['path'], "w").write(content)
 
     @log
-    def _create_note(self, file_note, title = None, content = None, tags = None):
+    def _create_note(self, file_note, title=None, content=None, tags=None):
         """
         Creates note from file
         """
@@ -306,13 +312,13 @@ class GNSync:
             title=title or file_note['name'],
             content=content,
             notebook=self.notebook_guid,
-            tags = tags or None,
+            tags=tags or None,
             created=file_note['mtime'])
 
         if result:
             logger.info('Note "{0}" was created'.format(title or file_note['name']))
         else:
-            raise Exception('Note "{0}" was not' \
+            raise Exception('Note "{0}" was not'
                             ' created'.format(title or file_note['name']))
 
         return result
@@ -340,7 +346,7 @@ class GNSync:
         content = Editor.textToENML(content=content, raise_ex=True, format=self.format)
 
         if content is None:
-            logger.warning("File {0}. Content must be " \
+            logger.warning("File {0}. Content must be "
                            "an UTF-8 encode.".format(path))
             return None
 
@@ -366,10 +372,10 @@ class GNSync:
             notebook = GeekNote().createNotebook(notebook_name)
 
             if(notebook):
-                logger.info('Notebook "{0}" was' \
+                logger.info('Notebook "{0}" was'
                             ' created'.format(notebook_name))
             else:
-                raise Exception('Notebook "{0}" was' \
+                raise Exception('Notebook "{0}" was'
                                 ' not created'.format(notebook_name))
 
             guid = notebook.guid

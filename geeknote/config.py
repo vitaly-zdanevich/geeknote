@@ -3,7 +3,7 @@
 import os
 import sys
 
-USE_YINXIANG = False # for 印象笔记, set to True
+USE_YINXIANG = False  # for 印象笔记, set to True
 # !!! DO NOT EDIT !!! >>>
 if USE_YINXIANG:
     USER_BASE_URL = "app.yinxiang.com"

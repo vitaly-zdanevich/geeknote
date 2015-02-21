@@ -38,7 +38,7 @@ class Editor(object):
 
     @staticmethod
     def getHtmlUnescapeTable():
-        return {v:k for k, v in Editor.getHtmlEscapeTable().items()}
+        return {v: k for k, v in Editor.getHtmlEscapeTable().items()}
 
     @staticmethod
     def HTMLEscape(text):
@@ -53,27 +53,26 @@ class Editor(object):
         '''
         Transforms Evernote checklist elements to github `* [ ]` task list style
         '''
-        transform_tags = ['p','div']
+        transform_tags = ['p', 'div']
 
         # soup.select cant be used with dashes: https://bugs.launchpad.net/beautifulsoup/+bug/1276211
         for todo in soup.find_all('en-todo'):
             parent = todo.parent
             transform = parent.find() == todo and parent.name in transform_tags
 
-            checked = todo.attrs.get('checked',None) == "true"
+            checked = todo.attrs.get('checked', None) == "true"
             todo.replace_with("[x] " if checked else "[ ] ")
 
             # EN checklist can appear anywhere, but if they appear at the beggining
             # of a block element, transform it so it ressembles github markdown syntax
             if transform:
                 content = ''.join(unicode(child) for child in parent.children
-                    if isinstance(child, NavigableString)
-                ).strip()
+                                  if isinstance(child, NavigableString)
+                                  ).strip()
 
                 new_tag = soup.new_tag("li")
                 new_tag.string = content
                 parent.replace_with(new_tag)
-
 
     @staticmethod
     def ENMLtoText(contentENML, format='default'):
@@ -144,7 +143,8 @@ class Editor(object):
         # To be more github compatible, if in a list all elements begins with `[ ]``
         # transform it to normal `[ ]` evernote elements
         for ul in soup.find_all('ul'):
-            tasks = []; istodo = True
+            tasks = []
+            istodo = True
 
             for li in ul.find_all('li'):
                 task = soup.new_tag('div')
@@ -154,29 +154,32 @@ class Editor(object):
                 istodo = istodo and reg
                 character = reg.group(1) if reg else None
 
-                if character == "x": todo_tag['checked']="true"
+                if character == "x":
+                    todo_tag['checked'] = "true"
 
                 task.append(todo_tag)
-                if reg: task.append(NavigableString(li.get_text()[3:].strip()))
+                if reg:
+                    task.append(NavigableString(li.get_text()[3:].strip()))
                 tasks.append(task)
 
             if istodo:
-                for task in tasks: ul.insert_after(task)
+                for task in tasks:
+                    ul.insert_after(task)
                 ul.extract()
 
         # For the rest of elements just replace `[ ]` with the appropriate element
         for todo in soup.find_all(text=checktodo_re):
-            str_re = re.match(r'(.*)\[(.)\](.*)',todo)
+            str_re = re.match(r'(.*)\[(.)\](.*)', todo)
             pre = str_re.group(1)
             post = str_re.group(3)
 
             todo_tag = soup.new_tag('en-todo')
-            if str_re.group(2) == "x": todo_tag['checked']="true"
+            if str_re.group(2) == "x":
+                todo_tag['checked'] = "true"
 
             todo.replace_with(todo_tag)
             todo_tag.insert_before(pre)
             todo_tag.insert_after(post)
-
 
     @staticmethod
     def textToENML(content, raise_ex=False, format='markdown'):
@@ -197,7 +200,7 @@ class Editor(object):
 
                 # Non-Pretty HTML output
                 contentHTML = str(soup)
-            elif format=='pre':
+            elif format == 'pre':
                 #
                 # For the 'pre' format, simply wrap the content with a 'pre' tag. Do
                 # perform any parsing/mutation.
@@ -205,28 +208,28 @@ class Editor(object):
                 contentHTML = u''.join(('<pre>', content, '</pre>')).encode("utf-8")
             elif format == 'html':
                 # Html to ENML http://dev.evernote.com/doc/articles/enml.php
-                ATTR_2_REMOVE = ["id"
-                                 , "class"
-                                 #, "on*"
-                                 , "accesskey"
-                                 , "data"
-                                 , "dynsrc"
-                                 , "tabindex"
-                ];
+                ATTR_2_REMOVE = ["id",
+                                 "class",
+                                 # "on*",
+                                 "accesskey",
+                                 "data",
+                                 "dynsrc",
+                                 "tabindex"
+                                 ]
                 soup = BeautifulSoup(content, 'html.parser')
 
                 for tag in soup.findAll():
                     if hasattr(tag, 'attrs'):
-                        map(lambda x: tag.attrs.pop(x, None), \
-                            [k for k in tag.attrs.keys() \
-                             if k in ATTR_2_REMOVE \
+                        map(lambda x: tag.attrs.pop(x, None),
+                            [k for k in tag.attrs.keys()
+                             if k in ATTR_2_REMOVE
                              or k.find('on') == 0])
                 contentHTML = str(soup)
             else:
                 contentHTML = Editor.HTMLEscape(content)
 
-            contentHTML = contentHTML.replace('[x]','<en-todo checked="true"></en-todo>')
-            contentHTML = contentHTML.replace('[ ]','<en-todo></en-todo>')
+            contentHTML = contentHTML.replace('[x]', '<en-todo checked="true"></en-todo>')
+            contentHTML = contentHTML.replace('[ ]', '<en-todo></en-todo>')
 
             return Editor.wrapENML(contentHTML)
         except:
@@ -242,7 +245,7 @@ class Editor(object):
                                "Content must be an UTF-8 encode.")
             return tools.exitErr()
 
-    def __init__(self, content, raw = False):
+    def __init__(self, content, raw=False):
         if not isinstance(content, str):
             raise Exception("Note content must be an instance "
                             "of string, '%s' given." % type(content))
@@ -250,7 +253,7 @@ class Editor(object):
         noteExtension = Storage().getUserprop('note_ext')
         if not noteExtension:
             noteExtension = config.DEF_NOTE_EXT
-        (tempfileHandler, tempfileName) = tempfile.mkstemp(suffix = noteExtension)
+        (tempfileHandler, tempfileName) = tempfile.mkstemp(suffix=noteExtension)
         os.write(tempfileHandler, content if raw else self.ENMLtoText(content))
         os.close(tempfileHandler)
 

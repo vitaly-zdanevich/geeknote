@@ -56,7 +56,9 @@ COMMANDS_DICT = {
             "--notebook":   {"altName": "-nb",
                              "help": "Set the notebook where to save note."},
             "--reminder":   {"altName": "-r",
-                             "help": "Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed."},
+                             "help": "Set reminder date and time(dd.mm.yyy-HH:MM). "
+                             "Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectively, "
+                             "NONE for a reminder without a time. Use DONE to mark a reminder as completed."},
         },
         "flags": {
             "--raw":        {"altName": "-r",
@@ -84,7 +86,10 @@ COMMANDS_DICT = {
             "--notebook":   {"altName": "-nb",
                              "help": "Assign new notebook for the note."},
             "--reminder":   {"altName": "-r",
-                             "help": "Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note."},
+                             "help": "Set reminder date and time(dd.mm.yyy-HH:MM). "
+                             "Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectively, "
+                             "NONE for a reminder without a time. Use DONE to mark a reminder as completed. "
+                             "Use DELETE to remove reminder from a note."},
         },
         "flags": {
             "--raw":        {"altName": "-r",
@@ -118,9 +123,9 @@ COMMANDS_DICT = {
         },
         "flags": {
             "--raw": {"altName": "-w",
-                       "help": "Show the raw note body",
-                       "value": True,
-                       "default": False},
+                      "help": "Show the raw note body",
+                      "value": True,
+                      "default": False},
         }
     },
     "find": {
@@ -161,9 +166,9 @@ COMMANDS_DICT = {
                                  "value": True,
                                  "default": False},
             "--ignore-completed": {"altName": "-C",
-                                 "help": "Include only unfinished reminders",
-                                 "value": True,
-                                 "default": False},
+                                   "help": "Include only unfinished reminders",
+                                   "value": True,
+                                   "default": False},
         }
     },
     "dedup": {
@@ -253,7 +258,9 @@ COMMANDS_DICT = {
             "--tagname": {"help": "The name of a tag to remove."},
         },
         "flags": {
-            "--force": {"help": "Don't ask about removing.", "value": True, "default": False},
+            "--force": {"help": "Don't ask about removing.",
+                        "value": True,
+                        "default": False},
         }
     },
     "notebook-remove": {
@@ -263,7 +270,9 @@ COMMANDS_DICT = {
             "--notebook": {"help": "The name of a notebook to remove."},
         },
         "flags": {
-            "--force": {"help": "Don't ask about removing.", "value": True, "default": False},
+            "--force": {"help": "Don't ask about removing.",
+                        "value": True,
+                        "default": False},
         }
     },
 """
@@ -369,7 +378,7 @@ class argparser(object):
                 if item in self.CMD_ARGS or item in self.CMD_FLAGS:
                     # active argument is "emptyValue"
                     if "emptyValue" in ACTIVE_CMD:
-                        activeArgTmp = item # remember the new "active" argument
+                        activeArgTmp = item  # remember the new "active" argument
                         item = ACTIVE_CMD['emptyValue']  # set the active argument to emptyValue
                     # Error, "active" argument has no values
                     else:

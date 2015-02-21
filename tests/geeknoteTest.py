@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import time
 import unittest
 from geeknote.geeknote import *
 from geeknote import tools
 from geeknote.editor import Editor
+
 
 class GeekNoteOver(GeekNote):
     def __init__(self):
@@ -26,7 +26,7 @@ class testNotes(unittest.TestCase):
         self.testNote = tools.Struct(title="note title")
 
     def test_parseInput1(self):
-        testData = self.notes._parseInput("title", "test body","tag1", None, ["res 1", "res 2"])
+        testData = self.notes._parseInput("title", "test body", "tag1", None, ["res 1", "res 2"])
         self.assertTrue(isinstance(testData, dict))
         if not isinstance(testData, dict):
             return
@@ -35,7 +35,6 @@ class testNotes(unittest.TestCase):
         self.assertEqual(testData['content'], Editor.textToENML("test body"))
         self.assertEqual(testData["tags"], ["tag1", ])
         self.assertEqual(testData["resources"], ["res 1", "res 2"])
-
 
     def test_parseInput2(self):
         testData = self.notes._parseInput("title", "WRITE", "tag1, tag2", None, None, self.testNote)
