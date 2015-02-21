@@ -44,6 +44,10 @@ class Editor(object):
         return escape(text, Editor.getHtmlEscapeTable())
 
     @staticmethod
+    def HTMLEscapeTag(text):
+        return escape(text)
+
+    @staticmethod
     def HTMLUnescape(text):
         return unescape(text, Editor.getHtmlUnescapeTable())
 
@@ -117,7 +121,7 @@ class Editor(object):
         enml.
         '''
 
-        checktodo_re = re.compile(r'\[(.)\]')
+        checktodo_re = re.compile(r'\[([ x])\]')
 
         # To be more github compatible, if in a list all elements begins with `[ ]``
         # transform it to normal `[ ]` evernote elements
@@ -142,18 +146,18 @@ class Editor(object):
                 for task in tasks: ul.insert_after(task)
                 ul.extract()
 
-        # For the rest of elements just replace `[ ]` with the appropriate element
-        for todo in soup.find_all(text=checktodo_re):
-            str_re = re.match(r'(.*)\[(.)\](.*)',todo)
-            pre = str_re.group(1)
-            post = str_re.group(3)
-
-            todo_tag = soup.new_tag('en-todo')
-            if str_re.group(2) == "x": todo_tag['checked']="true"
-
-            todo.replace_with(todo_tag)
-            todo_tag.insert_before(pre)
-            todo_tag.insert_after(post)
+#        # For the rest of elements just replace `[ ]` with the appropriate element
+#        for todo in soup.find_all(text=checktodo_re):
+#            str_re = re.match(r'(.*)\[(.)\](.*)',todo)
+#            pre = str_re.group(1)
+#            post = str_re.group(3)
+#
+#            todo_tag = soup.new_tag('en-todo')
+#            if str_re.group(2) == "x": todo_tag['checked']="true"
+#
+#            todo.replace_with(todo_tag)
+#            todo_tag.insert_before(pre)
+#            todo_tag.insert_after(post)
 
 
     @staticmethod
@@ -168,6 +172,7 @@ class Editor(object):
             # add 2 space before new line in paragraph for creating br tags
             content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
             if format=='markdown':
+              content = Editor.HTMLEscapeTag(content)
               contentHTML = markdown.markdown(content)
 
               soup = BeautifulSoup(contentHTML, 'html.parser')
@@ -180,7 +185,7 @@ class Editor(object):
             # perform any parsing/mutation.
             #
             elif format=='pre':
-              contentHTML = u''.join(('<pre>', content, '</pre>')).encode("utf-8")
+              contentHTML = u''.join(('<pre>', Editor.HTMLEscapeTag(content), '</pre>')).encode("utf-8")
             else:
               contentHTML = Editor.HTMLEscape(content)
 

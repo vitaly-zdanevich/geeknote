@@ -8,7 +8,6 @@ import datetime
 import sys
 
 import tools
-from editor import Editor
 import config
 
 
@@ -177,10 +176,12 @@ def showNote(note):
     if note.tagNames:
         printLine("Tags: %s" % ', '.join(note.tagNames))
 
+    from editor import Editor
     printLine(Editor.ENMLtoText(note.content))
 
 @preloaderStop
 def showNoteRaw(note):
+    from editor import Editor
     printLine(Editor.ENMLtoText(note.content, 'pre'))
 
 @preloaderStop

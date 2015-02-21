@@ -16,9 +16,11 @@ import evernote.edam.notestore.NoteStore as NoteStore
 import evernote.edam.error.ttypes as Errors
 import evernote.edam.type.ttypes as Types
 
+import traceback
 import config
 import tools
 import out
+import hashlib
 from editor import Editor, EditorThread
 from gclient import GUserStore as UserStore
 from argparser import argparser
@@ -68,7 +70,6 @@ class GeekNote(object):
                 return func(*args, **kwargs)
             except Exception, e:
                 logging.error("Error: %s : %s", func.__name__, str(e))
-
                 if not hasattr(e, 'errorCode'):
                     out.failureMessage("Sorry, operation has failed!!!.")
                     tools.exitErr()
@@ -95,6 +96,7 @@ class GeekNote(object):
                     tools.exitErr()
 
                 else:
+                    print e
                     return False
 
                 tools.exitErr()
