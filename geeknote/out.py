@@ -286,12 +286,12 @@ def printDate(timestamp):
     # Check for crashing when timestamp is 13 digits on python2.7
     # pull request #260
 
-    if len(str(timestamp)) == 13:
-        timestamp = int(str(timestamp)[0:-3])
+    #    if len(str(timestamp)) == 13:
+    #        timestamp = int(str(timestamp)[0:-3])
 
     # ---
 
-    return datetime.date.strftime(datetime.date.fromtimestamp(timestamp / 1000), config.DEF_DATE_FORMAT)
+    return datetime.datetime.fromtimestamp(timestamp/1000).strftime(config.DEF_DATE_FORMAT)
 
 
 def printLine(line, endLine="\n", out=sys.stdout):
