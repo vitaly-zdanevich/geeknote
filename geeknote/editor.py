@@ -77,7 +77,6 @@ class Editor(object):
 
     @staticmethod
     def ENMLtoText(contentENML, format='default'):
-        html2text.BODY_WIDTH = 0
         soup = BeautifulSoup(contentENML.decode('utf-8'))
 
         if format == 'pre':
@@ -120,7 +119,7 @@ class Editor(object):
 #       content = html2text.html2text(soup.prettify())
 #       content = html2text.html2text(str(soup))
 #       content = html2text.html2text(unicode(soup))
-        content = html2text.html2text(str(soup).decode('utf-8'))
+        content = html2text.html2text(str(soup).decode('utf-8'), '', 0)
 
         content = re.sub(r' *\n', os.linesep, content)
 
@@ -183,7 +182,6 @@ class Editor(object):
     def textToENML(content, raise_ex=False, format='markdown'):
         """
         Create an ENML format of note.
-        TODO: add media support
         """
         if not isinstance(content, str):
             content = ""

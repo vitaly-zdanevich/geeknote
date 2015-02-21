@@ -241,7 +241,7 @@ def printList(listItems, title="", showSelector=False,
         printLine("%s : %s%s%s%s" % (
             str(key).rjust(3, " "),
             printDate(item.created).ljust(18, " ") if hasattr(item, 'created') else '',
-	    printDate(item.updated).ljust(18, " ") if hasattr(item, 'updated') else '',
+            printDate(item.updated).ljust(18, " ") if hasattr(item, 'updated') else '',
             item.title if hasattr(item, 'title') else item.name,
             " " + (">>> " + config.NOTE_URL % item.guid) if showUrl else '',))
 
@@ -277,7 +277,16 @@ def rawInput(message, isPass=False):
 
 
 def printDate(timestamp):
-    return datetime.datetime.fromtimestamp(timestamp/1000).strftime(config.DEF_DATE_FORMAT)
+    # Author @ash-2000 https://github.com/ash-2000
+    # Check for crashing when timestamp is 13 digits on python2.7
+    # pull request #260
+
+    if len(str(timestamp)) == 13:
+        timestamp = int(str(timestamp)[0:-3])
+
+    # ---
+
+    return datetime.date.strftime(datetime.date.fromtimestamp(timestamp / 1000), config.DEF_DATE_FORMAT)
 
 
 def printLine(line, endLine="\n", out=sys.stdout):
