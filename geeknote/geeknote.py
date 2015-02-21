@@ -1056,6 +1056,8 @@ class Notes(GeekNoteConnector):
 
 
 def main(args=None):
+    os.environ['TMP'] = '/tmp'
+    os.environ['TEMP'] = '/tmp'
     try:
         exit_status_code = 0
 

@@ -95,6 +95,12 @@ class Editor(object):
                 format = 'default'
 
         if format == 'default':
+            # In ENML, each line in paragraph have <div> tag.
+            for section in soup.find_all('div'):
+                if not section.br:
+                    section.append(soup.new_tag("br"))
+                section.unwrap()
+
             for section in soup.select('li > p'):
                 section.replace_with(section.contents[0])
 
@@ -121,7 +127,7 @@ class Editor(object):
         content = html2text.html2text(str(soup).decode('utf-8'), '', 0)
 
         content = re.sub(r' *\n', os.linesep, content)
-
+        content = content.replace(unichr(160), " ")
         return content.encode('utf-8')
 
     @staticmethod
@@ -191,7 +197,9 @@ class Editor(object):
         try:
             content = unicode(content, "utf-8")
             # add 2 space before new line in paragraph for creating br tags
-            content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
+            #content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
+            content = re.sub(r'\r\n', '\n', content)
+
             if format == 'markdown':
                 contentHTML = markdown.markdown(content, extras=['markdown.extensions.extra'])
 
@@ -227,6 +235,15 @@ class Editor(object):
                 contentHTML = str(soup)
             else:
                 contentHTML = Editor.HTMLEscape(content)
+
+                tmpstr = ''
+                for l in contentHTML.split('\n'):
+                    if l == '':
+                        tmpstr = tmpstr + u'<div><br/></div>'
+                    else:
+                        tmpstr = tmpstr + u'<div>' + l + u'</div>'
+
+                contentHTML = tmpstr.encode("utf-8")
 
             contentHTML = contentHTML.replace('[x]', '<en-todo checked="true"></en-todo>')
             contentHTML = contentHTML.replace('[ ]', '<en-todo></en-todo>')
