@@ -16,7 +16,6 @@ Line 1
 _Line 2_
 
 **Line 3**
-
 """
         self.HTML_TEXT = "<h1>Header 1</h1><h2>Header 2</h2><p>Line 1</p><p>"\
                          "<em>Line 2</em></p><p><strong>Line 3</strong></p>"
@@ -28,6 +27,20 @@ _Line 2_
     def test_ENMLToText(self):
         wrapped = Editor.wrapENML(self.HTML_TEXT)
         self.assertEqual(Editor.ENMLtoText(wrapped), self.MD_TEXT)
+
+    def test_htmlEscape(self):
+        wrapped = Editor.textToENML(content="<what ever>", format="markdown")
+        self.assertEqual(wrapped, """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
+<en-note><p>&lt;what ever&gt;</p>
+</en-note>""")
+
+    def test_not_checklist(self):
+        wrapped = Editor.textToENML(content=" Item head[0]; ", format="markdown")
+        self.assertEqual(wrapped, """<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
+<en-note><p>Item head[0]; </p>
+</en-note>""")
 
     def test_wrapENML_success(self):
         text = "test"

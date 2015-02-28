@@ -15,6 +15,7 @@ import evernote.edam.notestore.NoteStore as NoteStore
 from evernote.edam.notestore.ttypes import NotesMetadataResultSpec
 import evernote.edam.type.ttypes as Types
 
+import traceback
 import config
 import hashlib
 import tools
@@ -126,6 +127,7 @@ class GeekNote(object):
                     tools.exitErr()
 
                 else:
+                    print e
                     return False
 
                 tools.exitErr()

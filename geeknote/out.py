@@ -8,7 +8,6 @@ import datetime
 import sys
 
 import tools
-from editor import Editor
 import config
 
 
@@ -181,11 +180,13 @@ def showNote(note):
     if note.tagNames:
         printLine("Tags: %s" % ', '.join(note.tagNames))
 
+    from editor import Editor
     printLine(Editor.ENMLtoText(note.content))
 
 
 @preloaderStop
 def showNoteRaw(note):
+    from editor import Editor
     printLine(Editor.ENMLtoText(note.content, 'pre'))
 
 
@@ -291,7 +292,7 @@ def printDate(timestamp):
 
     # ---
 
-    return datetime.datetime.fromtimestamp(timestamp/1000).strftime(config.DEF_DATE_FORMAT)
+    return datetime.datetime.fromtimestamp(timestamp / 1000).strftime(config.DEF_DATE_FORMAT)
 
 
 def printLine(line, endLine="\n", out=sys.stdout):
