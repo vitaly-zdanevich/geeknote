@@ -19,6 +19,3 @@ geeknote_comp=( ${(z)"$(_call_program geeknote geeknote autocomplete $words[2,-1
 _describe 'geeknote' geeknote_comp && ret=0
 
 return ret
-
-
-
