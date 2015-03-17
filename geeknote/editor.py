@@ -320,3 +320,6 @@ class Editor(object):
         newContent = open(self.tempfile, 'r').read()
 
         return newContent
+
+    def deleteTempfile(self):
+        os.remove(self.tempfile)
