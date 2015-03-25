@@ -236,7 +236,7 @@ class GeekNote(object):
 
         note.content = self.getNoteStore().getNoteContent(self.authToken, note.guid)
         # fill the tags in
-        if note.tagGuids and not note.tagNames:
+        if note.tagGuids and not getattr(note, 'tagNames', None):
             note.tagNames = []
             for guid in note.tagGuids:
                 tag = self.getNoteStore().getTag(self.authToken, guid)
