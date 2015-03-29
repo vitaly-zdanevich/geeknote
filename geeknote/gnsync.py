@@ -73,6 +73,9 @@ def reset_logpath(logpath):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
+def all_notebooks():
+    geeknote = GeekNote()
+    return [notebook.name for notebook in geeknote.findNotebooks()]
 
 def all_notebooks():
     geeknote = GeekNote()
@@ -85,12 +88,13 @@ class GNSync:
     path = None
     mask = None
     twoway = None
+    download_only = None
 
     notebook_guid = None
     all_set = False
 
     @log
-    def __init__(self, notebook_name, path, mask, format, twoway=False):
+    def __init__(self, notebook_name, path, mask, format, twoway=False, download_only=False):
         # check auth
         if not Storage().getUserToken():
             raise Exception("Auth error. There is not any oAuthToken.")
@@ -124,6 +128,7 @@ class GNSync:
             self.extension = ".txt"
 
         self.twoway = twoway
+        self.download_only = download_only
 
         logger.info('Sync Start')
 
@@ -147,43 +152,44 @@ class GNSync:
         files = self._get_files()
         notes = self._get_notes()
 
-        for f in files:
-            has_note = False
-            meta = self._parse_meta(self._get_file_content(f['path']))
-            title = f['name'] if 'title' not in meta else meta['title'].strip()
-            tags = None if 'tags' not in meta else meta['tags'] \
-                .replace('[', '').replace(']', '').split(',')
-            tags = None if not tags else map(lambda x: x.strip(), tags)
-            meta['tags'] = tags
-            meta['title'] = title
-            note = None
+        if not self.download_only:
+            for f in files:
+                has_note = False
+                meta = self._parse_meta(self._get_file_content(f['path']))
+                title = f['name'] if 'title' not in meta else meta['title'].strip()
+                tags = None if 'tags' not in meta else meta['tags'] \
+                    .replace('[', '').replace(']', '').split(',')
+                tags = None if not tags else map(lambda x: x.strip(), tags)
+                meta['tags'] = tags
+                meta['title'] = title
+                note = None
 
-            if self.format == 'html':
-                meta['mtime'] = f['mtime']
-                note = self._html2note(meta)
-
-            for n in notes:
-                if title == n.title:
-                    has_note = True
-                    if f['mtime'] > n.updated:
-                        if self.format == 'html':
-                            gn = GeekNote()
-                            note.guid = n.guid
-                            gn.getNoteStore().updateNote(gn.authToken, note)
-                            logger.info('Note "{0}" was updated'.format(note.title))
-                        else:
-                            self._update_note(f, n, title, meta['content'], tags)
-                        break
-
-            if not has_note:
                 if self.format == 'html':
-                    gn = GeekNote()
-                    gn.getNoteStore().createNote(gn.authToken, note)
-                    logger.info('Note "{0}" was created'.format(note.title))
-                else:
-                    self._create_note(f, title, meta['content'], tags)
+                    meta['mtime'] = f['mtime']
+                    note = self._html2note(meta)
 
-        if self.twoway:
+                for n in notes:
+                    if title == n.title:
+                        has_note = True
+                        if f['mtime'] > n.updated:
+                            if self.format == 'html':
+                                gn = GeekNote()
+                                note.guid = n.guid
+                                gn.getNoteStore().updateNote(gn.authToken, note)
+                                logger.info('Note "{0}" was updated'.format(note.title))
+                            else:
+                                self._update_note(f, n, title, meta['content'], tags)
+                            break
+
+                if not has_note:
+                    if self.format == 'html':
+                        gn = GeekNote()
+                        gn.getNoteStore().createNote(gn.authToken, note)
+                        logger.info('Note "{0}" was created'.format(note.title))
+                    else:
+                        self._create_note(f, title, meta['content'], tags)
+
+        if self.twoway or self.download_only:
             for n in notes:
                 has_file = False
                 for f in files:
@@ -192,6 +198,7 @@ class GNSync:
                         if f['mtime'] < n.updated:
                             self._update_file(f, n)
                             break
+                        os.utime(f, (n.updated, n.updated))
 
                 if not has_file:
                     self._create_file(n)
@@ -418,9 +425,10 @@ def main():
         parser.add_argument('--mask', '-m', action='store', help='Mask of files to synchronize. Default is "*.*"')
         parser.add_argument('--format', '-f', action='store', default='plain', choices=['plain', 'markdown', 'html'], help='The format of the file contents. Default is "plain". Valid values are "plain" "html" and "markdown"')
         parser.add_argument('--notebook', '-n', action='store', help='Notebook name for synchronize. Default is default notebook unless all is selected')
-        parser.add_argument('--logpath', '-l', action='store', help='Path to log file. Default is GeekNoteSync in home dir')
-        parser.add_argument('--two-way', '-t', action='store_true', help='Two-way sync', default=False)
         parser.add_argument('--all', '-a', action='store_true', help='Synchronize all notebooks', default=False)
+        parser.add_argument('--logpath', '-l', action='store', help='Path to log file. Default is GeekNoteSync in home dir')
+        parser.add_argument('--two-way', '-t', action='store_true', help='Two-way sync (also download from evernote)', default=False)
+        parser.add_argument('--download-only', action='store_true', help='Only download from evernote; no upload', default=False)
 
         args = parser.parse_args()
 
@@ -430,18 +438,20 @@ def main():
         notebook = args.notebook if args.notebook else None
         logpath = args.logpath if args.logpath else None
         twoway = args.two_way
+        download_only = args.download_only
 
         reset_logpath(logpath)
 
         if args.all:
             for notebook in all_notebooks():
+                logger.info("Syncing notebook %s", notebook)
                 notebook_path = os.path.join(path, notebook)
                 if not os.path.exists(notebook_path):
                     os.mkdir(notebook_path)
-                GNS = GNSync(notebook, notebook_path, mask, format, twoway)
+                GNS = GNSync(notebook, notebook_path, mask, format, twoway, download_only)
                 GNS.sync()
         else:
-            GNS = GNSync(notebook, path, mask, format, twoway)
+            GNS = GNSync(notebook, path, mask, format, twoway, download_only)
             GNS.sync()
 
     except (KeyboardInterrupt, SystemExit, tools.ExitException):
