@@ -5,7 +5,6 @@ import traceback
 import time
 import sys
 import os
-import re
 import mimetypes
 import hashlib
 
@@ -14,7 +13,6 @@ import thrift.transport.THttpClient as THttpClient
 
 import evernote.edam.userstore.constants as UserStoreConstants
 import evernote.edam.notestore.NoteStore as NoteStore
-import evernote.edam.error.ttypes as Errors
 import evernote.edam.type.ttypes as Types
 
 import config
