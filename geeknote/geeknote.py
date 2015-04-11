@@ -172,7 +172,23 @@ class GeekNote(object):
 
         if keywords:
             noteFilter.words = keywords
-        return self.getNoteStore().findNotes(self.authToken, noteFilter, offset, count)
+        result = self.getNoteStore().findNotes(self.authToken, noteFilter, offset, count)
+
+        # Reduces the count by the amount of notes already retrieved
+        update_count = lambda c: max(c - len(result.notes), 0)
+
+        count = update_count(count)
+
+        # Evernote api will only return so many notes in one go. Checks for more
+        # notes to come whilst obeying count rules
+        while ((result.totalNotes != len(result.notes)) and count != 0):
+            offset = len(result.notes)
+            result.notes += self.getNoteStore().findNotes(self.authToken, noteFilter, offset,
+                count).notes
+
+            count = update_count(count)
+
+        return result
 
     @EdamException
     def loadNoteContent(self, note):
@@ -783,19 +799,6 @@ class Notes(GeekNoteConnector):
 
         createFilter = True if search == "*" else False
         result = self.getEvernote().findNotes(request, count, createFilter)
-
-        # Reduces the count by the amount of notes already retrieved
-        update_count = lambda c: max(c - len(result.notes), 0)
-
-        count = update_count(count)
-
-        # Evernote api will only return so many notes in one go. Checks for more
-        # notes to come whilst obeying count rules
-        while ((result.totalNotes != len(result.notes)) and count != 0):
-            offset = len(result.notes)
-            result.notes += self.getEvernote().findNotes(request, count,
-                    createFilter, offset).notes
-            count = update_count(count)
 
         if result.totalNotes == 0:
             out.failureMessage("Notes have not been found.")
