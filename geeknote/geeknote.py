@@ -240,7 +240,10 @@ class GeekNote(object):
 
         note = Types.Note()
         note.title = title
-        note.content = content
+        try:
+            note.content = content.encode('utf-8')
+        except UnicodeDecodeError:
+            note.content = content
         note.created = created
 
         if tags:
@@ -274,7 +277,10 @@ class GeekNote(object):
             note.title = title
 
         if content:
-            note.content = content
+            try:
+                note.content = content.encode('utf-8')
+            except UnicodeDecodeError:
+                note.content = content
 
         if tags:
             note.tagNames = tags
