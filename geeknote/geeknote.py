@@ -592,11 +592,12 @@ class Notes(GeekNoteConnector):
         self.selectFirstOnUpdate = bool(selectFirstOnUpdate)
 
     def _editWithEditorInThread(self, inputData, note = None):
+        editor_userprop = self.storage.getUserprop('editor')
         if note:
             self.getEvernote().loadNoteContent(note)
-            editor = Editor(note.content)
+            editor = Editor(editor_userprop, note.content)
         else:
-            editor = Editor('')
+            editor = Editor(editor_userprop, '')
         thread = EditorThread(editor)
         thread.start()
 

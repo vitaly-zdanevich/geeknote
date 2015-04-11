@@ -12,7 +12,6 @@ import tools
 import out
 import re
 import config
-from storage import Storage
 from log import logging
 from xml.sax.saxutils import escape, unescape
 
@@ -201,7 +200,7 @@ class Editor(object):
                                "Content must be an UTF-8 encode.")
             return tools.exitErr()
 
-    def __init__(self, content):
+    def __init__(self, editor, content):
         if not isinstance(content, str):
             raise Exception("Note content must be an instance "
                             "of string, '%s' given." % type(content))
@@ -212,6 +211,7 @@ class Editor(object):
 
         self.content = content
         self.tempfile = tempfileName
+        self.editor = editor
 
     def getTempfileChecksum(self):
         with open(self.tempfile, 'rb') as fileHandler:
@@ -232,9 +232,7 @@ class Editor(object):
         """
 
         # Try to find default editor in the system.
-        storage = Storage()
-        editor = storage.getUserprop('editor')
-
+        editor = self.editor
         if not editor:
             editor = os.environ.get("editor")
 
