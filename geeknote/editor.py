@@ -99,6 +99,7 @@ class Editor(object):
 
         content = html2text.html2text(str(soup).decode('utf-8'), '', 0)
         content = re.sub(r' *\n', os.linesep, content)
+        content = Editor.HTMLUnescape(content)
 
         return content.encode('utf-8')
 
