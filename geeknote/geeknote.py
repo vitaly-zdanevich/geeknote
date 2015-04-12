@@ -15,7 +15,6 @@ import evernote.edam.notestore.NoteStore as NoteStore
 from evernote.edam.notestore.ttypes import NotesMetadataResultSpec
 import evernote.edam.type.ttypes as Types
 
-import traceback
 import config
 import hashlib
 import tools
@@ -225,7 +224,19 @@ class GeekNote(object):
         meta.includeAttributes = True
         meta.includeTagGuids = True
 
-        return self.getNoteStore().findNotesMetadata(self.authToken, noteFilter, offset, count, meta)
+        result = self.getNoteStore().findNotesMetadata(self.authToken, noteFilter, offset, count, meta)
+
+        # Reduces the count by the amount of notes already retrieved
+        count = max(count - len(result.notes), 0)
+
+        # Evernote api will only return so many notes in one go. Checks for more
+        # notes to come whilst obeying count rules
+        while ((result.totalNotes != len(result.notes)) and count != 0):
+            offset = len(result.notes)
+            result.notes += self.getNoteStore().findNotesMetadata(self.authToken, noteFilter, offset, count, meta).notes
+            count = max(count - len(result.notes), 0)
+
+        return result
 
     @EdamException
     def loadNoteContent(self, note):
@@ -246,7 +257,10 @@ class GeekNote(object):
     def createNote(self, title, content, tags=None, notebook=None, created=None, resources=None, reminder=None):
         note = Types.Note()
         note.title = title
-        note.content = content
+        try:
+            note.content = content.encode('utf-8')
+        except UnicodeDecodeError:
+            note.content = content
         note.created = created
 
         if tags:
@@ -298,7 +312,10 @@ class GeekNote(object):
             note.title = title
 
         if content:
-            note.content = content
+            try:
+                note.content = content.encode('utf-8')
+            except UnicodeDecodeError:
+                note.content = content
 
         if tags:
             note.tagNames = tags
@@ -687,11 +704,13 @@ class Notes(GeekNoteConnector):
         self.selectFirstOnUpdate = bool(selectFirstOnUpdate)
 
     def _editWithEditorInThread(self, inputData, note=None, raw=None):
+        editor_userprop = self.storage.getUserprop('editor')
+        noteExtension = self.storage.getUserprop('note_ext')
         if note:
             self.getEvernote().loadNoteContent(note)
-            editor = Editor(note.content, raw)
+            editor = Editor(editor_userprop, note.content, noteExtension, raw)
         else:
-            editor = Editor('', raw)
+            editor = Editor(editor_userprop, '', noteExtension, raw)
         thread = EditorThread(editor)
         thread.start()
 
@@ -912,17 +931,6 @@ class Notes(GeekNoteConnector):
 
         createFilter = True if search == "*" else False
         result = self.getEvernote().findNotes(request, count, createFilter)
-
-        # Reduces the count by the amount of notes already retrieved
-        count = max(count - len(result.notes), 0)
-
-        # Evernote api will only return so many notes in one go. Checks for more
-        # notes to come whilst obeying count rules
-        while ((result.totalNotes != len(result.notes)) and count != 0):
-            offset = len(result.notes)
-            result.notes += self.getEvernote().findNotes(request, count,
-                                                         createFilter, offset).notes
-            count = max(count - len(result.notes), 0)
 
         if result.totalNotes == 0:
             out.failureMessage("Notes have not been found.")

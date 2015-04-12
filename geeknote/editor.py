@@ -12,7 +12,6 @@ import tools
 import out
 import re
 import config
-from storage import Storage
 from log import logging
 from xml.sax.saxutils import escape, unescape
 
@@ -128,6 +127,8 @@ class Editor(object):
 
         content = re.sub(r' *\n', os.linesep, content)
         content = content.replace(unichr(160), " ")
+        content = Editor.HTMLUnescape(content)
+
         return content.encode('utf-8')
 
     @staticmethod
@@ -261,12 +262,11 @@ class Editor(object):
                                "Content must be an UTF-8 encode.")
             return tools.exitErr()
 
-    def __init__(self, content, raw=False):
+    def __init__(self, editor, content, noteExtension, raw=False):
         if not isinstance(content, str):
             raise Exception("Note content must be an instance "
                             "of string, '%s' given." % type(content))
 
-        noteExtension = Storage().getUserprop('note_ext')
         if not noteExtension:
             noteExtension = config.DEF_NOTE_EXT
         (tempfileHandler, tempfileName) = tempfile.mkstemp(suffix=noteExtension)
@@ -275,6 +275,7 @@ class Editor(object):
 
         self.content = content
         self.tempfile = tempfileName
+        self.editor = editor
 
     def getTempfileChecksum(self):
         with open(self.tempfile, 'rb') as fileHandler:
@@ -295,9 +296,7 @@ class Editor(object):
         """
 
         # Try to find default editor in the system.
-        storage = Storage()
-        editor = storage.getUserprop('editor')
-
+        editor = self.editor
         if not editor:
             editor = os.environ.get("editor")
 
