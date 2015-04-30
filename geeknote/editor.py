@@ -201,7 +201,7 @@ class Editor(object):
             content = re.sub(r'\r\n', '\n', content)
 
             if format == 'markdown':
-                contentHTML = markdown.markdown(content, extras=['markdown.extensions.extra'])
+                contentHTML = markdown.markdown(content, extras=['markdown.extensions.extra', 'markdown.extensions.tables'])
 
                 soup = BeautifulSoup(contentHTML, 'html.parser')
                 Editor.checklistInSoupToENML(soup)
