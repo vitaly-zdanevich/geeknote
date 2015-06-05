@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import codecs
 import os
 import argparse
 import glob
@@ -235,12 +236,13 @@ class GNSync:
         """
         Get file content.
         """
-        content = open(path, "r").read()
+        with codecs.open(path, 'r', encoding='utf-8') as f:
+            content = f.read()
 
         # strip unprintable characters
-        content = remove_control_characters(content.decode('utf-8')).encode('utf-8')
+        content = content.encode('ascii', errors='xmlcharrefreplace')
         content = Editor.textToENML(content=content, raise_ex=True, format=self.format)
-        
+
         if content is None:
             logger.warning("File {0}. Content must be " \
                            "an UTF-8 encode.".format(path))
