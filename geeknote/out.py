@@ -283,19 +283,14 @@ def rawInput(message, isPass=False):
 
 
 def printDate(timestamp):
-    # Author @ash-2000 https://github.com/ash-2000
-    # Check for crashing when timestamp is 13 digits on python2.7
-    # pull request #260
-
-    #    if len(str(timestamp)) == 13:
-    #        timestamp = int(str(timestamp)[0:-3])
-
-    # ---
-
     return datetime.datetime.fromtimestamp(timestamp / 1000).strftime(config.DEF_DATE_FORMAT)
 
 
-def printLine(line, endLine="\n", out=sys.stdout):
+def printLine(line, endLine="\n", out=None):
+    # "out = sys.stdout" makes it hard to mock
+    if out is None:
+        out = sys.stdout
+
     message = line + endLine
     message = tools.stdoutEncode(message)
     try:
