@@ -80,12 +80,13 @@ class GNSync:
     path = None
     mask = None
     twoway = None
+    nodownsync = None
 
     notebook_guid = None
     all_set = False
 
     @log
-    def __init__(self, notebook_name, path, mask, format, twoway=False):
+    def __init__(self, notebook_name, path, mask, format, twoway=False, nodownsync=False):
         # check auth
         if not Storage().getUserToken():
             raise Exception("Auth error. There is not any oAuthToken.")
@@ -117,6 +118,7 @@ class GNSync:
             self.extension = ".txt"
 
         self.twoway = twoway
+        self.nodownsync = nodownsync
 
         logger.info('Sync Start')
 
@@ -160,8 +162,9 @@ class GNSync:
                             self._update_file(f, n)
                             break
 
-                if not has_file:
-                    self._create_file(n)
+                if !self.nodownsync
+                    if not has_file:
+                        self._create_file(n)
 
         logger.info('Sync Complete')
 
@@ -316,6 +319,7 @@ def main():
         parser.add_argument('--notebook', '-n', action='store', help='Notebook name for synchronize. Default is default notebook')
         parser.add_argument('--logpath', '-l', action='store', help='Path to log file. Default is GeekNoteSync in home dir')
         parser.add_argument('--two-way', '-t', action='store', help='Two-way sync')
+        parser.add_argument('--nodownsync', '-d', action='store', help='Sync from Evernote only if the file is already local.')
 
         args = parser.parse_args()
 
@@ -325,10 +329,11 @@ def main():
         notebook = args.notebook if args.notebook else None
         logpath = args.logpath if args.logpath else None
         twoway = True if args.two_way else False
+        nodownsync = True if args.nodownsync else False
 
         reset_logpath(logpath)
 
-        GNS = GNSync(notebook, path, mask, format, twoway)
+        GNS = GNSync(notebook, path, mask, format, twoway, nodownsync)
         GNS.sync()
 
     except (KeyboardInterrupt, SystemExit, tools.ExitException):
