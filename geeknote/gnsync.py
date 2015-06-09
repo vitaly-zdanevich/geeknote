@@ -162,7 +162,7 @@ class GNSync:
                             self._update_file(f, n)
                             break
 
-                if !self.nodownsync
+                if not self.nodownsync:
                     if not has_file:
                         self._create_file(n)
 
