@@ -12,6 +12,7 @@ import tools
 import out
 import re
 import config
+from storage import Storage
 from log import logging
 from xml.sax.saxutils import escape, unescape
 
@@ -201,7 +202,10 @@ class Editor(object):
             content = re.sub(r'\r\n', '\n', content)
 
             if format == 'markdown':
-                contentHTML = markdown.markdown(content, extras=['markdown.extensions.extra', 'markdown.extensions.tables'])
+                storage = Storage()
+                extras = storage.getUserprop('markdown2_extras')
+
+                contentHTML = markdown.markdown(content, extras=extras)
 
                 soup = BeautifulSoup(contentHTML, 'html.parser')
                 Editor.checklistInSoupToENML(soup)
