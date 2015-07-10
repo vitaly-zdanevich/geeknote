@@ -12,6 +12,7 @@ import binascii
 import mimetypes
 
 import evernote.edam.type.ttypes as Types
+from evernote.edam.limits.constants import EDAM_USER_NOTES_MAX
 from bs4 import BeautifulSoup
 
 from geeknote import GeekNote
@@ -420,7 +421,7 @@ class GNSync:
         Get notes from evernote.
         """
         keywords = 'notebook:"{0}"'.format(tools.strip(self.notebook_name))
-        return GeekNote().findNotes(keywords, 10000).notes
+        return GeekNote().findNotes(keywords, EDAM_USER_NOTES_MAX).notes
 
 
 def main():
