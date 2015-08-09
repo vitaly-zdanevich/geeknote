@@ -76,7 +76,7 @@ class Editor(object):
 
     @staticmethod
     def ENMLtoText(contentENML, format='default'):
-        soup = BeautifulSoup(contentENML.decode('utf-8'))
+        soup = BeautifulSoup(contentENML.decode('utf-8'), 'html.parser')
 
         if format == 'pre':
             #
