@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
@@ -807,6 +808,10 @@ class Notes(GeekNoteConnector):
 
         self.connectToEvertone()
         note = self._searchNote(note)
+        if note:
+            out.preloader.setMessage("Loading note...")
+            self.getEvernote().loadNoteContent(note)
+            out.showNote(note)
 
         if not force and not out.confirm('Are you sure you want to '
                                          'delete this note: "%s"?' % note.title):
