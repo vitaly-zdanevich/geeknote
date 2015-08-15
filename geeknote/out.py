@@ -283,6 +283,7 @@ def rawInput(message, isPass=False):
 
 
 def printDate(timestamp):
+    # return datetime.date.strftime(datetime.date.fromtimestamp(timestamp / 1000), "%Y-%m-%d")
     return datetime.datetime.fromtimestamp(timestamp / 1000).strftime(config.DEF_DATE_FORMAT)
 
 
