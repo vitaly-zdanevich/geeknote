@@ -274,7 +274,17 @@ def rawInput(message, isPass=False):
 
 
 def printDate(timestamp):
-    return datetime.date.strftime(datetime.date.fromtimestamp(timestamp), "%d.%m.%Y")
+
+    # Author @ash-2000 https://github.com/ash-2000
+    # Check for crashing when timestamp is 13 digits on python2.7
+    # pull request #260
+    
+    if len(str(timestamp)) == 13:
+        timestamp = int(str(timestamp)[0:-3])
+
+    # ---
+    
+    return datetime.date.strftime(datetime.date.fromtimestamp(timestamp / 1000), "%d.%m.%Y")
 
 def printLine(line, endLine="\n", out=sys.stdout):
     message = line + endLine
