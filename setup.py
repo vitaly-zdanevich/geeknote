@@ -39,8 +39,8 @@ class full_install(install):
     user_options = install.user_options + [
         ('userhome=', None,
          "(Linux only) Set user home directory for"
-         " bash completion (/home/{0})"
-         .format(getpass.getuser()))
+         " bash completion ({0})"
+         .format(os.path.expanduser('~')))
     ]
 
     def initialize_options(self):
@@ -56,7 +56,7 @@ class full_install(install):
         if self.userhome:
             self.userhome = '{0}/.bash_completion'.format(self.userhome)
         else:
-            self.userhome = '/home/{0}/.bash_completion'.format(getpass.getuser())
+            self.userhome = '{0}/.bash_completion'.format(os.path.expanduser('~'))
 
         if not os.path.exists(self.userhome) or \
            BASH_COMPLETION not in open(self.userhome, 'r').read():
