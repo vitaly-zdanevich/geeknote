@@ -30,9 +30,12 @@ You can install Geeknote as a python script.
 
     $ cd geeknote
 
-    # Configuration
-    #   For Yinxiang 印象笔记, set USE_YINZIANG to True in geeknote/config.py
+    # Optional configuration
+    #   For Yinxiang 印象笔记, set USE_YINXIANG to True in geeknote/config.py
     #   By default, the False setting will enable Evernote servers
+    #   If you want to temporarily switch between Yinxiang and standard Evernote,
+    #   you maybe wish instead to use the environment variable GEEKNOTE_BASE,
+    #   described below in "(Yinxiang Biji notes)"
 
     # Installation
     $ [sudo] python[2] setup.py install
@@ -64,6 +67,23 @@ If you want to change Evernote user you should launch *logout* command:
     $ geeknote logout
 
 Afterward, you can repeat the authorization step.
+
+### (Yinxiang Biji notes)
+
+If you want to use Evernote's separate service in China Yinxiang Biji (印象笔记),
+you need to set the environment variable `GEEKNOTE_BASE` to `yinxiang`.
+
+    $ GEEKNOTE_BASE=yinxiang geeknote login
+
+Yinxiang Biji (印象笔记) is faster in China and it supports Chinese payment method.
+Be aware that Yinxiang Biji will not have support for sharing social features
+like twitter and facebook. And since data are stored on servers in China,
+Chinese authorities have the right to access their data according to current
+regulations.
+
+For more information, see:
+
+https://blog.evernote.com/blog/2012/05/09/evernote-launches-separate-chinese-service/
 
 ### Examine your settings
 

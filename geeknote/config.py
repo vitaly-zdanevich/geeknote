@@ -3,14 +3,15 @@
 import os
 import sys
 
-USE_YINXIANG = False  # for 印象笔记, set to True
+ALWAYS_USE_YINXIANG = False  # for 印象笔记, set to True
+
 # !!! DO NOT EDIT !!! >>>
-if USE_YINXIANG:
+if ALWAYS_USE_YINXIANG or os.getenv("GEEKNOTE_BASE") == "yinxiang":
     USER_BASE_URL = "app.yinxiang.com"
-    USER_STORE_URI = "https://app.yinxiang.com/edam/user"
 else:
     USER_BASE_URL = "www.evernote.com"
-    USER_STORE_URI = "https://www.evernote.com/edam/user"
+
+USER_STORE_URI = "https://{}/edam/user".format(USER_BASE_URL)
 
 CONSUMER_KEY = "skaizer-5314"
 CONSUMER_SECRET = "6f4f9183b3120801"
