@@ -104,10 +104,9 @@ setup(
         ]
     },
     cmdclass={
-        'install': full_install
+        'install': full_install,
     },
     platforms='Any',
-    test_suite='tests',
     zip_safe=False,
     keywords='Evernote, console'
 )
