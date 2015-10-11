@@ -1,4 +1,4 @@
-geeknote for evernote (or 印象笔记)
+geeknote for evernote (or 印象笔记)  [![Build Status](https://travis-ci.org/jeffkowalski/geeknote.svg?branch=master)](https://travis-ci.org/jeffkowalski/geeknote)
 ==================================
 
 Geeknote is a command line client for Evernote that can be use on Linux, FreeBSD and OS X.
