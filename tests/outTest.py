@@ -22,7 +22,9 @@ class UserStub(object):
     accounting = AccountingStub()
 
 class AttributesStub(object):
-    pass
+    reminderOrder = None
+    reminderTime = None
+    reminderDoneTime = None
 
 class NoteStub(object):
     title = 'testnote'
@@ -107,7 +109,7 @@ Username         : testusername
 Name             : testname
 Email            : testemail
 Upload limit     : 0.00
-Upload limit end : 01.01.1970\n'''
+Upload limit end : 1970-01-01\n'''
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), info)
 
@@ -115,8 +117,10 @@ Upload limit end : 01.01.1970\n'''
         note = '''################## TITLE ##################
 testnote
 =================== META ==================
-Created: 01.01.1970     \nUpdated: 01.01.1970     \n'''\
-'''----------------- CONTENT -----------------
+Created: 1970-01-01     \nUpdated: 1970-01-01     \n'''\
+'''|||||||||||||||| REMINDERS ||||||||||||||||
+Order: None Time: None Done: None
+----------------- CONTENT -----------------
 Tags: tag1, tag2, tag3
 ##note content\n\n'''
         showNote(NoteStub())
@@ -124,27 +128,27 @@ Tags: tag1, tag2, tag3
         self.assertEquals(sys.stdout.read(), note)
 
     def test_print_list_without_title_success(self):
-        notes_list = '''Total found: 2
-  1 : 01.01.1970        testnote
-  2 : 01.01.1970        testnote\n'''
+        notes_list = '''Found 2 items
+  1 : 1970-01-01        1970-01-01        testnote
+  2 : 1970-01-01        1970-01-01        testnote\n'''
         printList([NoteStub() for _ in xrange(2)])
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), notes_list)
 
     def test_print_list_with_title_success(self):
         notes_list = '''=================== test ==================
-Total found: 2
-  1 : 01.01.1970        testnote
-  2 : 01.01.1970        testnote\n'''
+Found 2 items
+  1 : 1970-01-01        1970-01-01        testnote
+  2 : 1970-01-01        1970-01-01        testnote\n'''
         printList([NoteStub() for _ in xrange(2)], title='test')
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), notes_list)
 
     def test_print_list_with_urls_success(self):
         notes_list = '''=================== test ==================
-Total found: 2
-  1 : 01.01.1970        testnote >>> https://www.evernote.com/Home.action?#n=12345
-  2 : 01.01.1970        testnote >>> https://www.evernote.com/Home.action?#n=12345
+Found 2 items
+  1 : 1970-01-01        1970-01-01        testnote >>> https://www.evernote.com/Home.action?#n=12345
+  2 : 1970-01-01        1970-01-01        testnote >>> https://www.evernote.com/Home.action?#n=12345
 '''
         printList([NoteStub() for _ in xrange(2)], title='test', showUrl=True)
         sys.stdout.seek(0)
@@ -153,9 +157,9 @@ Total found: 2
     def test_print_list_with_selector_success(self):
         out.rawInput = lambda x: 2
         notes_list = '''=================== test ==================
-Total found: 2
-  1 : 01.01.1970        testnote
-  2 : 01.01.1970        testnote
+Found 2 items
+  1 : 1970-01-01        1970-01-01        testnote
+  2 : 1970-01-01        1970-01-01        testnote
   0 : -Cancel-\n'''
         out.printList([NoteStub() for _ in xrange(2)], title='test', showSelector=True)
         sys.stdout.seek(0)
@@ -163,12 +167,12 @@ Total found: 2
 
     def test_search_result_success(self):
         result = '''Search request: test
-Total found: 2
-  1 : 01.01.1970        testnote
-  2 : 01.01.1970        testnote\n'''
+Found 2 items
+  1 : 1970-01-01        1970-01-01        testnote
+  2 : 1970-01-01        1970-01-01        testnote\n'''
         SearchResult([NoteStub() for _ in xrange(2)], 'test')
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), result)
 
     def test_print_date(self):
-        self.assertEquals(printDate(1000000000), '12.01.1970')
+        self.assertEquals(printDate(1000000000), '1970-01-12')

@@ -15,7 +15,7 @@ class GeekNoteOver(GeekNote):
 
 
 class NotesOver(Notes):
-    def connectToEvertone(self):
+    def connectToEvernote(self):
         self.evernote = GeekNoteOver()
 
 
@@ -64,11 +64,11 @@ class testNotes(unittest.TestCase):
             search="test text",
             tags="tag1",
             notebooks="test notebook",
-            date="01.01.2000",
+            date="2000-01-01",
             exact_entry=True,
             content_search=True
         )
-        response = 'notebook:"test notebook" tag:"tag1" ' \
+        response = 'notebook:"test notebook" tag:tag1 ' \
                    'created:20000101 -created:20000102 "test text"'
         self.assertEqual(testRequest, response)
 
@@ -77,12 +77,12 @@ class testNotes(unittest.TestCase):
             search="test text",
             tags="tag1, tag2",
             notebooks="notebook1, notebook2",
-            date="31.12.1999-31.12.2000",
+            date="1999-12-31/2000-12-31",
             exact_entry=False,
             content_search=False
         )
-        response = 'notebook:"notebook1" notebook:"notebook2" tag:"tag1"' \
-                   ' tag:"tag2" created:19991231 -created:20010101 ' \
+        response = 'notebook:notebook1 notebook:notebook2 tag:tag1' \
+                   ' tag:tag2 created:19991231 -created:20010101 ' \
                    'intitle:test text'
         self.assertEqual(testRequest, response)
 
@@ -91,4 +91,4 @@ class testNotes(unittest.TestCase):
 
         with self.assertRaises(tools.ExitException):
             self.notes._createSearchRequest(search="test text",
-                                            date="12.31.1999")
+                                            date="12-31-1999")

@@ -259,7 +259,6 @@ class Editor(object):
             if raise_ex:
                 raise Exception("Error while parsing text to html."
                                 " Content must be an UTF-8 encode.")
-
             logging.error("Error while parsing text to html. "
                           "Content must be an UTF-8 encode.")
             out.failureMessage("Error while parsing text to html. "

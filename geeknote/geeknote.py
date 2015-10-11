@@ -6,6 +6,8 @@ import time
 import sys
 import os
 import mimetypes
+import hashlib
+import re
 
 import thrift.protocol.TBinaryProtocol as TBinaryProtocol
 import thrift.transport.THttpClient as THttpClient
@@ -16,7 +18,6 @@ from evernote.edam.notestore.ttypes import NotesMetadataResultSpec
 import evernote.edam.type.ttypes as Types
 
 import config
-import hashlib
 import tools
 import out
 from editor import Editor, EditorThread
@@ -449,7 +450,7 @@ class GeekNoteConnector(object):
     evernote = None
     storage = None
 
-    def connectToEvertone(self):
+    def connectToEvernote(self):
         out.preloader.setMessage("Connect to Evernote...")
         self.evernote = GeekNote()
 
@@ -457,7 +458,7 @@ class GeekNoteConnector(object):
         if self.evernote:
             return self.evernote
 
-        self.connectToEvertone()
+        self.connectToEvernote()
         return self.evernote
 
     def getStorage(self):
@@ -466,6 +467,31 @@ class GeekNoteConnector(object):
 
         self.storage = self.getEvernote().getStorage()
         return self.storage
+
+
+def getEditor(storage):
+    editor = None if storage is None else storage.getUserprop('editor')
+    if not editor:
+        editor = os.environ.get("editor")
+    if not editor:
+        editor = os.environ.get("EDITOR")
+    if not editor:
+        editor = config.DEF_WIN_EDITOR if sys.platform == 'win32' else config.DEF_UNIX_EDITOR
+    return editor
+
+
+def getExtras(storage):
+    extras = None if storage is None else storage.getUserprop('markdown2_extras')
+    if not extras:
+        extras = None
+    return extras
+
+
+def getNoteExt(storage):
+    note_ext = None if storage is None else storage.getUserprop('note_ext')
+    if not note_ext or not storage.getUserprop('note_ext'):
+        note_ext = config.DEF_NOTE_EXT
+    return note_ext
 
 
 class User(GeekNoteConnector):
@@ -517,45 +543,35 @@ class User(GeekNoteConnector):
 
         if editor:
             if editor == '#GET#':
-                editor = storage.getUserprop('editor')
-                if not editor:
-                    editor = os.environ.get("editor")
-                if not editor:
-                    editor = os.environ.get("EDITOR")
-                if not editor:
-                    editor = config.DEF_WIN_EDITOR if sys.platform == 'win32' else config.DEF_UNIX_EDITOR
-                out.successMessage("Current editor is: %s" % editor)
+                out.successMessage("Current editor is: %s" % getEditor(storage))
             else:
                 storage.setUserprop('editor', editor)
                 out.successMessage("Changes have been saved.")
         if extras:
             if extras == '#GET#':
-                extras = storage.getUserprop('markdown2_extras')
-                if not extras:
-                    extras = None
-                out.successMessage("Current markdown2 extras is : %s" % extras)
+                out.successMessage("Current markdown2 extras is : %s" % getExtras(storage))
             else:
                 storage.setUserprop('markdown2_extras', extras.split(','))
                 out.successMessage("Changes have been saved.")
         if note_ext:
             if note_ext == '#GET#':
-                note_ext = storage.getUserprop('note_ext')
-                if not note_ext or not storage.getUserprop('note_ext'):
-                    note_ext = config.DEF_NOTE_EXT
-                out.successMessage("Default note extension is: %s" % note_ext)
+                out.successMessage("Default note extension is: %s" % getNoteExt(storage))
             else:
                 storage.setUserprop('note_ext', note_ext)
                 out.successMessage("Changes have been saved.")
 
         if all([not editor, not extras, not note_ext]):
+            editor = getEditor(storage)
+            extras = getExtras(storage)
+            note_ext = getNoteExt(storage)
             settings = ('Geeknote',
                         '*' * 30,
                         'Version: %s' % config.VERSION,
                         'App dir: %s' % config.APP_DIR,
                         'Error log: %s' % config.ERROR_LOG,
-                        'Current editor: %s' % storage.getUserprop('editor'),
-                        'Markdown2 Extras: %s' % ','.join(storage.getUserprop('markdown2_extras')),
-                        'Note extension: %s' % storage.getUserprop('note_ext'))
+                        'Current editor: %s' % editor,
+                        'Markdown2 Extras: %s' % extras if extras is None else ','.join(extras),
+                        'Note extension: %s' % note_ext)
 
             user_settings = storage.getUserprops()
 
@@ -577,7 +593,7 @@ class Tags(GeekNoteConnector):
         out.printList(result)
 
     def create(self, title):
-        self.connectToEvertone()
+        self.connectToEvernote()
         out.preloader.setMessage("Creating tag...")
         result = self.getEvernote().createTag(name=title)
 
@@ -638,7 +654,7 @@ class Notebooks(GeekNoteConnector):
         out.printList(result)
 
     def create(self, title, stack=None):
-        self.connectToEvertone()
+        self.connectToEvernote()
         out.preloader.setMessage("Creating notebook...")
         result = self.getEvernote().createNotebook(name=title, stack=stack)
 
@@ -716,13 +732,13 @@ class Notes(GeekNoteConnector):
         self.selectFirstOnUpdate = bool(selectFirstOnUpdate)
 
     def _editWithEditorInThread(self, inputData, note=None, raw=None):
-        editor_userprop = self.storage.getUserprop('editor')
-        noteExtension = self.storage.getUserprop('note_ext')
+        editor_userprop = getEditor(self.storage)
+        noteExt_userprop = getNoteExt(self.storage)
         if note:
             self.getEvernote().loadNoteContent(note)
-            editor = Editor(editor_userprop, note.content, noteExtension, raw)
+            editor = Editor(editor_userprop, note.content, noteExt_userprop, raw)
         else:
-            editor = Editor(editor_userprop, '', noteExtension, raw)
+            editor = Editor(editor_userprop, '', noteExt_userprop, raw)
         thread = EditorThread(editor)
         thread.start()
 
@@ -768,7 +784,7 @@ class Notes(GeekNoteConnector):
             out.failureMessage("Edited note could not be saved, so it remains in %s" % editor.tempfile)
 
     def create(self, title, content=None, tags=None, notebook=None, resource=None, reminder=None, raw=None):
-        self.connectToEvertone()
+        self.connectToEvernote()
 
         # Optional Content.
         content = content or " "
@@ -788,7 +804,7 @@ class Notes(GeekNoteConnector):
             return tools.exitErr()
 
     def edit(self, note, title=None, content=None, tags=None, notebook=None, resource=None, reminder=None, raw=None):
-        self.connectToEvertone()
+        self.connectToEvernote()
         note = self._searchNote(note)
 
         inputData = self._parseInput(title, content, tags, notebook, resource, note, reminder=reminder)
@@ -807,7 +823,7 @@ class Notes(GeekNoteConnector):
 
     def remove(self, note, force=None):
 
-        self.connectToEvertone()
+        self.connectToEvernote()
         note = self._searchNote(note)
         if note:
             out.preloader.setMessage("Loading note...")
@@ -829,7 +845,7 @@ class Notes(GeekNoteConnector):
 
     def show(self, note, raw=None):
 
-        self.connectToEvertone()
+        self.connectToEvernote()
 
         note = self._searchNote(note)
 
@@ -1057,16 +1073,16 @@ class Notes(GeekNoteConnector):
                 request += _formatExpression('tag', tag)
 
         if date:
-            date = tools.strip(date.split('-'))
+            date = tools.strip(re.split(config.DEF_DATE_RANGE_DELIMITER, date))
             try:
-                dateStruct = time.strptime(date[0] + " 00:00:00", config.DEF_DATE_FORMAT)
+                dateStruct = time.strptime(date[0], config.DEF_DATE_FORMAT)
                 request += 'created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct)))
                 if len(date) == 2:
-                    dateStruct = time.strptime(date[1] + " 00:00:00", config.DEF_DATE_AND_TIME_FORMAT)
+                    dateStruct = time.strptime(date[1], config.DEF_DATE_FORMAT)
                 request += '-created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct) + 60 * 60 * 24))
             except ValueError:
-                out.failureMessage('Incorrect date format in --date attribute. '
-                                   'Format: %s' % time.strftime(config.DEF_DATE_FORMAT, time.strptime('19991231', "%Y%m%d")))
+                out.failureMessage('Incorrect date format (%s) in --date attribute. '
+                                   'Format: %s' % (date, time.strftime(config.DEF_DATE_FORMAT, time.strptime('19991231', "%Y%m%d"))))
                 return tools.exitErr()
 
         if search:

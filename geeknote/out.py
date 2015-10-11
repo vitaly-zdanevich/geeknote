@@ -172,7 +172,7 @@ def showNote(note):
     printLine("Updated: %s" %
               (printDate(note.updated).ljust(15, " ")))
     for key, value in note.attributes.__dict__.items():
-        if value and key not in ('reminderOrder', 'reminderTime', 'reminderDone'):
+        if value and key not in ('reminderOrder', 'reminderTime', 'reminderDoneTime'):
             printLine("%s: %s" % (key, value))
     separator("|", "REMINDERS")
     printLine("Order: %s Time: %s Done: %s" % (str(note.attributes.reminderOrder), str(note.attributes.reminderTime), str(note.attributes.reminderDoneTime)))
