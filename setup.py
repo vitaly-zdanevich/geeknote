@@ -17,10 +17,10 @@ def read(fname):
 class full_install(install):
 
     user_options = install.user_options + [
-        ('bash-completion-dir', None,
+        ('bash-completion-dir=', None,
          "(Linux only) Set bash completion directory (default: /etc/bash_completion.d)"
         ),
-        ('zsh-completion-dir', None,
+        ('zsh-completion-dir=', None,
          "(Linux only) Set zsh completion directory (default: /usr/local/share/zsh/site-functions)"
         )
     ]
