@@ -121,6 +121,11 @@ class Editor(object):
             for section in soup.findAll('en-todo'):
                 section.replace_with('[ ]')
 
+            # Keep Evernote media elements in html format in markdown so
+            # they'll stay in place over an edit
+            for section in soup.find_all('en-media'):
+                section.replace_with(str(section))
+
 #       content = html2text.html2text(soup.prettify())
 #       content = html2text.html2text(str(soup))
 #       content = html2text.html2text(unicode(soup))
