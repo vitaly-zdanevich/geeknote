@@ -1,33 +1,13 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
-from __future__ import with_statement
 import sys
 import os
-import getpass
+import shutil
 import codecs
 import geeknote
 from setuptools import setup
 from setuptools.command.install import install
-
-
-BASH_COMPLETION = '''
-_geeknote_command()
-{
-    COMPREPLY=()
-    cur="${COMP_WORDS[COMP_CWORD]}"
-
-    SAVE_IFS=$IFS
-    IFS=" "
-    args="${COMP_WORDS[*]:1}"
-    IFS=$SAVE_IFS
-
-    COMPREPLY=( $(compgen -W "`geeknote autocomplete ${args}`" -- ${cur}) )
-
-    return 0
-}
-complete -F _geeknote_command geeknote
-'''
 
 
 def read(fname):
@@ -37,32 +17,33 @@ def read(fname):
 class full_install(install):
 
     user_options = install.user_options + [
-        ('userhome=', None,
-         "(Linux only) Set user home directory for"
-         " bash completion ({0})"
-         .format(os.path.expanduser('~')))
+        ('bash-completion-dir', None,
+         "(Linux only) Set bash completion directory (default: /etc/bash_completion.d)"
+        ),
+        ('zsh-completion-dir', None,
+         "(Linux only) Set zsh completion directory (default: /usr/local/share/zsh/site-functions)"
+        )
     ]
 
     def initialize_options(self):
         install.initialize_options(self)
-        self.userhome = ''
+        self.bash_completion_dir = '/etc/bash_completion.d'
+        self.zsh_completion_dir = '/usr/local/share/zsh/site-functions'
 
     def run(self):
-        if sys.platform == 'linux2':
-            self.install_autocomplite()
+        if sys.platform.startswith('linux'):
+            self.install_autocomplete()
         install.run(self)
 
-    def install_autocomplite(self):
-        if self.userhome:
-            self.userhome = '{0}/.bash_completion'.format(self.userhome)
-        else:
-            self.userhome = '{0}/.bash_completion'.format(os.path.expanduser('~'))
+    def install_autocomplete(self):
+        def copy_autocomplete(src,dst):
+            if os.path.exists(dst):
+                shutil.copy(src,dst)
+                print('copying %s -> %s' % (src,dst))
 
-        if not os.path.exists(self.userhome) or \
-           BASH_COMPLETION not in open(self.userhome, 'r').read():
-            with open(self.userhome, 'a') as completion:
-                print('Autocomplete was written to {0}'.format(self.userhome))
-                completion.write(BASH_COMPLETION)
+        print "installing autocomplete"
+        copy_autocomplete('completion/bash_completion/_geeknote',self.bash_completion_dir)
+        copy_autocomplete('completion/zsh_completion/_geeknote',self.zsh_completion_dir)
 
 
 setup(
