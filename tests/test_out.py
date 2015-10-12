@@ -1,6 +1,8 @@
 #!/usr/bin/env python2
 
 import sys
+import os
+import time
 import unittest
 from cStringIO import StringIO
 from geeknote.config import VERSION
@@ -12,7 +14,7 @@ from geeknote import out
 
 class AccountingStub(object):
     uploadLimit = 100
-    uploadLimitEnd = 100000
+    uploadLimitEnd = 1095292800000
 
 
 class UserStub(object):

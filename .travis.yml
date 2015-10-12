@@ -21,4 +21,4 @@ env:
 - EDITOR=/bin/cat
 
 # command to run tests
-script: nosetests
+script: py.test
