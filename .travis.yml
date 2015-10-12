@@ -18,7 +18,7 @@ install:
 
 # there's no interactive editor here, so use cat
 env:
-- EDIROR=/bin/cat
+- EDITOR=/bin/cat
 
 # command to run tests
 script: nosetests
