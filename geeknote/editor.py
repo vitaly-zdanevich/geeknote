@@ -45,6 +45,10 @@ class Editor(object):
         return escape(text, Editor.getHtmlEscapeTable())
 
     @staticmethod
+    def HTMLEscapeTag(text):
+        return escape(text)
+
+    @staticmethod
     def HTMLUnescape(text):
         return unescape(text, Editor.getHtmlUnescapeTable())
 
@@ -205,6 +209,7 @@ class Editor(object):
                 storage = Storage()
                 extras = storage.getUserprop('markdown2_extras')
 
+                content = Editor.HTMLEscapeTag(content)
                 contentHTML = markdown.markdown(content, extras=extras)
 
                 soup = BeautifulSoup(contentHTML, 'html.parser')
