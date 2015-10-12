@@ -16,5 +16,9 @@ install:
   - python setup.py build
   - python setup.py install --bash-completion-dir=/tmp --zsh-completion-dir=/tmp
 
+# there's no interactive editor here, so use cat
+env:
+- EDIROR=/bin/cat
+
 # command to run tests
 script: nosetests
