@@ -11,7 +11,7 @@ if ALWAYS_USE_YINXIANG or os.getenv("GEEKNOTE_BASE") == "yinxiang":
 else:
     USER_BASE_URL = "www.evernote.com"
 
-USER_STORE_URI = "https://{}/edam/user".format(USER_BASE_URL)
+USER_STORE_URI = "https://{0}/edam/user".format(USER_BASE_URL)
 
 CONSUMER_KEY = "skaizer-5314"
 CONSUMER_SECRET = "6f4f9183b3120801"

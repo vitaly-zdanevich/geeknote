@@ -70,7 +70,7 @@ setup(
     ],
 
     install_requires=[
-        'evernote>=1.17',
+        'evernote>=1.25',
         'html2text',
         'sqlalchemy',
         'markdown2',
@@ -88,6 +88,6 @@ setup(
         'install': full_install,
     },
     platforms='Any',
-    zip_safe=False,
+    zip_safe=True,
     keywords='Evernote, console'
 )

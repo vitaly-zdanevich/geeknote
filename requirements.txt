@@ -1,4 +1,4 @@
-evernote>=1.17
+evernote>=1.25
 html2text
 sqlalchemy
 markdown2
