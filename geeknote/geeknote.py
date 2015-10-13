@@ -875,7 +875,7 @@ class Notes(GeekNoteConnector):
 
         # if get note without params
         if (note and title is None and content is None and tags is None
-                and created is None and notebook is None):
+                and created is None and reminder is None and notebook is None):
             content = config.EDITOR_OPEN
 
         if title is None and note:
@@ -895,17 +895,7 @@ class Notes(GeekNoteConnector):
             result['tags'] = tools.strip(tags.split(','))
 
         if created:
-            logging.debug("created time: %s" % created)
-            dateStruct = None
-            for fmt in config.DEF_DATE_FORMAT, config.DEF_DATE_AND_TIME_FORMAT:
-                try:
-                    dateStruct = time.strptime(created, fmt)
-                except ValueError:
-                    pass
-            if not dateStruct:
-                out.failureMessage('Incorrect date format (%s) in --created attribute.' % created)
-                return tools.exitErr()
-            result['created'] = int(round(time.mktime(dateStruct) * 1000))
+            result['created'] = self._getTimeFromDate(created)
 
         if notebook:
             notepadGuid = Notebooks().getNoteGUID(notebook)
@@ -922,17 +912,24 @@ class Notes(GeekNoteConnector):
                 now = int(round(time.time() * 1000))
                 result['reminder'] = now + then
             elif reminder not in [config.REMINDER_NONE, config.REMINDER_DONE, config.REMINDER_DELETE]:
-                reminder = tools.strip(reminder.split('-'))
-                try:
-                    dateStruct = time.strptime(reminder[0] + " " + reminder[1], config.DEF_DATE_AND_TIME_FORMAT)
-                    reminderTime = int(round(time.mktime(dateStruct) * 1000))
-                    result['reminder'] = reminderTime
-                except (ValueError, IndexError):
-                    out.failureMessage('Incorrect date format in --reminder attribute. '
-                                       'Format: %s' % time.strftime(config.DEF_DATE_FORMAT, time.strptime('199912311422', "%Y%m%d%H%M")))
-                    return tools.exitErr()
+                result['reminder'] = self._getTimeFromDate(reminder)
 
         return result
+
+    def _getTimeFromDate(self, date):
+        dateStruct = None
+        for fmt in config.DEF_DATE_FORMAT, config.DEF_DATE_AND_TIME_FORMAT:
+            try:
+                dateStruct = time.strptime(date, fmt)
+            except ValueError:
+                pass
+        if not dateStruct:
+            out.failureMessage('Error while parsing date: "%s" is in an '
+                    'incorrect format. Dates should\nbe specified as '
+                    '"yyyy-mm-dd" or "yyyy-mm-dd HH:MM" strings.'
+                    % date)
+            return tools.exitErr()
+        return int(round(time.mktime(dateStruct) * 1000))
 
     def _searchNote(self, note):
         note = tools.strip(note)
