@@ -86,7 +86,8 @@ COMMANDS_DICT = {
         "arguments": {
             "--note":       {"altName": "-n",
                              "help": "The name or ID from the "
-                                     "previous search of a note to edit."},
+                                     "previous search of a note to edit.",
+                                     "required": True},
             "--title":      {"altName": "-t",
                              "help": "Set new title of the note."},
             "--content":    {"altName": "-c",
@@ -126,7 +127,8 @@ COMMANDS_DICT = {
         "arguments": {
             "--note":  {"altName": "-n",
                         "help": "The name or ID from the previous "
-                                "search of a note to remove."},
+                                "search of a note to remove.",
+                                "required": True},
         },
         "flags": {
             "--force": {"altName": "-f",
@@ -141,7 +143,8 @@ COMMANDS_DICT = {
         "arguments": {
             "--note": {"altName": "-n",
                        "help": "The name or ID from the previous "
-                               "search of a note to show."},
+                               "search of a note to show.",
+                               "required": True},
         },
         "flags": {
             "--raw": {"altName": "-w",
