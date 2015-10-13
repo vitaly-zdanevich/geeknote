@@ -1,6 +1,6 @@
 class Geeknote < Formula
   homepage 'http://www.geeknote.me/'
-  head 'https://github.com/VitaliyRodnenko/geeknote'
+  head 'https://github.com/jeffkowalski/geeknote'
 
   depends_on :python
 
