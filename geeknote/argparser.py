@@ -55,6 +55,9 @@ COMMANDS_DICT = {
             "--tags":       {"altName": "-tg",
                              "help": "One tag or the list of tags which"
                                      " will be added to the note."},
+            "--created":    {"altName": "-cr",
+                             "help": "Set creation time in 'yyyy-mm-dd'"
+                                     " or 'yyyy-mm-dd HH:MM' format."},
             "--resource":   {"altName": "-rs",
                              "help": "Add a resource to the note.",
                              "repetitive": True},
@@ -88,6 +91,9 @@ COMMANDS_DICT = {
                              "repetitive": True},
             "--tags":       {"altName": "-tg",
                              "help": "Set new list o tags for the note."},
+            "--created":    {"altName": "-cr",
+                             "help": "Set creation time in 'yyyy-mm-dd'"
+                                     " or 'yyyy-mm-dd HH:MM' format."},
             "--notebook":   {"altName": "-nb",
                              "help": "Assign new notebook for the note."},
             "--reminder":   {"altName": "-r",

@@ -255,17 +255,18 @@ class GeekNote(object):
                 note.tagNames.append(tag.name)
 
     @EdamException
-    def createNote(self, title, content, tags=None, notebook=None, created=None, resources=None, reminder=None):
+    def createNote(self, title, content, tags=None, created=None, notebook=None, resources=None, reminder=None):
         note = Types.Note()
         note.title = title
         try:
             note.content = content.encode('utf-8')
         except UnicodeDecodeError:
             note.content = content
-        note.created = created
 
         if tags:
             note.tagNames = tags
+
+        note.created = created
 
         if notebook:
             note.notebookGuid = notebook
@@ -306,7 +307,8 @@ class GeekNote(object):
 
     @EdamException
     def updateNote(self, guid, title=None, content=None,
-                   tags=None, notebook=None, resources=None, reminder=None):
+                   tags=None, created=None, notebook=None,
+                   resources=None, reminder=None):
         note = Types.Note()
         note.guid = guid
         if title:
@@ -320,6 +322,8 @@ class GeekNote(object):
 
         if tags:
             note.tagNames = tags
+
+        note.created = created
 
         if notebook:
             note.notebookGuid = notebook
@@ -783,13 +787,13 @@ class Notes(GeekNoteConnector):
         else:
             out.failureMessage("Edited note could not be saved, so it remains in %s" % editor.tempfile)
 
-    def create(self, title, content=None, tags=None, notebook=None, resource=None, reminder=None, raw=None):
+    def create(self, title, content=None, tags=None, created=None, notebook=None, resource=None, reminder=None, raw=None):
         self.connectToEvernote()
 
         # Optional Content.
         content = content or " "
 
-        inputData = self._parseInput(title, content, tags, notebook, resource, reminder=reminder)
+        inputData = self._parseInput(title, content, tags, created, notebook, resource, reminder=reminder)
 
         if inputData['content'] == config.EDITOR_OPEN:
             result = self._editWithEditorInThread(inputData, raw=raw)
@@ -803,11 +807,11 @@ class Notes(GeekNoteConnector):
             out.failureMessage("Error while creating the note.")
             return tools.exitErr()
 
-    def edit(self, note, title=None, content=None, tags=None, notebook=None, resource=None, reminder=None, raw=None):
+    def edit(self, note, title=None, content=None, tags=None, created=None, notebook=None, resource=None, reminder=None, raw=None):
         self.connectToEvernote()
         note = self._searchNote(note)
 
-        inputData = self._parseInput(title, content, tags, notebook, resource, note, reminder=reminder)
+        inputData = self._parseInput(title, content, tags, created, notebook, resource, note, reminder=reminder)
 
         if inputData['content'] == config.EDITOR_OPEN:
             result = self._editWithEditorInThread(inputData, note, raw=raw)
@@ -857,11 +861,12 @@ class Notes(GeekNoteConnector):
         else:
             out.showNote(note)
 
-    def _parseInput(self, title=None, content=None, tags=None, notebook=None, resources=[], note=None, reminder=None):
+    def _parseInput(self, title=None, content=None, tags=None, created=None, notebook=None, resources=[], note=None, reminder=None):
         result = {
             "title": title,
             "content": content,
             "tags": tags,
+            "created": created,
             "notebook": notebook,
             "resources": resources,
             "reminder": reminder,
@@ -869,7 +874,8 @@ class Notes(GeekNoteConnector):
         result = tools.strip(result)
 
         # if get note without params
-        if note and title is None and content is None and tags is None and notebook is None:
+        if (note and title is None and content is None and tags is None
+                and created is None and notebook is None):
             content = config.EDITOR_OPEN
 
         if title is None and note:
@@ -888,6 +894,19 @@ class Notes(GeekNoteConnector):
         if tags:
             result['tags'] = tools.strip(tags.split(','))
 
+        if created:
+            logging.debug("created time: %s" % created)
+            dateStruct = None
+            for fmt in config.DEF_DATE_FORMAT, config.DEF_DATE_AND_TIME_FORMAT:
+                try:
+                    dateStruct = time.strptime(created, fmt)
+                except ValueError:
+                    pass
+            if not dateStruct:
+                out.failureMessage('Incorrect date format (%s) in --created attribute.' % created)
+                return tools.exitErr()
+            result['created'] = int(round(time.mktime(dateStruct) * 1000))
+
         if notebook:
             notepadGuid = Notebooks().getNoteGUID(notebook)
             if notepadGuid is None:
@@ -905,7 +924,7 @@ class Notes(GeekNoteConnector):
             elif reminder not in [config.REMINDER_NONE, config.REMINDER_DONE, config.REMINDER_DELETE]:
                 reminder = tools.strip(reminder.split('-'))
                 try:
-                    dateStruct = time.strptime(reminder[0] + " " + reminder[1] + ":00", config.DEF_DATE_AND_TIME_FORMAT)
+                    dateStruct = time.strptime(reminder[0] + " " + reminder[1], config.DEF_DATE_AND_TIME_FORMAT)
                     reminderTime = int(round(time.mktime(dateStruct) * 1000))
                     result['reminder'] = reminderTime
                 except (ValueError, IndexError):
