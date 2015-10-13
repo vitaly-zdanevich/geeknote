@@ -17,7 +17,10 @@ notes, notebooks and tags using Geeknote and how to use Geeknote
 search.
 
 ## Installation
-You can install Geeknote as a python script.
+You can install Geeknote as a python script or using [Homebrew](http://brew.sh/)/[Linuxbrew](https://github.com/Homebrew/linuxbrew).
+
+### Homebrew installation
+    brew install --HEAD https://raw.githubusercontent.com/VitaliyRodnenko/geeknote/master/geeknote.rb
 
 ### Downloading and installing from source
     # Install dependencies. (This example for Debian-based systems):
