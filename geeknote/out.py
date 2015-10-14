@@ -204,8 +204,9 @@ def showUser(user, fullInfo):
     if fullInfo:
         limit = (int(user.accounting.uploadLimit) / 1024 / 1024)
         endlimit = time.gmtime(user.accounting.uploadLimitEnd / 1000)
-        line('Upload limit', "%.2f" % limit)
+        line('Upload limit', "%.2f MB" % limit)
         line('Upload limit end', time.strftime(config.DEF_DATE_FORMAT, endlimit))
+        line('Timezone ', user.timezone)
 
 
 @preloaderStop

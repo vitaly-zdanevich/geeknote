@@ -278,7 +278,7 @@ That will show you the note "Shopping list 25.04.2012".
 :   Search just in notebook/notebooks you need. The list of notebooks specify by comma.
 
 --date &lt;date or range&gt;
-:   Filter by date. You can set a single date: dd.mm.yyyy, or date range: dd.mm.yyyy-dd.mm.yyyy
+:   Filter by date. You can set a single date in 'yyyy-mm-dd' format or a range with 'yyyy-mm-dd/yyyy-mm-dd'.
 
 --count &lt;how many results to show&gt;
 :   Limits the number of displayed results.
@@ -301,7 +301,7 @@ That will show you the note "Shopping list 25.04.2012".
 
 
 ### Examples
-    $ geeknote find --search "How to patch KDE2" --notebooks "jokes" --date 25.03.2012-25.06.2012
+    $ geeknote find --search "How to patch KDE2" --notebooks "jokes" --date 2015-10-14/2015-10-28
     $ geeknote find --search "apt-get install apache nginx" --content-search --notebooks "manual"
 
 ## Show notes in console

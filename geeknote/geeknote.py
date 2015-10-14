@@ -903,7 +903,13 @@ class Notes(GeekNoteConnector):
             result['tags'] = tools.strip(tags.split(','))
 
         if created:
-            result['created'] = self._getTimeFromDate(created)
+            try:
+                result['created'] = self._getTimeFromDate(created)
+            except ValueError:
+                out.failureMessage("Incorrect date format (%s) in --created attribute. 'Format: '%s' or '%s'" % (created,
+                                       time.strftime(config.DEF_DATE_FORMAT, time.strptime('20151231', "%Y%m%d")),
+                                       time.strftime(config.DEF_DATE_AND_TIME_FORMAT, time.strptime('201512311430', "%Y%m%d%H%M"))))
+                return tools.exitErr()
 
         if notebook:
             notepadGuid = Notebooks().getNoteGUID(notebook)
@@ -920,7 +926,13 @@ class Notes(GeekNoteConnector):
                 now = int(round(time.time() * 1000))
                 result['reminder'] = now + then
             elif reminder not in [config.REMINDER_NONE, config.REMINDER_DONE, config.REMINDER_DELETE]:
-                result['reminder'] = self._getTimeFromDate(reminder)
+                try:
+                    result['reminder'] = self._getTimeFromDate(reminder)
+                except ValueError:
+                    out.failureMessage("Incorrect date format (%s) in --reminder attribute. 'Format: '%s' or '%s'" % (reminder,
+                                        time.strftime(config.DEF_DATE_FORMAT, time.strptime('20151231', "%Y%m%d")),
+                                        time.strftime(config.DEF_DATE_AND_TIME_FORMAT, time.strptime('201512311430', "%Y%m%d%H%M"))))
+                    return tools.exitErr()
 
         return result
 
@@ -932,12 +944,8 @@ class Notes(GeekNoteConnector):
             except ValueError:
                 pass
         if not dateStruct:
-            out.failureMessage('Error while parsing date: "%s" is in an '
-                    'incorrect format. Dates should\nbe specified as '
-                    '"yyyy-mm-dd" or "yyyy-mm-dd HH:MM" strings.'
-                    % date)
-            return tools.exitErr()
-        return int(round(time.mktime(dateStruct) * 1000))
+            raise ValueError
+        return int((time.mktime(dateStruct) + 1) * 1000)
 
     def _searchNote(self, note):
         note = tools.strip(note)
@@ -1098,15 +1106,18 @@ class Notes(GeekNoteConnector):
 
         if date:
             date = tools.strip(re.split(config.DEF_DATE_RANGE_DELIMITER, date))
+            # UTC had to be chosen here as I couldn't make localtime work.
+            # user.timezone is correctly configured so at this point it looks
+            # like a bug from Evernote's side
             try:
                 dateStruct = time.strptime(date[0], config.DEF_DATE_FORMAT)
-                request += 'created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct)))
+                request += 'created:%s ' % time.strftime("%Y%m%dT%H%M00Z", time.gmtime(time.mktime(dateStruct)))
                 if len(date) == 2:
                     dateStruct = time.strptime(date[1], config.DEF_DATE_FORMAT)
-                request += '-created:%s ' % time.strftime("%Y%m%d", time.localtime(time.mktime(dateStruct) + 60 * 60 * 24))
+                request += '-created:%s ' % time.strftime("%Y%m%dT%H%M00Z", time.gmtime(time.mktime(dateStruct) + 60 * 60 * 24))
             except ValueError:
                 out.failureMessage('Incorrect date format (%s) in --date attribute. '
-                                   'Format: %s' % (date, time.strftime(config.DEF_DATE_FORMAT, time.strptime('19991231', "%Y%m%d"))))
+                                   'Format: %s' % (date, time.strftime(config.DEF_DATE_FORMAT, time.strptime('20151231', "%Y%m%d"))))
                 return tools.exitErr()
 
         if search:

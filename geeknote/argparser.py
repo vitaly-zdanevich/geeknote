@@ -168,8 +168,8 @@ COMMANDS_DICT = {
             "--notebooks":  {"altName": "-nb",
                              "help": "In which notebook search the note."},
             "--date":       {"altName": "-d",
-                             "help": "Set date in format dd.mm.yyyy or "
-                                     "date range dd.mm.yyyy-dd.mm.yyyy."},
+                             "help": "Set date in 'yyyy-mm-dd' format or "
+                                     "date range 'yyyy-mm-dd/yyyy-mm-dd' format."},
             "--count":      {"altName": "-cn",
                              "help": "How many notes show in the result list.",
                              "type": int},
@@ -211,8 +211,8 @@ COMMANDS_DICT = {
             "--notebooks":  {"altName": "-nb",
                              "help": "In which notebook search the note."},
             "--date":       {"altName": "-d",
-                             "help": "Set date in format dd.mm.yyyy or "
-                                     "date range dd.mm.yyyy-dd.mm.yyyy."},
+                             "help": "Set date in 'yyyy-mm-dd' format or "
+                                     "date range 'yyyy-mm-dd/yyyy-mm-dd' format."},
             "--count":      {"altName": "-cn",
                              "help": "How many notes show in the result list.",
                              "type": int},
