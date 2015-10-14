@@ -97,6 +97,8 @@ https://blog.evernote.com/blog/2012/05/09/evernote-launches-separate-chinese-ser
     App dir: /Users/username/.geeknote
     Error log: /Users/username/.geeknote/error.log
     Current editor: vim
+    Markdown2 Extras: None
+    Note extension: .md,.org
     ******************************
     Username: username
     Id: 11111111
@@ -131,6 +133,7 @@ The main functionality that we need is creating notes in Evernote.
     $ geeknote create --title <title>
                       [--content <content>]
                       [--tags <list of tags>]
+                      [--created <date and time>]
                       [--resource <attachment filename>]
                       [--notebook <notebook where to save>]
        	              [--reminder <date and time>]
@@ -144,6 +147,9 @@ The main functionality that we need is creating notes in Evernote.
 
 --tags &lt;list of tags, like: tag1, tag2&gt;
 :   Specify tags that our note will have. It can accept multiple tags, separated with comma.
+
+--created &lt;date&gt;
+:   Set note creation date date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format.
 
 --resource &lt;attachment filename, like: document.pdf&gt;
 :   Specify file to be attached to the note.  May be repeated.
@@ -159,11 +165,21 @@ The main functionality that we need is creating notes in Evernote.
 This command allows us to create a new note in Evernote. Geeknote has designed for using in console, so we have some restrictions like inability to use double quotes in **--content** option. But there is a method to avoid it - use stdin stream or file synchronization, we show it later in documentation.
 
 ### Examples
-    $ geeknote create --title "Shopping list 22.04.2012"
+
+Creating a new note:
+
+    $ geeknote create --title "Shopping list 23.04.2015"
                       --content "Don't forget to buy milk, turkey and chips."
                       --resource shoppinglist.pdf
                       --notebook "Family"
                       --tags "shop, holiday, important"
+
+Creating a new note and editing content in editor:
+
+    $ geeknote create --title "Meeting with customer"
+                      --notebook "Meetings"
+                      --tags "projectA, important, report"
+                      --created "2015-10-23 14:30"
 
 ## Editing notes
 With Geeknote you can edit your notes in Evernote using any editor you like. It could be nano, vi, vim etc ... You can edit notes right in console!
@@ -173,6 +189,7 @@ With Geeknote you can edit your notes in Evernote using any editor you like. It 
                     [--content <new content or "WRITE">]
                     [--title <the new title>]
                     [--tags <new list of data>]
+                    [--created <date and time>]
                     [--resource <attachment filename>]
                     [--notebook <new notebook>]
        	            [--reminder <date and time>]
@@ -193,6 +210,9 @@ With Geeknote you can edit your notes in Evernote using any editor you like. It 
 
 --tags &lt;list of tags, like: tag1, tag2&gt;
 :   The same for tags - you can set a new list of tags for your note.
+
+--created &lt;date&gt;
+:   Set note creation date date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format.
 
 --notebook &lt;notebook where to save&gt;
 :   With this option you can change the notebook which contains your note.
@@ -250,8 +270,8 @@ That will show you the note "Shopping list 25.04.2012".
 --notebooks &lt;list on notebooks where to make search&gt;
 :   Search just in notebook/notebooks you need. The list of notebooks specify by comma.
 
---date <date or range>
-:   Filter by date. You can set a singl date: dd.mm.yyyy, or date range: dd.mm.yyyy-dd.mm.yyyy
+--date &lt;date or range&gt;
+:   Filter by date. You can set a single date: dd.mm.yyyy, or date range: dd.mm.yyyy-dd.mm.yyyy
 
 --count &lt;how many results to show&gt;
 :   Limits the number of displayed results.

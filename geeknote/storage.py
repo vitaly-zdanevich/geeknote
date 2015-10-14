@@ -216,6 +216,19 @@ class Storage(object):
         return True
 
     @logging
+    def delUserprop(self, key):
+        """
+        Delete single user's property. User's property must have key
+        return True if done
+        return False if something wrong
+        """
+        instance = self.session.query(Userprop).filter_by(key=key).first()
+        if instance:
+            self.session.delete(instance)
+            return True
+        return False
+
+    @logging
     def setSettings(self, settings):
         """
         Set multuple settings. Settings must be an instanse dict

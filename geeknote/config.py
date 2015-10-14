@@ -51,8 +51,13 @@ REMINDER_DELETE = "DELETE"
 # Shortcuts have a word and a number of seconds to add to the current time
 REMINDER_SHORTCUTS = {'TOMORROW': 86400000, 'WEEK': 604800000}
 
-# Default file extension for editing
-DEF_NOTE_EXT = ".org"
+# Default file extensions for editing markdown and raw ENML,
+# in the format ".markdown_ext, .html_ext"
+DEF_NOTE_EXT = ".markdown, .org"
+# Accepted markdown extensions
+MARKDOWN_EXTENSIONS = ['.md', '.markdown']
+# Accepted html extensions
+HTML_EXTENSIONS = ['.html', '.org']
 
 DEV_MODE = False
 DEBUG = False
@@ -62,7 +67,7 @@ NOTE_URL = "https://%domain%/Home.action?#n=%s"
 
 # Date format
 DEF_DATE_FORMAT = "%Y-%m-%d"
-DEF_DATE_AND_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+DEF_DATE_AND_TIME_FORMAT = "%Y-%m-%d %H:%M"
 DEF_DATE_RANGE_DELIMITER = "/"
 
 # validate config
