@@ -493,7 +493,12 @@ def getExtras(storage):
 
 def getNoteExt(storage):
     note_ext = None if storage is None else storage.getUserprop('note_ext')
-    if not note_ext or not storage.getUserprop('note_ext'):
+    if not note_ext:
+        note_ext = config.DEF_NOTE_EXT
+    # If there is only one extension saved (previous storage), we remove this
+    # setting as we don't now which extension it is
+    elif len(note_ext.split(',')) != 2:
+        storage.delUserprop('note_ext')
         note_ext = config.DEF_NOTE_EXT
     return note_ext
 
@@ -561,8 +566,11 @@ class User(GeekNoteConnector):
             if note_ext == '#GET#':
                 out.successMessage("Default note extension is: %s" % getNoteExt(storage))
             else:
-                storage.setUserprop('note_ext', note_ext)
-                out.successMessage("Changes have been saved.")
+                if len(note_ext.split(',')) == 2:
+                    storage.setUserprop('note_ext', note_ext.replace(" ",""))
+                    out.successMessage("Changes have been saved.")
+                else:
+                    out.failureMessage("Error in note extension, format is '.markdown, .org'")
 
         if all([not editor, not extras, not note_ext]):
             editor = getEditor(storage)
@@ -737,7 +745,7 @@ class Notes(GeekNoteConnector):
 
     def _editWithEditorInThread(self, inputData, note=None, raw=None):
         editor_userprop = getEditor(self.getStorage())
-        noteExt_userprop = getNoteExt(self.getStorage())
+        noteExt_userprop = getNoteExt(self.getStorage()).split(',')[bool(raw)]
         if note:
             self.getEvernote().loadNoteContent(note)
             editor = Editor(editor_userprop, note.content, noteExt_userprop, raw)
@@ -752,8 +760,8 @@ class Notes(GeekNoteConnector):
             if prevChecksum != editor.getTempfileChecksum() and result:
                 newContent = open(editor.tempfile, 'r').read()
                 ext = os.path.splitext(editor.tempfile)[1]
-                mapping = {'markdown': ['.md', '.markdown'],
-                           'html': ['.html', '.org']}
+                mapping = {'markdown': config.MARKDOWN_EXTENSIONS,
+                           'html': config.HTML_EXTENSIONS}
                 fmt = filter(lambda k: ext in mapping[k], mapping)
                 if fmt:
                     fmt = fmt[0]
