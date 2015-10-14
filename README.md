@@ -98,7 +98,7 @@ https://blog.evernote.com/blog/2012/05/09/evernote-launches-separate-chinese-ser
     Error log: /Users/username/.geeknote/error.log
     Current editor: vim
     Markdown2 Extras: None
-    Note extension: .md,.org
+    Note extension: .markdown,.org
     ******************************
     Username: username
     Id: 11111111
@@ -149,7 +149,7 @@ The main functionality that we need is creating notes in Evernote.
 :   Specify tags that our note will have. It can accept multiple tags, separated with comma.
 
 --created &lt;date&gt;
-:   Set note creation date date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format.
+:   Set note creation date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format.
 
 --resource &lt;attachment filename, like: document.pdf&gt;
 :   Specify file to be attached to the note.  May be repeated.
@@ -157,8 +157,11 @@ The main functionality that we need is creating notes in Evernote.
 --notebook &lt;notebook where to save&gt;
 :   Specify the notebook where new note should be saved. This option is not required. If it isn't given, the note will be saved in default notebook. If notebook doesn't exist Geeknote will create it automatically.
 
---reminder &lt;dd.mm.yy-HH:MM&gt;
-:   Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed.
+--reminder  &lt;date&gt;
+:   Set reminder date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM'
+format. Alternatively use TOMORROW and WEEK for 24 hours and a week ahead
+respectively, NONE for a reminder without a time. Use DONE to mark a reminder
+as completed.
 
 
 ### Description
@@ -218,7 +221,11 @@ With Geeknote you can edit your notes in Evernote using any editor you like. It 
 :   With this option you can change the notebook which contains your note.
 
 --reminder &lt;dd.mm.yy-HH:MM&gt;
-:   Set reminder date and time(dd.mm.yyy-HH:MM). Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectivley, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note.
+--reminder  &lt;date&gt;
+:   Set reminder date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM'
+format. Alternatively use TOMORROW and WEEK for 24 hours and a week ahead
+respectively, NONE for a reminder without a time. Use DONE to mark a reminder
+as completed. Use DELETE to remove reminder from a note.
 
 ### Examples
 Simple editing:
