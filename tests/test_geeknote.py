@@ -26,7 +26,7 @@ class testNotes(unittest.TestCase):
         self.testNote = tools.Struct(title="note title")
 
     def test_parseInput1(self):
-        testData = self.notes._parseInput("title", "test body", "tag1", None, ["res 1", "res 2"])
+        testData = self.notes._parseInput("title", "test body", "tag1", None, None, ["res 1", "res 2"])
         self.assertTrue(isinstance(testData, dict))
         if not isinstance(testData, dict):
             return
