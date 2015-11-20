@@ -136,7 +136,7 @@ The main functionality that we need is creating notes in Evernote.
                       [--created <date and time>]
                       [--resource <attachment filename>]
                       [--notebook <notebook where to save>]
-       	              [--reminder <date and time>]
+                      [--reminder <date and time>]
 ### Options
 
 --title &lt;title&gt;
@@ -188,14 +188,14 @@ Creating a new note and editing content in editor:
 With Geeknote you can edit your notes in Evernote using any editor you like. It could be nano, vi, vim etc ... You can edit notes right in console!
 
 ### Synopsis
-    $ geeknote edit --note <title of note which to edit>
+    $ geeknote edit --note <title or GUID of note to edit>
                     [--content <new content or "WRITE">]
                     [--title <the new title>]
                     [--tags <new list of data>]
                     [--created <date and time>]
                     [--resource <attachment filename>]
                     [--notebook <new notebook>]
-       	            [--reminder <date and time>]
+                    [--reminder <date and time>]
 
 ### Options
 
@@ -253,6 +253,9 @@ You can easily search notes in Evernote with Geeknote and get results in console
                     [--url-only]
                     [--reminders-only]
                     [--ignore-completed]
+                    [--with-tags]
+                    [--with-notebook]
+                    [--guid]
 ### Description
 With **find** you can make a search through your Evernote. It has an usefull options that allow you to make search more detail. Important notice, that Geeknote remembers the result of the last search. So, you can use the number of the note's position to make some actions that Geeknote can.
 For example:
@@ -293,12 +296,19 @@ That will show you the note "Shopping list 25.04.2012".
 :   Show results as a list of URLs to the every note in Evernote's web-client.
 
 --reminders-only
-: Include only notes with a reminder.
+:   Include only notes with a reminder.
 
 --ignore-completed
-: Include only unfinished reminders.
+:   Include only unfinished reminders.
 
+--with-tags
+:   Show tags of the note after note title.
 
+--with-notebook
+:   Show notebook which contains the note after note title.
+
+--guid
+:   Show GUID of the note as substitute for result index.
 
 ### Examples
     $ geeknote find --search "How to patch KDE2" --notebooks "jokes" --date 25.03.2012-25.06.2012
@@ -308,7 +318,7 @@ That will show you the note "Shopping list 25.04.2012".
 You can output any note in console using command *show* - that is add-on for *find*. When you use *show* it make search previously, and if the count of results more then 1, Geeknote will ask you to make a choise.
 
 ### Synopsis
-    $ geeknote show <text to search and show>
+    $ geeknote show <text or GUID to search and show>
 That is really simple, so doesn't need any descriptions. Just some examples:
 ### Examples
     $ geeknote show "Shop*"
@@ -334,7 +344,7 @@ As we mentioned before, *show* can use the results of previous search, so if you
 You can remove notes with Geeknotes from Evernote.
 
 ### Synopsis
-    $ geeknote remove --notebook <note name>
+    $ geeknote remove --notebook <note name or GUID>
                      [--force]
 ### Options
 
@@ -351,7 +361,11 @@ You can remove notes with Geeknotes from Evernote.
 ## Notebooks: show the list of notebooks
 Geeknote can display the list of all notebooks you have in Evernote.
 ### Synopsis
-    $ geeknote notebook-list
+    $ geeknote notebook-list [--guid]
+
+### Options
+--guid
+:   Show GUID of the notebook as substitute for result index.
 
 ## Notebooks: create the notebook
 With Geeknote you can create notebooks in Evernote right in console!
@@ -386,7 +400,11 @@ With Geeknote it's possible to rename existing notebooks in Evernote.
 ## Tags: show the list of tags
 You can get the list of all tags you have in Evernote.
 ### Synopsis
-    $ geeknote tag-list
+    $ geeknote tag-list [--guid]
+
+### Options
+--guid
+:   Show GUID of the tag as substitute for result index.
 
 ## Tags: create a new tag
 Usually tags are created with publishing new note. But if you need, you can create a new tag with Geeknote.

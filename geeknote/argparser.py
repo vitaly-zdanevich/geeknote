@@ -88,7 +88,7 @@ COMMANDS_DICT = {
         "firstArg": "--note",
         "arguments": {
             "--note":       {"altName": "-n",
-                             "help": "The name or ID from the "
+                             "help": "The name or GUID or ID from the "
                                      "previous search of a note to edit.",
                                      "required": True},
             "--title":      {"altName": "-t",
@@ -129,7 +129,7 @@ COMMANDS_DICT = {
         "firstArg": "--note",
         "arguments": {
             "--note":  {"altName": "-n",
-                        "help": "The name or ID from the previous "
+                        "help": "The name or GUID or ID from the previous "
                                 "search of a note to remove.",
                                 "required": True},
         },
@@ -145,7 +145,7 @@ COMMANDS_DICT = {
         "firstArg": "--note",
         "arguments": {
             "--note": {"altName": "-n",
-                       "help": "The name or ID from the previous "
+                       "help": "The name or GUID or ID from the previous "
                                "search of a note to show.",
                                "required": True},
         },
@@ -180,13 +180,24 @@ COMMANDS_DICT = {
                                          "in results to Evernote web-version.",
                                  "value": True,
                                  "default": False},
+            "--with-tags":      {"altName": "-wt",
+                                 "help": "Add tag list of each note in results.",
+                                 "value": True,
+                                 "default": False},
+            "--with-notebook":  {"altName": "-wn",
+                                 "help": "Add notebook of each note in results.",
+                                 "value": True,
+                                 "default": False},
             "--exact-entry":    {"altName": "-ee",
-                                 "help": "Search for exact "
-                                         "entry of the request.",
+                                 "help": "Search for exact entry of the request.",
                                  "value": True,
                                  "default": False},
             "--content-search": {"altName": "-cs",
                                  "help": "Search by content, not by title.",
+                                 "value": True,
+                                 "default": False},
+            "--guid":           {"altName": "-id",
+                                 "help": "Replace ID with GUID of each note in results.",
                                  "value": True,
                                  "default": False},
             "--reminders-only": {"altName": "-R",
@@ -238,6 +249,13 @@ COMMANDS_DICT = {
     # Notebooks
     "notebook-list": {
         "help": "Show the list of existing notebooks in your Evernote.",
+        "flags": {
+            "--guid": {"altName": "-id",
+                       "help": "Replace ID with GUID "
+                               "of each notebook in results.",
+                       "value": True,
+                       "default": False},
+        }
     },
     "notebook-create": {
         "help": "Create new notebook.",
@@ -261,6 +279,12 @@ COMMANDS_DICT = {
     # Tags
     "tag-list": {
         "help": "Show the list of existing tags in your Evernote.",
+        "flags": {
+            "--guid": {"altName": "-id",
+                       "help": "Replace ID with GUID of each note in results.",
+                       "value": True,
+                       "default": False},
+        }
     },
     "tag-create": {
         "help": "Create new tag.",

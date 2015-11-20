@@ -600,9 +600,9 @@ class User(GeekNoteConnector):
 class Tags(GeekNoteConnector):
     """ Work with auth Notebooks """
 
-    def list(self):
+    def list(self, guid=None):
         result = self.getEvernote().findTags()
-        out.printList(result)
+        out.printList(result, showGUID=guid)
 
     def create(self, title):
         self.connectToEvernote()
@@ -661,9 +661,9 @@ class Tags(GeekNoteConnector):
 class Notebooks(GeekNoteConnector):
     """ Work with auth Notebooks """
 
-    def list(self):
+    def list(self, guid=None):
         result = self.getEvernote().findNotebooks()
-        out.printList(result)
+        out.printList(result, showGUID=guid)
 
     def create(self, title, stack=None):
         self.connectToEvernote()
@@ -943,27 +943,28 @@ class Notes(GeekNoteConnector):
         note = tools.strip(note)
 
         # load search result
-        result = self.getStorage().getSearch()
-        if result and tools.checkIsInt(note) and 1 <= int(note) <= len(result.notes):
-            note = result.notes[int(note) - 1]
+        result = self.getStorage().getNote(note)
+        if result:
+            note = result
 
         else:
-            request = self._createSearchRequest(search=note)
-
-            logging.debug("Search notes: %s" % request)
-            result = self.getEvernote().findNotes(request, 20)
-
-            logging.debug("Search notes result: %s" % str(result))
-            if result.totalNotes == 0:
-                out.failureMessage("Notes have not been found.")
-                return tools.exitErr()
-
-            elif result.totalNotes == 1 or self.selectFirstOnUpdate:
-                note = result.notes[0]
-
+            result = self.getStorage().getSearch()
+            if result and tools.checkIsInt(note) and 1 <= int(note) <= len(result.notes):
+                note = result.notes[int(note) - 1]
             else:
-                logging.debug("Choose notes: %s" % str(result.notes))
-                note = out.SelectSearchResult(result.notes)
+                request = self._createSearchRequest(search=note)
+                logging.debug("Search notes: %s" % request)
+                result = self.getEvernote().findNotes(request, 20)
+                logging.debug("Search notes result: %s" % str(result))
+                if result.totalNotes == 0:
+                    out.failureMessage("Notes have not been found.")
+                    return tools.exitErr()
+                elif result.totalNotes == 1 or self.selectFirstOnUpdate:
+                    note = result.notes[0]
+
+                else:
+                    logging.debug("Choose notes: %s" % str(result.notes))
+                    note = out.SelectSearchResult(result.notes)
 
         logging.debug("Selected note: %s" % str(note))
         note = self.getEvernote().getNote(note.guid)
@@ -971,7 +972,8 @@ class Notes(GeekNoteConnector):
 
     def find(self, search=None, tags=None, notebooks=None,
              date=None, exact_entry=None, content_search=None,
-             with_url=None, count=None, ignore_completed=None, reminders_only=None,):
+             with_url=None, with_tags=None, with_notebook=None,
+             count=None, ignore_completed=None, reminders_only=None, guid=None):
 
         request = self._createSearchRequest(search, tags, notebooks,
                                             date, exact_entry,
@@ -995,8 +997,11 @@ class Notes(GeekNoteConnector):
         # save search result
         # print result
         self.getStorage().setSearch(result)
+        for note in result.notes:
+            self.getStorage().setNote(note)
 
-        out.SearchResult(result.notes, request, showUrl=with_url)
+        out.SearchResult(result.notes, request, showUrl=with_url, showTags=with_tags,
+                         showNotebook=with_notebook, showGUID=guid)
 
     def dedup(self, search=None, tags=None, notebooks=None,
               date=None, exact_entry=None, content_search=None,
