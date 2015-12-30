@@ -16,11 +16,12 @@ class AccountingStub(object):
     uploadLimit = 100
     uploadLimitEnd = 1095292800000
 
-
 class UserStub(object):
     username = 'testusername'
     name = 'testname'
     email = 'testemail'
+    id = 111
+    shardId = 222
     accounting = AccountingStub()
 
 class AttributesStub(object):
@@ -121,7 +122,9 @@ Upload limit end : 2004-09-16\n'''
         self.assertEquals(sys.stdout.read(), info)
 
     def test_show_note_success(self):
-        note = '''################## TITLE ##################
+        note = '''################### URL ###################
+NOTEURL: https://www.evernote.com/shard/222/nl/111/12345
+################## TITLE ##################
 testnote
 =================== META ==================
 Created: 2004-09-16     \nUpdated: 2004-09-16     \n'''\
@@ -130,7 +133,7 @@ Order: None Time: None Done: None
 ----------------- CONTENT -----------------
 Tags: tag1, tag2, tag3
 ##note content\n\n'''
-        showNote(NoteStub())
+        showNote(NoteStub(), UserStub().id, UserStub().shardId)
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), note)
 
