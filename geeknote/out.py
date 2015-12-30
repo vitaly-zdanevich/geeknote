@@ -162,7 +162,10 @@ def confirm(message):
 
 
 @preloaderStop
-def showNote(note):
+def showNote(note, id, shardId):
+    separator("#", "URL")
+    printLine("NOTEURL: https://www.evernote.com/shard/%s/nl/%s/%s" % (shardId,id,note.guid))
+    #printLine(config.NOTE_URL % note.guid)
     separator("#", "TITLE")
     printLine(note.title)
     separator("=", "META")

@@ -694,7 +694,10 @@ class Notes(GeekNoteConnector):
         if raw:
           out.showNoteRaw(note)
         else:
-          out.showNote(note)
+          #print self.getEvernote().getUserInfo()
+          #print self.getEvernote().getUserInfo().id
+          #print self.getEvernote().getUserInfo().shardId
+          out.showNote(note, self.getEvernote().getUserInfo().id, self.getEvernote().getUserInfo().shardId)
 
     def _parseInput(self, title=None, content=None, tags=None, notebook=None, resources=None, note=None):
         result = {
