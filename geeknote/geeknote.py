@@ -840,7 +840,7 @@ class Notes(GeekNoteConnector):
         if note:
             out.preloader.setMessage("Loading note...")
             self.getEvernote().loadNoteContent(note)
-            out.showNote(note)
+            out.showNote(note, self.getEvernote().getUserInfo().id, self.getEvernote().getUserInfo().shardId)
 
         if not force and not out.confirm('Are you sure you want to '
                                          'delete this note: "%s"?' % note.title):
@@ -867,7 +867,7 @@ class Notes(GeekNoteConnector):
         if raw:
             out.showNoteRaw(note)
         else:
-            out.showNote(note)
+            out.showNote(note, self.getEvernote().getUserInfo().id, self.getEvernote().getUserInfo().shardId)
 
     def _parseInput(self, title=None, content=None, tags=None, created=None, notebook=None, resources=[], note=None, reminder=None):
         result = {
