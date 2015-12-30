@@ -165,8 +165,8 @@ def confirm(message):
 @preloaderStop
 def showNote(note, id, shardId):
     separator("#", "URL")
-    printLine("NOTEURL: https://www.evernote.com/shard/%s/nl/%s/%s" % (shardId,id,note.guid))
-   #printLine(config.NOTE_URL % note.guid)
+    printLine("NoteLink: " + (config.NOTE_LINK % (shardId,id,note.guid)))
+    printLine("WebClientURL: " + (config.NOTE_WEBCLIENT_URL % note.guid))
     separator("#", "TITLE")
     printLine(note.title)
     separator("=", "META")
@@ -255,7 +255,7 @@ def printList(listItems, title="", showSelector=False,
             item.title if hasattr(item, 'title') else item.name,
             "".join( map(lambda s:" #"+s, item.tagGuids) ) if showTags and hasattr(item, 'tagGuids') and item.tagGuids else '',
             " @"+item.notebookGuid if showNotebook and hasattr(item, 'notebookGuid') else '',
-            " " + (">>> " + config.NOTE_URL % item.guid) if showUrl else '',))
+            " " + (">>> " + config.NOTE_WEBCLIENT_URL % item.guid) if showUrl else '',))
 
         if showByStep != 0 and key % showByStep == 0 and key < total:
             printLine("-- More --", "\r")

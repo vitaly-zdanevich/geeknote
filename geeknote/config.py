@@ -62,8 +62,10 @@ HTML_EXTENSIONS = ['.html', '.org']
 DEV_MODE = False
 DEBUG = False
 
-# Url view the note
-NOTE_URL = "https://%domain%/Home.action?#n=%s"
+# Url view the note via the web client
+NOTE_WEBCLIENT_URL = "https://%service%/Home.action?#n=%s"
+# Direct note link https://[service]/shard/[shardId]/nl/[userId]/[noteGuid]/ (see https://dev.evernote.com/doc/articles/note_links.php)
+NOTE_LINK = "https://%service%/shard/%s/nl/%s/%s"
 
 # Date format
 DEF_DATE_FORMAT = "%Y-%m-%d"
@@ -84,4 +86,5 @@ if DEV_MODE:
     CONSUMER_SECRET = CONSUMER_SECRET_SANDBOX
     USER_BASE_URL = USER_BASE_URL_SANDBOX
 
-NOTE_URL = NOTE_URL.replace('%domain%', USER_BASE_URL)
+NOTE_WEBCLIENT_URL = NOTE_WEBCLIENT_URL.replace('%service%', USER_BASE_URL)
+NOTE_LINK = NOTE_LINK.replace('%service%', USER_BASE_URL)

@@ -123,7 +123,8 @@ Upload limit end : 2004-09-16\n'''
 
     def test_show_note_success(self):
         note = '''################### URL ###################
-NOTEURL: https://www.evernote.com/shard/222/nl/111/12345
+NoteLink: https://www.evernote.com/shard/222/nl/111/12345
+WebClientURL: https://www.evernote.com/Home.action?#n=12345
 ################## TITLE ##################
 testnote
 =================== META ==================
