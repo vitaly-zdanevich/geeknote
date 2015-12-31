@@ -23,22 +23,22 @@ You can install Geeknote using [Homebrew](http://brew.sh/)/[Linuxbrew](https://g
 ### Homebrew installation
 
 ``` sh
-$ brew install --HEAD https://raw.githubusercontent.com/jeffkowalski/geeknote/master/geeknote.rb
+brew install --HEAD https://raw.githubusercontent.com/jeffkowalski/geeknote/master/geeknote.rb
 ```
 
 ### Downloading and installing from source
 
 ``` sh
 # Install dependencies. (This example for Debian-based systems):
-$ sudo apt-get update; sudo apt-get -y install python-setuptools
+sudo apt-get update; sudo apt-get -y install python-setuptools
 
 # Download the repository.
-$ git clone git://github.com/jeffkowalski/geeknote.git
+git clone git://github.com/jeffkowalski/geeknote.git
 
-$ cd geeknote
+cd geeknote
 
 # Installation
-$ sudo python setup.py install
+sudo python setup.py install
 ```
 
 ### Testing
@@ -46,16 +46,16 @@ Geeknote has a non-destructive unit test suite with fair coverage.
 
 ``` sh
 # Ensure pytest framework is installed
-$ sudo apt-get install python-pip; sudo pip install -U pytest
+sudo apt-get install python-pip; sudo pip install -U pytest
 
 # Execute the tests
-$ py.test
+py.test
 ```
 
 Note that one of the tests (`test_editWithEditorInThread` from `tests/test_geeknote.py`) will invoke the configured editor.  Exit the editor to resume the test.  You might also temporarily set the editor to something inert when running the tests, as in
 
 ``` sh
-$ EDITOR=/bin/cat py.test
+EDITOR=/bin/cat py.test
 ```
 
 ## Geeknote Settings
@@ -64,7 +64,7 @@ $ EDITOR=/bin/cat py.test
 After installation, Geeknote must be authorized with Evernote prior to use. To authorize your Geeknote in Evernote launch the command *login*:
 
 ``` sh
-$ geeknote login
+geeknote login
 ```
 
 This will start the authorization process. Geeknote will ask you to enter your credentials just once to generate access token, which will be saved in local database. Re-authorization is not required, if you won't decide to change user.
@@ -74,7 +74,7 @@ After authorization you can start to work with Geeknote.
 If you want to change Evernote user you should launch *logout* command:
 
 ``` sh
-$ geeknote logout
+geeknote logout
 ```
 
 Afterward, you can repeat the authorization step.
@@ -85,10 +85,10 @@ If you want to use Evernote's separate service in China Yìnxiàng Bǐjì (印�
 you need to set the environment variable `GEEKNOTE_BASE` to `yinxiang`.
 
 ``` sh
-$ GEEKNOTE_BASE=yinxiang geeknote login
+GEEKNOTE_BASE=yinxiang geeknote login
 # or
-$ export GEEKNOTE_BASE=yinxiang
-$ geeknote ...commands...
+export GEEKNOTE_BASE=yinxiang
+geeknote ...commands...
 ```
 
 Yìnxiàng Bǐjì (印象笔记) is faster in China and it supports Chinese payment method.
@@ -152,13 +152,13 @@ The main functionality that we need is creating notes in Evernote.
 ### Synopsis
 
 ``` sh
-$ geeknote create --title <title>
-                 [--content <content>]
-                 [--tags <list of tags>]
-                 [--created <date and time>]
-                 [--resource <attachment filename>]
-                 [--notebook <notebook where to save>]
-                 [--reminder <date and time>]
+geeknote create --title <title>
+               [--content <content>]
+               [--tags <list of tags>]
+               [--created <date and time>]
+               [--resource <attachment filename>]
+               [--notebook <notebook where to save>]
+               [--reminder <date and time>]
 ```
 
 ### Options
@@ -195,20 +195,20 @@ This command allows us to create a new note in Evernote. Geeknote has designed f
 Creating a new note:
 
 ``` sh
-$ geeknote create --title "Shopping list 23.04.2015"
-                  --content "Don't forget to buy milk, turkey and chips."
-                  --resource shoppinglist.pdf
-                  --notebook "Family"
-                  --tags "shop, holiday, important"
+geeknote create --title "Shopping list 23.04.2015"
+                --content "Don't forget to buy milk, turkey and chips."
+                --resource shoppinglist.pdf
+                --notebook "Family"
+                --tags "shop, holiday, important"
 ```
 
 Creating a new note and editing content in editor (notice the lack of `content` argument):
 
 ``` sh
-$ geeknote create --title "Meeting with customer"
-                  --notebook "Meetings"
-                  --tags "projectA, important, report"
-                  --created "2015-10-23 14:30"
+geeknote create --title "Meeting with customer"
+                --notebook "Meetings"
+                --tags "projectA, important, report"
+                --created "2015-10-23 14:30"
 
 ```
 
@@ -218,14 +218,14 @@ With Geeknote you can edit your notes in Evernote using any editor you like. It 
 ### Synopsis
 
 ``` sh
-$ geeknote edit --note <title or GUID of note to edit>
-               [--content <new content or "WRITE">]
-               [--title <the new title>]
-               [--tags <new list of data>]
-               [--created <date and time>]
-               [--resource <attachment filename>]
-               [--notebook <new notebook>]
-               [--reminder <date and time>]
+geeknote edit --note <title or GUID of note to edit>
+             [--content <new content or "WRITE">]
+             [--title <the new title>]
+             [--tags <new list of data>]
+             [--created <date and time>]
+             [--resource <attachment filename>]
+             [--notebook <new notebook>]
+             [--reminder <date and time>]
 ```
 
 ### Options
@@ -264,13 +264,13 @@ as completed. Use DELETE to remove reminder from a note.
 Renaming the note:
 
 ``` sh
-$ geeknote edit --note "Shoplist 22.05.2012" --title "Shoplist 23.05.2012"
+geeknote edit --note "Shoplist 22.05.2012" --title "Shoplist 23.05.2012"
 ```
 
 Renaming the note and editing content in editor:
 
 ``` sh
-$ geeknote edit --note "Shoplist 22.05.2012" --title "Shoplist 23.05.2012" --content "WRITE"
+geeknote edit --note "Shoplist 22.05.2012" --title "Shoplist 23.05.2012" --content "WRITE"
 ```
 
 ## Search notes in Evernote
@@ -280,19 +280,19 @@ You can easily search notes in Evernote with Geeknote and get results in console
 ### Synopsis
 
 ``` sh
-$ geeknote find --search <text to find>
-               [--tags <list of tags that notes should have>]
-               [--notebooks <list on notebooks where to make search >]
-               [--date <data ro data range>]
-               [--count <how many results to show>]
-               [--exact-entry]
-               [--content-search]
-               [--url-only]
-               [--reminders-only]
-               [--ignore-completed]
-               [--with-tags]
-               [--with-notebook]
-               [--guid]
+geeknote find --search <text to find>
+             [--tags <list of tags that notes should have>]
+             [--notebooks <list on notebooks where to make search >]
+             [--date <data ro data range>]
+             [--count <how many results to show>]
+             [--exact-entry]
+             [--content-search]
+             [--url-only]
+             [--reminders-only]
+             [--ignore-completed]
+             [--with-tags]
+             [--with-notebook]
+             [--guid]
 ```
 
 ### Description
@@ -309,6 +309,7 @@ Total found: 2
 
 $ geeknote show 2
 ```
+
 That will show you the note "Shopping list 25.04.2012".
 
 
@@ -356,8 +357,8 @@ That will show you the note "Shopping list 25.04.2012".
 ### Examples
 
 ``` sh
-$ geeknote find --search "How to patch KDE2" --notebooks "jokes" --date 25.03.2012-25.06.2012
-$ geeknote find --search "apt-get install apache nginx" --content-search --notebooks "manual"
+geeknote find --search "How to patch KDE2" --notebooks "jokes" --date 25.03.2012-25.06.2012
+geeknote find --search "apt-get install apache nginx" --content-search --notebooks "manual"
 ```
 
 ## Show notes in console
@@ -367,8 +368,9 @@ You can output any note in console using command *show* - that is add-on for *fi
 ### Synopsis
 
 ``` sh
-$ geeknote show <text or GUID to search and show>
+geeknote show <text or GUID to search and show>
 ```
+
 That is really simple, so doesn't need any descriptions. Just some examples:
 
 ### Examples
@@ -401,8 +403,8 @@ You can remove notes with Geeknotes from Evernote.
 ### Synopsis
 
 ``` sh
-$ geeknote remove --notebook <note name or GUID>
-                 [--force]
+geeknote remove --notebook <note name or GUID>
+               [--force]
 ```
 
 ### Options
@@ -416,7 +418,7 @@ $ geeknote remove --notebook <note name or GUID>
 ### Examples
 
 ``` sh
-$ geeknote remove --note "Shopping list 25.04.2012"
+geeknote remove --note "Shopping list 25.04.2012"
 ```
 
 ## Notebooks: show the list of notebooks
@@ -426,7 +428,7 @@ Geeknote can display the list of all notebooks you have in Evernote.
 ### Synopsis
 
 ``` sh
-$ geeknote notebook-list [--guid]
+geeknote notebook-list [--guid]
 ```
 
 ### Options
@@ -439,7 +441,7 @@ With Geeknote you can create notebooks in Evernote right in console!
 ### Synopsis
 
 ``` sh
-$ geeknote notebook-create --title <notebook title>
+geeknote notebook-create --title <notebook title>
 ```
 
 ### Options
@@ -450,7 +452,7 @@ $ geeknote notebook-create --title <notebook title>
 ### Examples
 
 ``` sh
-$ geeknote notebook-create --title "Sport diets"
+geeknote notebook-create --title "Sport diets"
 ```
 
 ## Notebooks: rename the notebook
@@ -460,8 +462,8 @@ With Geeknote it's possible to rename existing notebooks in Evernote.
 ### Synopsis
 
 ``` sh
-$ geeknote notebook-edit --notebook <old name>
-                         --title <new name>
+geeknote notebook-edit --notebook <old name>
+                       --title <new name>
 ```
 
 ### Options
@@ -475,7 +477,7 @@ $ geeknote notebook-edit --notebook <old name>
 ### Examples
 
 ``` sh
-$ geeknote notebook-edit --notebook "Sport diets" --title "Hangover"
+geeknote notebook-edit --notebook "Sport diets" --title "Hangover"
 ```
 
 ## Tags: show the list of tags
@@ -485,7 +487,7 @@ You can get the list of all tags you have in Evernote.
 ### Synopsis
 
 ``` sh
-$ geeknote tag-list [--guid]
+geeknote tag-list [--guid]
 ```
 
 ### Options
@@ -498,7 +500,7 @@ Usually tags are created with publishing new note. But if you need, you can crea
 ### Synopsis
 
 ``` sh
-$ geeknote tag-create --title <tag name to create>
+geeknote tag-create --title <tag name to create>
 ```
 
 ### Options
@@ -509,7 +511,7 @@ $ geeknote tag-create --title <tag name to create>
 ### Examples
 
 ``` sh
-$ geeknote tag-create --title "Hobby"
+geeknote tag-create --title "Hobby"
 ```
 
 ## Tags: rename the tag
@@ -519,8 +521,8 @@ You can rename the tag:
 ### Synopsis
 
 ``` sh
-$ geeknote tag-edit --tagname <old name>
-                    --title <new name>
+geeknote tag-edit --tagname <old name>
+                  --title <new name>
 ```
 
 ### Options
@@ -534,7 +536,7 @@ $ geeknote tag-edit --tagname <old name>
 ### Examples
 
 ``` sh
-$ geeknote tag-edit --tagname "Hobby" --title "Girls"
+geeknote tag-edit --tagname "Hobby" --title "Girls"
 ```
 
 ## Tags: remove tags
@@ -543,9 +545,8 @@ And you can remove tag from your Evernote
 ### Synopsis
 
 ``` sh
-$ geeknote tag-remove --tagname <tag name>
-                     [--force]
-
+geeknote tag-remove --tagname <tag name>
+                   [--force]
 ```
 
 ### Options
@@ -559,7 +560,7 @@ $ geeknote tag-remove --tagname <tag name>
 ### Examples
 
 ``` sh
-$ geeknote tag-remove --tagname "College" --force
+geeknote tag-remove --tagname "College" --force
 ```
 
 ## gnsync - synchronization app
@@ -569,14 +570,14 @@ Gnsync is an additional application installed with Geeknote. Gnsync allows to sy
 ### Synopsis
 
 ``` sh
-$ gnsync --path <path to directory which to sync>
-        [--mask <unix shell-style wildcards to select the files, like *.* or *.txt or *.log>]
-        [--format <in what format to save the note - plain, markdown, or html>]
-        [--notebook <notebook, which will be used>]
-        [--all]
-        [--logpath <path to logfile>]
-        [--two-way]
-        [--download]
+gnsync --path <path to directory which to sync>
+      [--mask <unix shell-style wildcards to select the files, like *.* or *.txt or *.log>]
+      [--format <in what format to save the note - plain, markdown, or html>]
+      [--notebook <notebook, which will be used>]
+      [--all]
+      [--logpath <path to logfile>]
+      [--two-way]
+      [--download]
 ```
 
 ### Options
@@ -611,10 +612,10 @@ The application *gnsync* is very useful in system adminstration, because you can
 ### Examples
 
 ``` sh
-$ gnsync --path /home/project/xmpp/logs/
-         --mask "*.logs"
-         --logpath /home/user/logs/xmpp2evernote.log
-         --notebook "XMPP logs"
+gnsync --path /home/project/xmpp/logs/
+       --mask "*.logs"
+       --logpath /home/user/logs/xmpp2evernote.log
+       --notebook "XMPP logs"
 ```
 
 ## Original Contributors
