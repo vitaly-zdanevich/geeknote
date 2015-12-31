@@ -1,7 +1,8 @@
-geeknote for evernote (or 印象笔记)  [![Build Status](https://travis-ci.org/jeffkowalski/geeknote.svg?branch=master)](https://travis-ci.org/jeffkowalski/geeknote)
+Geeknote for Evernote (or 印象笔记)  [![Build Status](https://travis-ci.org/jeffkowalski/geeknote.svg?branch=master)](https://travis-ci.org/jeffkowalski/geeknote)
 ==================================
 
 Geeknote is a command line client for Evernote that can be use on Linux, FreeBSD and OS X.
+
 It allows you to:
    * create notes in your Evernote account;
    * create tags, notebooks;
@@ -20,7 +21,7 @@ search.
 You can install Geeknote as a python script or using [Homebrew](http://brew.sh/)/[Linuxbrew](https://github.com/Homebrew/linuxbrew).
 
 ### Homebrew installation
-    brew install --HEAD https://raw.githubusercontent.com/VitaliyRodnenko/geeknote/master/geeknote.rb
+    brew install --HEAD https://raw.githubusercontent.com/jeffkowalski/geeknote/master/geeknote.rb
 
 ### Downloading and installing from source
     # Install dependencies. (This example for Debian-based systems):
@@ -49,10 +50,11 @@ You can install Geeknote as a python script or using [Homebrew](http://brew.sh/)
 ### Development
 Run tests
 
-    $ python[2] setup.py test
+    $ py.test
 
-    # or, to run tests with `tox`
-    $ tox
+Note that one of the tests (test_editWithEditorInThread from test_geeknote.py) will invoke the configured editor.  Exit the editor to resume the test.  You might also temporarily set the editor to something inert when running the tests, as in
+
+    $ EDITOR=/bin/cat py.test
 
 ## Geeknote Settings
 
