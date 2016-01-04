@@ -15,6 +15,7 @@ import evernote.edam.type.ttypes as Types
 from evernote.edam.limits.constants import EDAM_USER_NOTES_MAX
 from bs4 import BeautifulSoup
 
+import config
 from geeknote import GeekNote
 from storage import Storage
 from editor import Editor
@@ -22,7 +23,7 @@ import tools
 
 
 # set default logger (write log to file)
-def_logpath = os.path.join(os.getenv('HOME') or os.getenv('USERPROFILE'), 'GeekNoteSync.log')
+def_logpath = os.path.join(config.APP_DIR, 'gnsync.log')
 formatter = logging.Formatter('%(asctime)-15s : %(message)s')
 handler = logging.FileHandler(def_logpath)
 handler.setFormatter(formatter)
