@@ -69,7 +69,7 @@ class testNotes(unittest.TestCase):
             content_search=True
         )
         response = 'notebook:"test notebook" tag:tag1 ' \
-                   'created:20000101 -created:20000102 "test text"'
+                   'created:20000101T080000Z -created:20000102T080000Z "test text"'
         self.assertEqual(testRequest, response)
 
     def test_createSearchRequest2(self):
@@ -82,7 +82,7 @@ class testNotes(unittest.TestCase):
             content_search=False
         )
         response = 'notebook:notebook1 notebook:notebook2 tag:tag1' \
-                   ' tag:tag2 created:19991231 -created:20010101 ' \
+                   ' tag:tag2 created:19991231T080000Z -created:20010101T080000Z ' \
                    'intitle:test text'
         self.assertEqual(testRequest, response)
 

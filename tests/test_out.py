@@ -23,6 +23,7 @@ class UserStub(object):
     id = 111
     shardId = 222
     accounting = AccountingStub()
+    timezone = "America/Los_Angeles"
 
 class AttributesStub(object):
     reminderOrder = None
@@ -116,8 +117,9 @@ Email            : testemail\n'''
 Username         : testusername
 Name             : testname
 Email            : testemail
-Upload limit     : 0.00
-Upload limit end : 2004-09-16\n'''
+Upload limit     : 0.00 MB
+Upload limit end : 2004-09-16
+Timezone         : America/Los_Angeles\n'''
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), info)
 

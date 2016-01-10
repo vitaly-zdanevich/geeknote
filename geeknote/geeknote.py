@@ -1111,9 +1111,9 @@ class Notes(GeekNoteConnector):
 
         if date:
             date = tools.strip(re.split(config.DEF_DATE_RANGE_DELIMITER, date))
-            # UTC had to be chosen here as I couldn't make localtime work.
-            # user.timezone is correctly configured so at this point it looks
-            # like a bug from Evernote's side
+            # timestamps returned by the evernote service will always be in UTC,
+            # per https://discussion.evernote.com/topic/18792-get-timestamp-in-local-time-zone/
+            # user.timezone refers only to the UI
             try:
                 dateStruct = time.strptime(date[0], config.DEF_DATE_FORMAT)
                 request += 'created:%s ' % time.strftime("%Y%m%dT%H%M00Z", time.gmtime(time.mktime(dateStruct)))
