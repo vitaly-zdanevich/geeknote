@@ -278,7 +278,6 @@ $ geeknote show 2
 
 That will show you the note "Shopping list 25.04.2012".
 
-
 ##### Options
 
 | Option             | Argument        | Description |
@@ -286,7 +285,7 @@ That will show you the note "Shopping list 25.04.2012".
 | ‑‑search           | text to find    | Set the text to find. You can use &quot;&#042;&quot; like this: *--search &quot;Shop&#042;&quot;* |
 | ‑‑tags             | list of tags    | Filter by tag. Tags can be separated with comma. |
 | ‑‑notebooks        | list of notebooks to search | Search just in notebook/notebooks you need. The list of notebooks specify by comma. |
-| ‑‑date             | date or range   | Filter by date. You can set a single date: dd.mm.yyyy, or date range: dd.mm.yyyy-dd.mm.yyyy |
+| ‑‑date             | date or range   | Filter by date. You can set a single date in 'yyyy-mm-dd' format or a range with 'yyyy-mm-dd/yyyy-mm-dd' |
 | ‑‑count            | how many results to show | Limits the number of displayed results. |
 | ‑‑exact-entry      |                 | By default Geeknote has a smart search, so it searches fuzzy entries. But if you need exact entry, you can set this flag. |
 | ‑‑content-search   |                 | *find* command searches by note's title. If you want to search by note's content - set this flag.                         |
@@ -300,7 +299,7 @@ That will show you the note "Shopping list 25.04.2012".
 ##### Examples
 
 ``` sh
-geeknote find --search "How to patch KDE2" --notebooks "jokes" --date 25.03.2012-25.06.2012
+geeknote find --search "How to patch KDE2" --notebooks "jokes" --date 2015-10-14/2015-10-28
 geeknote find --search "apt-get install apache nginx" --content-search --notebooks "manual"
 ```
 
@@ -313,8 +312,6 @@ You can output any note in console using command *show* - that is add-on for *fi
 ``` sh
 geeknote show <text or GUID to search and show>
 ```
-
-That is really simple, so doesn't need any descriptions. Just some examples:
 
 ##### Examples
 
