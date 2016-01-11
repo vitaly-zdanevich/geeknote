@@ -23,7 +23,7 @@ class UserStub(object):
     id = 111
     shardId = 222
     accounting = AccountingStub()
-    timezone = "America/Los_Angeles"
+    timezone = None
 
 class AttributesStub(object):
     reminderOrder = None
@@ -49,7 +49,7 @@ class outTestsWithHackedStdout(unittest.TestCase):
         # set the timezone for the date tests to work
         # this is particularly important on Travis CI, where
         # the timezone may not be the same as our dev machine
-        os.environ['TZ'] = 'america/los_angeles'
+        os.environ['TZ'] = "PST-0800"
         time.tzset()
 
     def tearDown(self):
@@ -118,8 +118,8 @@ Username         : testusername
 Name             : testname
 Email            : testemail
 Upload limit     : 0.00 MB
-Upload limit end : 2004-09-16
-Timezone         : America/Los_Angeles\n'''
+Upload limit end : 2004-09-17
+Timezone         : None\n'''
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), info)
 
@@ -130,9 +130,12 @@ WebClientURL: https://www.evernote.com/Home.action?#n=12345
 ################## TITLE ##################
 testnote
 =================== META ==================
-Created: 2004-09-16     \nUpdated: 2004-09-16     \n'''\
-'''|||||||||||||||| REMINDERS ||||||||||||||||
-Order: None Time: None Done: None
+Created: 2004-09-17
+Updated: 2004-09-17
+|||||||||||||||| REMINDERS ||||||||||||||||
+Order: None
+Time: None
+Done: None
 ----------------- CONTENT -----------------
 Tags: tag1, tag2, tag3
 ##note content\n\n'''
@@ -142,8 +145,8 @@ Tags: tag1, tag2, tag3
 
     def test_print_list_without_title_success(self):
         notes_list = '''Found 2 items
-  1 : 2004-09-16        2004-09-16        testnote
-  2 : 2004-09-16        2004-09-16        testnote\n'''
+  1 : 2004-09-17        2004-09-17        testnote
+  2 : 2004-09-17        2004-09-17        testnote\n'''
         printList([NoteStub() for _ in xrange(2)])
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), notes_list)
@@ -151,8 +154,8 @@ Tags: tag1, tag2, tag3
     def test_print_list_with_title_success(self):
         notes_list = '''=================== test ==================
 Found 2 items
-  1 : 2004-09-16        2004-09-16        testnote
-  2 : 2004-09-16        2004-09-16        testnote\n'''
+  1 : 2004-09-17        2004-09-17        testnote
+  2 : 2004-09-17        2004-09-17        testnote\n'''
         printList([NoteStub() for _ in xrange(2)], title='test')
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), notes_list)
@@ -160,8 +163,8 @@ Found 2 items
     def test_print_list_with_urls_success(self):
         notes_list = '''=================== test ==================
 Found 2 items
-  1 : 2004-09-16        2004-09-16        testnote >>> https://www.evernote.com/Home.action?#n=12345
-  2 : 2004-09-16        2004-09-16        testnote >>> https://www.evernote.com/Home.action?#n=12345
+  1 : 2004-09-17        2004-09-17        testnote >>> https://www.evernote.com/Home.action?#n=12345
+  2 : 2004-09-17        2004-09-17        testnote >>> https://www.evernote.com/Home.action?#n=12345
 '''
         printList([NoteStub() for _ in xrange(2)], title='test', showUrl=True)
         sys.stdout.seek(0)
@@ -171,8 +174,8 @@ Found 2 items
         out.rawInput = lambda x: 2
         notes_list = '''=================== test ==================
 Found 2 items
-  1 : 2004-09-16        2004-09-16        testnote
-  2 : 2004-09-16        2004-09-16        testnote
+  1 : 2004-09-17        2004-09-17        testnote
+  2 : 2004-09-17        2004-09-17        testnote
   0 : -Cancel-\n'''
         out.printList([NoteStub() for _ in xrange(2)], title='test', showSelector=True)
         sys.stdout.seek(0)
@@ -181,11 +184,11 @@ Found 2 items
     def test_search_result_success(self):
         result = '''Search request: test
 Found 2 items
-  1 : 2004-09-16        2004-09-16        testnote
-  2 : 2004-09-16        2004-09-16        testnote\n'''
+  1 : 2004-09-17        2004-09-17        testnote
+  2 : 2004-09-17        2004-09-17        testnote\n'''
         SearchResult([NoteStub() for _ in xrange(2)], 'test')
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), result)
 
     def test_print_date(self):
-        self.assertEquals(printDate(1095292800000), '2004-09-16')
+        self.assertEquals(printDate(1095292800000), '2004-09-17')

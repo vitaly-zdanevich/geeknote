@@ -936,6 +936,7 @@ class Notes(GeekNoteConnector):
 
         return result
 
+    # return milliseconds since the epoch, given a localized time string
     def _getTimeFromDate(self, date):
         dateStruct = None
         for fmt in config.DEF_DATE_FORMAT, config.DEF_DATE_AND_TIME_FORMAT:
@@ -1111,15 +1112,15 @@ class Notes(GeekNoteConnector):
 
         if date:
             date = tools.strip(re.split(config.DEF_DATE_RANGE_DELIMITER, date))
-            # timestamps returned by the evernote service will always be in UTC,
+            # Timestamps used by the evernote service will always be in UTC,
             # per https://discussion.evernote.com/topic/18792-get-timestamp-in-local-time-zone/
-            # user.timezone refers only to the UI
+            # (user.timezone refers only to the UI and has no effect on the API)
+            # Here we assume the user is specifying localized time, so we use _getTimeFromDate to
+            # give us the UTC timestamp
             try:
-                dateStruct = time.strptime(date[0], config.DEF_DATE_FORMAT)
-                request += 'created:%s ' % time.strftime("%Y%m%dT%H%M00Z", time.gmtime(time.mktime(dateStruct)))
+                request += 'created:%s ' % time.strftime("%Y%m%dT%H%M00Z", time.gmtime(self._getTimeFromDate(date[0])/1000))
                 if len(date) == 2:
-                    dateStruct = time.strptime(date[1], config.DEF_DATE_FORMAT)
-                request += '-created:%s ' % time.strftime("%Y%m%dT%H%M00Z", time.gmtime(time.mktime(dateStruct) + 60 * 60 * 24))
+                    request += '-created:%s ' % time.strftime("%Y%m%dT%H%M00Z", time.gmtime(self._getTimeFromDate(date[1])/1000 + 60 * 60 * 24))
             except ValueError:
                 out.failureMessage('Incorrect date format (%s) in --date attribute. '
                                    'Format: %s' % (date, time.strftime(config.DEF_DATE_FORMAT, time.strptime('20151231', "%Y%m%d"))))

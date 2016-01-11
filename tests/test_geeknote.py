@@ -24,6 +24,11 @@ class testNotes(unittest.TestCase):
     def setUp(self):
         self.notes = NotesOver()
         self.testNote = tools.Struct(title="note title")
+        # set the timezone for the date tests to work
+        # this is particularly important on Travis CI, where
+        # the timezone may not be the same as our dev machine
+        os.environ['TZ'] = "PST-0800"
+        time.tzset()
 
     def test_parseInput1(self):
         testData = self.notes._parseInput("title", "test body", "tag1", None, None, ["res 1", "res 2"])
@@ -68,8 +73,8 @@ class testNotes(unittest.TestCase):
             exact_entry=True,
             content_search=True
         )
-        response = 'notebook:"test notebook" tag:tag1 ' \
-                   'created:20000101T080000Z -created:20000102T080000Z "test text"'
+        response = 'notebook:"test notebook" tag:tag1' \
+                   ' created:19991231T000000Z "test text"'
         self.assertEqual(testRequest, response)
 
     def test_createSearchRequest2(self):
@@ -82,8 +87,8 @@ class testNotes(unittest.TestCase):
             content_search=False
         )
         response = 'notebook:notebook1 notebook:notebook2 tag:tag1' \
-                   ' tag:tag2 created:19991231T080000Z -created:20010101T080000Z ' \
-                   'intitle:test text'
+                   ' tag:tag2 created:19991230T000000Z -created:20001231T000000Z' \
+                   ' intitle:test text'
         self.assertEqual(testRequest, response)
 
     def testError_createSearchRequest1(self):

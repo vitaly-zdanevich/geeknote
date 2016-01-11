@@ -36,7 +36,8 @@ git clone git://github.com/jeffkowalski/geeknote.git
 cd geeknote
 
 # Installation
-sudo python setup.py install
+python setup.py build
+sudo pip install .
 ```
 
 ##### Testing

@@ -170,15 +170,15 @@ def showNote(note, id, shardId):
     separator("#", "TITLE")
     printLine(note.title)
     separator("=", "META")
-    printLine("Created: %s" %
-              (printDate(note.created).ljust(15, " ")))
-    printLine("Updated: %s" %
-              (printDate(note.updated).ljust(15, " ")))
+    printLine("Created: %s" % printDate(note.created))
+    printLine("Updated: %s" % printDate(note.updated))
     for key, value in note.attributes.__dict__.items():
         if value and key not in ('reminderOrder', 'reminderTime', 'reminderDoneTime'):
             printLine("%s: %s" % (key, value))
     separator("|", "REMINDERS")
-    printLine("Order: %s Time: %s Done: %s" % (str(note.attributes.reminderOrder), str(note.attributes.reminderTime), str(note.attributes.reminderDoneTime)))
+    printLine("Order: %s" % str(note.attributes.reminderOrder))
+    printLine("Time: %s" % printDate(note.attributes.reminderTime))
+    printLine("Done: %s" % printDate(note.attributes.reminderDoneTime))
     separator("-", "CONTENT")
     if note.tagNames:
         printLine("Tags: %s" % ', '.join(note.tagNames))
@@ -195,21 +195,16 @@ def showNoteRaw(note):
 
 @preloaderStop
 def showUser(user, fullInfo):
-    def line(key, value):
-        if value:
-            printLine("%s : %s" % (key.ljust(16, " "), value))
-
     separator("#", "USER INFO")
-    line('Username', user.username)
-    line('Name', user.name)
-    line('Email', user.email)
+    colWidth = 17
+    printLine("%s: %s" % ("Username".ljust(colWidth, " "), user.username))
+    printLine("%s: %s" % ("Name".ljust(colWidth, " "), user.name))
+    printLine("%s: %s" % ("Email".ljust(colWidth, " "), user.email))
 
     if fullInfo:
-        limit = (int(user.accounting.uploadLimit) / 1024 / 1024)
-        endlimit = time.gmtime(user.accounting.uploadLimitEnd / 1000)
-        line('Upload limit', "%.2f MB" % limit)
-        line('Upload limit end', time.strftime(config.DEF_DATE_FORMAT, endlimit))
-        line('Timezone ', user.timezone)
+        printLine("%s: %.2f MB" % ("Upload limit".ljust(colWidth, " "), (int(user.accounting.uploadLimit) / 1024 / 1024)))
+        printLine("%s: %s" % ("Upload limit end".ljust(colWidth, " "), printDate(user.accounting.uploadLimitEnd)))
+        printLine("%s: %s" % ("Timezone".ljust(colWidth, " "), user.timezone))
 
 
 @preloaderStop
@@ -289,8 +284,12 @@ def rawInput(message, isPass=False):
     return tools.stdinEncode(data)
 
 
+# return a timezone-localized formatted representation of a UTC timestamp
 def printDate(timestamp):
-    return datetime.datetime.fromtimestamp(timestamp / 1000).strftime(config.DEF_DATE_FORMAT)
+    if timestamp is None:
+        return "None"
+    else:
+        return datetime.datetime.fromtimestamp(timestamp / 1000).strftime(config.DEF_DATE_FORMAT)
 
 
 def printLine(line, endLine="\n", out=None):
