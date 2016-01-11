@@ -59,7 +59,7 @@ COMMANDS_DICT = {
                              "help": "One tag or the list of tags which"
                                      " will be added to the note."},
             "--created":    {"altName": "-cr",
-                             "help": "Set creation time in 'yyyy-mm-dd'"
+                             "help": "Set local creation time in 'yyyy-mm-dd'"
                                      " or 'yyyy-mm-dd HH:MM' format."},
             "--resource":   {"altName": "-rs",
                              "help": "Add a resource to the note.",
@@ -67,7 +67,7 @@ COMMANDS_DICT = {
             "--notebook":   {"altName": "-nb",
                              "help": "Set the notebook where to save note."},
             "--reminder":   {"altName": "-r",
-                             "help": "Set reminder date and time in 'yyyy-mm-dd'"
+                             "help": "Set local reminder date and time in 'yyyy-mm-dd'"
                                      " or 'yyyy-mm-dd HH:MM' format."
                                      "\n             Alternatively use TOMORROW "
                                      "and WEEK for 24 hours and a week ahead "
@@ -81,79 +81,6 @@ COMMANDS_DICT = {
                              "help": "Edit note with raw ENML",
                              "value": True,
                              "default": False}
-        }
-    },
-    "edit": {
-        "help": "Edit note in Evernote.",
-        "firstArg": "--note",
-        "arguments": {
-            "--note":       {"altName": "-n",
-                             "help": "The name or GUID or ID from the "
-                                     "previous search of a note to edit.",
-                                     "required": True},
-            "--title":      {"altName": "-t",
-                             "help": "Set new title of the note."},
-            "--content":    {"altName": "-c",
-                             "help": "Set new content of the note."},
-            "--resource":   {"altName": "-rs",
-                             "help": "Add a resource to the note.",
-                             "repetitive": True},
-            "--tags":       {"altName": "-tg",
-                             "help": "Set new list o tags for the note."},
-            "--created":    {"altName": "-cr",
-                             "help": "Set creation time in 'yyyy-mm-dd'"
-                                     " or 'yyyy-mm-dd HH:MM' format."},
-            "--notebook":   {"altName": "-nb",
-                             "help": "Assign new notebook for the note."},
-            "--reminder":   {"altName": "-r",
-                             "help": "Set reminder date and time in 'yyyy-mm-dd'"
-                                     " or 'yyyy-mm-dd HH:MM' format."
-                                     "\n             Alternatively use TOMORROW "
-                                     "and WEEK for 24 hours and a week ahead "
-                                     "respectively,"
-                                     "\n             NONE for a reminder "
-                                     "without a time. Use DONE to mark a "
-                                     "reminder as completed."
-                                     "\n             Use DELETE to remove "
-                                     "reminder from a note."},
-        },
-        "flags": {
-            "--raw":        {"altName": "-r",
-                             "help": "Edit note with raw ENML",
-                             "value": True,
-                             "default": False}
-        }
-    },
-    "remove": {
-        "help": "Remove note from Evernote.",
-        "firstArg": "--note",
-        "arguments": {
-            "--note":  {"altName": "-n",
-                        "help": "The name or GUID or ID from the previous "
-                                "search of a note to remove.",
-                                "required": True},
-        },
-        "flags": {
-            "--force": {"altName": "-f",
-                        "help": "Don't ask about removing.",
-                        "value": True,
-                        "default": False},
-        }
-    },
-    "show": {
-        "help": "Output note in the terminal.",
-        "firstArg": "--note",
-        "arguments": {
-            "--note": {"altName": "-n",
-                       "help": "The name or GUID or ID from the previous "
-                               "search of a note to show.",
-                               "required": True},
-        },
-        "flags": {
-            "--raw": {"altName": "-w",
-                      "help": "Show the raw note body",
-                      "value": True,
-                      "default": False},
         }
     },
     "find": {
@@ -175,39 +102,112 @@ COMMANDS_DICT = {
                              "type": int},
         },
         "flags": {
-            "--with-url":       {"altName": "-wu",
-                                 "help": "Add direct url of each note "
-                                         "in results to Evernote web-version.",
-                                 "value": True,
-                                 "default": False},
-            "--with-tags":      {"altName": "-wt",
-                                 "help": "Add tag list of each note in results.",
-                                 "value": True,
-                                 "default": False},
-            "--with-notebook":  {"altName": "-wn",
-                                 "help": "Add notebook of each note in results.",
+            "--content-search": {"altName": "-cs",
+                                 "help": "Search by content, not by title.",
                                  "value": True,
                                  "default": False},
             "--exact-entry":    {"altName": "-ee",
                                  "help": "Search for exact entry of the request.",
                                  "value": True,
                                  "default": False},
-            "--content-search": {"altName": "-cs",
-                                 "help": "Search by content, not by title.",
-                                 "value": True,
-                                 "default": False},
             "--guid":           {"altName": "-id",
                                  "help": "Replace ID with GUID of each note in results.",
-                                 "value": True,
-                                 "default": False},
-            "--reminders-only": {"altName": "-R",
-                                 "help": "Include only notes with a reminder.",
                                  "value": True,
                                  "default": False},
             "--ignore-completed": {"altName": "-C",
                                    "help": "Include only unfinished reminders",
                                    "value": True,
                                    "default": False},
+            "--reminders-only": {"altName": "-R",
+                                 "help": "Include only notes with a reminder.",
+                                 "value": True,
+                                 "default": False},
+            "--with-notebook":  {"altName": "-wn",
+                                 "help": "Add notebook of each note in results.",
+                                 "value": True,
+                                 "default": False},
+            "--with-tags":      {"altName": "-wt",
+                                 "help": "Add tag list of each note in results.",
+                                 "value": True,
+                                 "default": False},
+            "--with-url":       {"altName": "-wu",
+                                 "help": "Add direct url of each note "
+                                         "in results to Evernote web-version.",
+                                 "value": True,
+                                 "default": False}
+        }
+    },
+    "edit": {
+        "help": "Edit note in Evernote.",
+        "firstArg": "--note",
+        "arguments": {
+            "--note":       {"altName": "-n",
+                             "help": "The name or GUID or ID from the "
+                                     "previous search of a note to edit.",
+                                     "required": True},
+            "--title":      {"altName": "-t",
+                             "help": "Set new title of the note."},
+            "--content":    {"altName": "-c",
+                             "help": "Set new content of the note."},
+            "--resource":   {"altName": "-rs",
+                             "help": "Add a resource to the note.",
+                             "repetitive": True},
+            "--tags":       {"altName": "-tg",
+                             "help": "Set new list of tags for the note."},
+            "--created":    {"altName": "-cr",
+                             "help": "Set local creation time in 'yyyy-mm-dd'"
+                                     " or 'yyyy-mm-dd HH:MM' format."},
+            "--notebook":   {"altName": "-nb",
+                             "help": "Assign new notebook for the note."},
+            "--reminder":   {"altName": "-r",
+                             "help": "Set local reminder date and time in 'yyyy-mm-dd'"
+                                     " or 'yyyy-mm-dd HH:MM' format."
+                                     "\n             Alternatively use TOMORROW "
+                                     "and WEEK for 24 hours and a week ahead "
+                                     "respectively,"
+                                     "\n             NONE for a reminder "
+                                     "without a time. Use DONE to mark a "
+                                     "reminder as completed."
+                                     "\n             Use DELETE to remove "
+                                     "reminder from a note."},
+        },
+        "flags": {
+            "--raw":        {"altName": "-r",
+                             "help": "Edit note with raw ENML",
+                             "value": True,
+                             "default": False}
+        }
+    },
+    "show": {
+        "help": "Output note in the terminal.",
+        "firstArg": "--note",
+        "arguments": {
+            "--note": {"altName": "-n",
+                       "help": "The name or GUID or ID from the previous "
+                               "search of a note to show.",
+                               "required": True},
+        },
+        "flags": {
+            "--raw": {"altName": "-w",
+                      "help": "Show the raw note body",
+                      "value": True,
+                      "default": False},
+        }
+    },
+    "remove": {
+        "help": "Remove note from Evernote.",
+        "firstArg": "--note",
+        "arguments": {
+            "--note":  {"altName": "-n",
+                        "help": "The name or GUID or ID from the previous "
+                                "search of a note to remove.",
+                                "required": True},
+        },
+        "flags": {
+            "--force": {"altName": "-f",
+                        "help": "Don't ask about removing.",
+                        "value": True,
+                        "default": False},
         }
     },
     "dedup": {
