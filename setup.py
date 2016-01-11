@@ -41,9 +41,9 @@ class full_install(install):
             try:
                 if os.path.exists(dst):
                     shutil.copy(src,dst)
-                    print('copying %s -> %s' % (src,dst))                
+                    print('copying %s -> %s' % (src,dst))
             except IOError:
-                print('cannot copy autocomplet script %s to %s, got root ?' % (src,dst))
+                print('cannot copy autocomplete script %s to %s, got root ?' % (src,dst))
                 print(traceback.format_exc())
 
         print "installing autocomplete"
