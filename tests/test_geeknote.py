@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+from cStringIO import StringIO
 from geeknote.geeknote import *
 from geeknote import tools
 from geeknote.editor import Editor
@@ -94,8 +95,10 @@ class testNotes(unittest.TestCase):
         self.assertEqual(testRequest, response)
 
     def testError_createSearchRequest1(self):
+        # set fake stdout and stderr
+        self.stdout, sys.stdout = sys.stdout, StringIO()
+        self.stderr, sys.stderr = sys.stderr, StringIO()
         sys.exit = lambda code: code
-
         with self.assertRaises(tools.ExitException):
             self.notes._createSearchRequest(search="test text",
                                             date="12-31-1999")
