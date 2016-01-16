@@ -54,15 +54,17 @@ class testNotes(unittest.TestCase):
         )
         self.assertEqual(testData["tags"], ["tag1", "tag2"])
 
-    def test_editWithEditorInThread(self):
-        testData = self.notes._parseInput("title", "WRITE", "tag1, tag2", None, None, self.testNote)
-        print ('')
-        print ('')
-        print (testData)
-        print ('')
-        print ('')
-
-        self.notes._editWithEditorInThread(testData)
+    # Disable this test
+    #   It blocks, and while it can be overriden by defining EDITOR=/bin/cat, for example,
+    #   it's challenging to make those arrangements in all CI systems
+    # def test_editWithEditorInThread(self):
+    #     testData = self.notes._parseInput("title", "WRITE", "tag1, tag2", None, None, self.testNote)
+    #     print ('')
+    #     print ('')
+    #     print (testData)
+    #     print ('')
+    #     print ('')
+    #     self.notes._editWithEditorInThread(testData)
 
     def test_createSearchRequest1(self):
         testRequest = self.notes._createSearchRequest(

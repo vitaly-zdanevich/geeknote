@@ -53,12 +53,6 @@ Execute the tests
 py.test
 ```
 
-Note that one of the tests (`test_editWithEditorInThread` from `tests/test_geeknote.py`) will invoke the configured editor.  Exit the editor to resume the test.  You might also temporarily set the editor to something inert when running the tests, as in
-
-``` sh
-EDITOR=/bin/cat py.test
-```
-
 ## Geeknote Settings
 ##### Authorizing Geeknote
 After installation, Geeknote must be authorized with Evernote prior to use. To authorize your Geeknote in Evernote launch the command *login*:
