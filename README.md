@@ -1,4 +1,4 @@
-Geeknote for Evernote (or 印象笔记)  [![Build Status](https://travis-ci.org/jeffkowalski/geeknote.svg?branch=master)](https://travis-ci.org/jeffkowalski/geeknote)
+Geeknote for Evernote (or 印象笔记)  [![Travis CI](https://travis-ci.org/jeffkowalski/geeknote.svg?branch=master)](https://travis-ci.org/jeffkowalski/geeknote) [![Circle CI](https://circleci.com/gh/jeffkowalski/geeknote.svg?&style=shield)](https://circleci.com/gh/jeffkowalski/geeknote)
 ===
 
 Geeknote is a command line client for Evernote that can be use on Linux, FreeBSD and OS X.
