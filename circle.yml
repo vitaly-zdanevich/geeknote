@@ -1,0 +1,11 @@
+machine:
+  python:
+    version: 2.7.6
+
+dependencies:
+  pre:
+    - pip install pytest
+
+test:
+  override:
+    - py.test
