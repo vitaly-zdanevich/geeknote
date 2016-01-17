@@ -5,6 +5,11 @@ machine:
 dependencies:
   pre:
     - pip install pytest
+    - pip install -r requirements.txt
+
+  override:
+    - python setup.py build
+    - python setup.py install --bash-completion-dir=/tmp --zsh-completion-dir=/tmp
 
 test:
   override:
