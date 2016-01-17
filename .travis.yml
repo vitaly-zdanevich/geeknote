@@ -1,6 +1,6 @@
 language: python
 python:
-# geenote uses features of python not present in 2.6
+# geeknote uses features of python not present in 2.6
 #  - "2.6"
   - "2.7"
 # The official Evernote SDK doesn't support Python 3 yet
