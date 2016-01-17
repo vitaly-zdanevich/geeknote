@@ -12,5 +12,7 @@ dependencies:
     - python setup.py install --bash-completion-dir=/tmp --zsh-completion-dir=/tmp
 
 test:
+  pre:
+    - rm ./venv
   override:
     - py.test
