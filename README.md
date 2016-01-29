@@ -127,6 +127,12 @@ To change the default editor call:
 geeknote settings --editor vim
 ```
 
+To use `gvim` you need to prevent forking from the terminal with `-f`:
+
+``` sh
+geeknote settings --editor 'gvim -f'
+```
+
 ###### Example
 
 ``` sh
