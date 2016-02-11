@@ -53,6 +53,20 @@ class Editor(object):
         return unescape(text, Editor.getHtmlUnescapeTable())
 
     @staticmethod
+    def getImages(contentENML):
+        '''
+        creates a list of image resources to save. each has a hash and extension attribute
+        '''
+        soup = BeautifulSoup(contentENML.decode('utf-8'))
+        imageList = []
+        for section in soup.findAll('en-media'):
+            if 'type' in section.attrs and 'hash' in section.attrs:
+                imageType, imageExtension = section['type'].split('/')
+                if imageType == "image":
+                    imageList.append({'hash': section['hash'], 'extension': imageExtension})
+        return imageList
+
+    @staticmethod
     def checklistInENMLtoSoup(soup):
         '''
         Transforms Evernote checklist elements to github `* [ ]` task list style
@@ -79,7 +93,7 @@ class Editor(object):
                 parent.replace_with(new_tag)
 
     @staticmethod
-    def ENMLtoText(contentENML, format='default'):
+    def ENMLtoText(contentENML, format='default', imageOptions={'saveImages': False}, imageFilename=""):
         soup = BeautifulSoup(contentENML.decode('utf-8'), 'html.parser')
 
         if format == 'pre':
@@ -124,6 +138,16 @@ class Editor(object):
 
             for section in soup.findAll('en-todo'):
                 section.replace_with('[ ]')
+
+            # change <en-media> tags to <img> tags
+            if 'saveImages' in imageOptions and imageOptions['saveImages']:
+                for section in soup.findAll('en-media'):
+                    if 'type' in section.attrs and 'hash' in section.attrs:
+                        imageType, imageExtension = section['type'].split('/')
+                        if imageType == "image":
+                            newTag = soup.new_tag("img")
+                            newTag['src'] = "{}-{}.{}".format(imageOptions['baseFilename'], section['hash'], imageExtension)
+                            section.replace_with(newTag)
 
             # Keep Evernote media elements in html format in markdown so
             # they'll stay in place over an edit

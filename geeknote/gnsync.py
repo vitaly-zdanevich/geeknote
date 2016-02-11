@@ -4,6 +4,7 @@
 import codecs
 import os
 import argparse
+import binascii
 import glob
 import logging
 import re
@@ -98,7 +99,7 @@ class GNSync:
     all_set = False
 
     @log
-    def __init__(self, notebook_name, path, mask, format, twoway=False, download_only=False, nodownsync=False):
+    def __init__(self, notebook_name, path, mask, format, twoway=False, download_only=False, nodownsync=False, imageOptions={'saveImages': False, 'imagesInSubdir': False}):
         # check auth
         if not Storage().getUserToken():
             raise Exception("Auth error. There is not any oAuthToken.")
@@ -140,6 +141,9 @@ class GNSync:
         # set notebook
         self.notebook_guid,\
             self.notebook_name = self._get_notebook(notebook_name, path)
+
+        # set image options
+        self.imageOptions = imageOptions
 
         # all is Ok
         self.all_set = True
@@ -342,9 +346,26 @@ class GNSync:
         Creates file from note
         """
         GeekNote().loadNoteContent(note)
-        content = Editor.ENMLtoText(note.content)
+
+        # Save images
+        if 'saveImages' in self.imageOptions and self.imageOptions['saveImages']:
+            if 'imagesInSubdir' in self.imageOptions and self.imageOptions['imagesInSubdir']:
+                os.mkdir(os.path.join(self.path, note.title + "_images"))
+                imagePath = os.path.join(self.path, note.title + "_images", note.title)
+                self.imageOptions['baseFilename'] = note.title + "_images/" + note.title
+            else:
+                imagePath = os.path.join(self.path, note.title)
+                self.imageOptions['baseFilename'] = note.title
+            for imageInfo in Editor.getImages(note.content):
+                filename = "{}-{}.{}".format(imagePath, imageInfo['hash'], imageInfo['extension'])
+                logger.info('Saving image to {}'.format(filename))
+                binaryHash = binascii.unhexlify(imageInfo['hash'])
+                GeekNote().saveMedia(note.guid, binaryHash, filename)
+
+        content = Editor.ENMLtoText(note.content, self.imageOptions)
         path = os.path.join(self.path, note.title + self.extension)
         open(path, "w").write(content)
+
         return True
 
     @log
@@ -437,6 +458,8 @@ def main():
         parser.add_argument('--two-way', '-t', action='store_true', help='Two-way sync (also download from evernote)', default=False)
         parser.add_argument('--download-only', action='store_true', help='Only download from evernote; no upload', default=False)
         parser.add_argument('--nodownsync', '-d', action='store', help='Sync from Evernote only if the file is already local.')
+        parser.add_argument('--save-images', action='store_true', help='save images along with text')
+        parser.add_argument('--images-in-subdir', action='store_true', help='save images in a subdirectory (instead of same directory as file)')
 
         args = parser.parse_args()
 
@@ -449,6 +472,11 @@ def main():
         download_only = args.download_only
         nodownsync = True if args.nodownsync else False
 
+        # image options
+        imageOptions = {}
+        imageOptions['saveImages'] = args.save_images
+        imageOptions['imagesInSubdir'] = args.images_in_subdir
+
         reset_logpath(logpath)
 
         if args.all:
@@ -457,10 +485,10 @@ def main():
                 notebook_path = os.path.join(path, notebook)
                 if not os.path.exists(notebook_path):
                     os.mkdir(notebook_path)
-                GNS = GNSync(notebook, notebook_path, mask, format, twoway, download_only, nodownsync)
+                GNS = GNSync(notebook, notebook_path, mask, format, twoway, download_only, nodownsync, imageOptions)
                 GNS.sync()
         else:
-            GNS = GNSync(notebook, path, mask, format, twoway, download_only, nodownsync)
+            GNS = GNSync(notebook, path, mask, format, twoway, download_only, nodownsync, imageOptions)
             GNS.sync()
 
     except (KeyboardInterrupt, SystemExit, tools.ExitException):
