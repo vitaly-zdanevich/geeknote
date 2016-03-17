@@ -57,7 +57,7 @@ class Geeknote < Formula
     system "python", *Language::Python.setup_install_args(prefix)
 
     bash_completion.install "completion/bash_completion/_geeknote" => "geeknote"
-    zsh_completion.install "completion/zsh_completion/_geeknote" => "geeknote"
+    zsh_completion.install "completion/zsh_completion/_geeknote" => "_geeknote"
 
     bin.env_script_all_files(libexec/"bin", :PYTHONPATH => ENV["PYTHONPATH"])
   end
