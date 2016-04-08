@@ -347,7 +347,7 @@ You can remove notes with Geeknotes from Evernote.
 ##### Synopsis
 
 ``` sh
-geeknote remove --notebook <note name or GUID>
+geeknote remove --note <note name or GUID>
                [--force]
 ```
 
