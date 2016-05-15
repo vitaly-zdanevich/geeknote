@@ -16,6 +16,7 @@ class AccountingStub(object):
     uploadLimit = 100
     uploadLimitEnd = 1095292800000
 
+
 class UserStub(object):
     username = 'testusername'
     name = 'testname'
@@ -25,10 +26,12 @@ class UserStub(object):
     accounting = AccountingStub()
     timezone = None
 
+
 class AttributesStub(object):
     reminderOrder = None
     reminderTime = None
     reminderDoneTime = None
+
 
 class NoteStub(object):
     title = 'testnote'
