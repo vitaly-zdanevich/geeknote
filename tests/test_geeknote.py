@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import sys
+import time
 import unittest
 from cStringIO import StringIO
 from geeknote.geeknote import *
 from geeknote import tools
 from geeknote.editor import Editor
+from geeknote.storage import Storage
 
 
 class GeekNoteOver(GeekNote):
@@ -12,7 +15,13 @@ class GeekNoteOver(GeekNote):
         pass
 
     def loadNoteContent(self, note):
-        note.content = "note content"
+        if "content" not in note.__dict__:
+            note.content = "note content"
+
+    def updateNote(self, guid=None, **inputData):
+        # HACK for testing: this assumes that the guid represents a "note" itself
+        # see do_test_editWithEditorInThread below
+        guid.content = inputData["content"]
 
 
 class NotesOver(Notes):
@@ -21,6 +30,19 @@ class NotesOver(Notes):
 
 
 class testNotes(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        # Use our trivial "pseudoedit" program as editor to avoid user interaction
+        cls.storage = Storage()
+        cls.saved_editor = cls.storage.getUserprop('editor')
+        cls.storage.setUserprop('editor', sys.executable + " " +
+                                os.path.join(os.path.dirname(os.path.abspath(__file__)), "pseudoedit.py"))
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.saved_editor:
+            cls.storage.setUserprop('editor', cls.saved_editor)
 
     def setUp(self):
         self.notes = NotesOver()
@@ -55,17 +77,25 @@ class testNotes(unittest.TestCase):
         )
         self.assertEqual(testData["tags"], ["tag1", "tag2"])
 
-    # Disable this test
-    #   It blocks, and while it can be overriden by defining EDITOR=/bin/cat, for example,
-    #   it's challenging to make those arrangements in all CI systems
+    def do_test_editWithEditorInThread(self, txt, expected):
+        testNote = tools.Struct(title="note title",
+                                content=txt)
+        # hack to make updateNote work - see above
+        testNote.guid = testNote
+        testData = self.notes._parseInput("title",
+                                          txt,
+                                          "tag1, tag2",
+                                          None, None, testNote)
+        result = self.notes._editWithEditorInThread(testData, testNote)
+        self.assertEqual(Editor.ENMLtoText(testNote.content), expected)
+
     # def test_editWithEditorInThread(self):
-    #     testData = self.notes._parseInput("title", "WRITE", "tag1, tag2", None, None, self.testNote)
-    #     print ('')
-    #     print ('')
-    #     print (testData)
-    #     print ('')
-    #     print ('')
-    #     self.notes._editWithEditorInThread(testData)
+    #     txt = "Please do not change this file"
+    #     self.do_test_editWithEditorInThread(txt, txt + '\n')
+
+    def test_editWithEditorInThread2(self):
+        txt = "Please delete this line, save, and quit the editor"
+        self.do_test_editWithEditorInThread(txt, "\n")
 
     def test_createSearchRequest1(self):
         testRequest = self.notes._createSearchRequest(

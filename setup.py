@@ -80,7 +80,8 @@ setup(
         'sqlalchemy',
         'markdown2',
         'beautifulsoup4',
-        'thrift'
+        'thrift',
+        'proxyenv'
     ],
 
     entry_points={

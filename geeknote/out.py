@@ -6,6 +6,7 @@ import thread
 import time
 import datetime
 import sys
+import os.path
 
 import tools
 import config
@@ -94,9 +95,35 @@ class preloader(object):
             pass
 
 
+def _getCredentialsFromFile():
+    # Get evernote credentials from file APP_DIR/credentials
+    # This is used only for sandbox mode (DEV_MODE=True) for security reasons
+    if config.DEV_MODE:
+        creds = os.path.join(config.APP_DIR, "credentials")
+        if os.path.exists(creds):
+            credentials = None
+            # execfile doesn't work reliably for assignments, see python docs
+            with open(creds, "r") as f:
+                # this sets "credentials" if correctly formatted
+                exec f.read()
+            try:
+                return credentials.split(":")
+            except:
+                sys.stderr.write("""Error reading credentials from %s.
+Format should be:
+credentials="<username>:<password>:<two-factor auth code>"
+
+""" % creds)
+    return None
+
+
 @preloaderPause
 def GetUserCredentials():
     """Prompts the user for a username and password."""
+    creds = _getCredentialsFromFile()
+    if creds is not None:
+        return creds[:2]
+
     try:
         login = None
         password = None
@@ -117,6 +144,10 @@ def GetUserCredentials():
 @preloaderPause
 def GetUserAuthCode():
     """Prompts the user for a two factor auth code."""
+    creds = _getCredentialsFromFile()
+    if creds is not None:
+        return creds[2]
+
     try:
         code = None
         if code is None:
@@ -165,7 +196,7 @@ def confirm(message):
 @preloaderStop
 def showNote(note, id, shardId):
     separator("#", "URL")
-    printLine("NoteLink: " + (config.NOTE_LINK % (shardId,id,note.guid)))
+    printLine("NoteLink: " + (config.NOTE_LINK % (shardId, id, note.guid)))
     printLine("WebClientURL: " + (config.NOTE_WEBCLIENT_URL % note.guid))
     separator("#", "TITLE")
     printLine(note.title)
@@ -249,8 +280,8 @@ def printList(listItems, title="", showSelector=False,
             printDate(item.created).ljust(18, " ") if hasattr(item, 'created') else '',
             printDate(item.updated).ljust(18, " ") if hasattr(item, 'updated') else '',
             item.title if hasattr(item, 'title') else item.name,
-            "".join( map(lambda s:" #"+s, item.tagGuids) ) if showTags and hasattr(item, 'tagGuids') and item.tagGuids else '',
-            " @"+item.notebookGuid if showNotebook and hasattr(item, 'notebookGuid') else '',
+            "".join(map(lambda s: " #" + s, item.tagGuids)) if showTags and hasattr(item, 'tagGuids') and item.tagGuids else '',
+            " @" + item.notebookGuid if showNotebook and hasattr(item, 'notebookGuid') else '',
             " " + (">>> " + config.NOTE_WEBCLIENT_URL % item.guid) if showUrl else '',))
 
         if showByStep != 0 and key % showByStep == 0 and key < total:
@@ -290,7 +321,6 @@ def printDate(timestamp):
         return "None"
     else:
         return datetime.datetime.fromtimestamp(timestamp / 1000).strftime(config.DEF_DATE_FORMAT)
-
 
 def printLine(line, endLine="\n", out=None):
     # "out = sys.stdout" makes it hard to mock

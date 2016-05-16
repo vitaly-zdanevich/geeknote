@@ -5,7 +5,7 @@ import os
 import time
 import unittest
 from cStringIO import StringIO
-from geeknote.config import VERSION
+from geeknote.config import VERSION, USER_BASE_URL
 from geeknote.out import printDate, printLine, printAbout,\
     separator, failureMessage, successMessage, showUser, showNote, \
     printList, SearchResult
@@ -96,9 +96,13 @@ And visit www.geeknote.me to check for updates.\n''' % VERSION
         self.assertEquals(sys.stdout.read(), '\n\n')
 
     def test_failure_message_success(self):
+        sav = sys.stderr
+        buf = StringIO()
+        sys.stderr = buf
         failureMessage('fail')
-        sys.stderr.seek(0)
-        self.assertEquals(sys.stderr.read(), 'fail\n')
+        sys.stderr = sav
+        buf.seek(0)
+        self.assertEquals(buf.read(), 'fail\n')
 
     def test_success_message_success(self):
         successMessage('success')
@@ -166,9 +170,9 @@ Found 2 items
     def test_print_list_with_urls_success(self):
         notes_list = '''=================== test ==================
 Found 2 items
-  1 : 2004-09-17        2004-09-17        testnote >>> https://www.evernote.com/Home.action?#n=12345
-  2 : 2004-09-17        2004-09-17        testnote >>> https://www.evernote.com/Home.action?#n=12345
-'''
+  1 : 2004-09-17        2004-09-17        testnote >>> https://{url}/Home.action?#n=12345
+  2 : 2004-09-17        2004-09-17        testnote >>> https://{url}/Home.action?#n=12345
+'''.format(url=USER_BASE_URL)
         printList([NoteStub() for _ in xrange(2)], title='test', showUrl=True)
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), notes_list)

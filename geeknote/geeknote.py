@@ -793,7 +793,7 @@ class Notes(GeekNoteConnector):
             if not thread.isAlive():
                 # check if thread is alive here before sleep to avoid losing data saved during this 5 secs
                 break
-            time.sleep(5)
+            thread.join(timeout=5)
         self._finalizeEditor(editor, result)
         return result
 

@@ -60,7 +60,7 @@ MARKDOWN_EXTENSIONS = ['.md', '.markdown']
 HTML_EXTENSIONS = ['.html', '.org']
 
 DEV_MODE = False
-DEBUG = False
+APPDEBUG = False
 
 # Url view the note via the web client
 NOTE_WEBCLIENT_URL = "https://%service%/Home.action?#n=%s"
@@ -71,6 +71,16 @@ NOTE_LINK = "https://%service%/shard/%s/nl/%s/%s"
 DEF_DATE_FORMAT = "%Y-%m-%d"
 DEF_DATE_AND_TIME_FORMAT = "%Y-%m-%d %H:%M"
 DEF_DATE_RANGE_DELIMITER = "/"
+
+if DEV_MODE:
+    USER_STORE_URI = USER_STORE_URI_SANDBOX
+    CONSUMER_KEY = CONSUMER_KEY_SANDBOX
+    CONSUMER_SECRET = CONSUMER_SECRET_SANDBOX
+    USER_BASE_URL = USER_BASE_URL_SANDBOX
+    APP_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config")
+    sys.stderr.write("Developer mode: using %s as application directory\n" % APP_DIR)
+
+ERROR_LOG = os.path.join(APP_DIR, "error.log")
 
 # validate config
 try:
