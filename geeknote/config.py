@@ -60,7 +60,7 @@ MARKDOWN_EXTENSIONS = ['.md', '.markdown']
 HTML_EXTENSIONS = ['.html', '.org']
 
 DEV_MODE = False
-APPDEBUG = False
+DEBUG = False
 
 # Url view the note via the web client
 NOTE_WEBCLIENT_URL = "https://%service%/Home.action?#n=%s"
