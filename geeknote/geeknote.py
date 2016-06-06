@@ -70,7 +70,7 @@ class GeekNote(object):
                 logging.error("Error: %s : %s", func.__name__, str(e))
 
                 if not hasattr(e, 'errorCode'):
-                    out.failureMessage("Sorry, operation has failed!!!.")
+                    out.failureMessage("Operation failed!.")
                     tools.exitErr()
 
                 errorCode = int(e.errorCode)
@@ -83,8 +83,8 @@ class GeekNote(object):
                     return func(*args, **kwargs)
 
                 elif errorCode == 3:
-                    out.failureMessage("Sorry, you do not have permissions "
-                                       "to do this operation.")
+                    out.failureMessage("Sorry, you are not authorized "
+                                       "to perform this operation.")
 
                 # Rate limited
                 # Patched because otherwise if you get rate limited you still keep
@@ -141,7 +141,7 @@ class GeekNote(object):
 
     def checkAuth(self):
         self.authToken = self.getStorage().getUserToken()
-        logging.debug("oAuth token : %s", self.authToken)
+        logging.debug("oauth token : %s", self.authToken)
         if self.authToken:
             return True
         return False
@@ -151,7 +151,7 @@ class GeekNote(object):
         self.authToken = GNA.getToken()
         userInfo = self.getUserInfo()
         if not isinstance(userInfo, object):
-            logging.error("User info not get")
+            logging.error("Could not get user info.")
             return False
 
         self.getStorage().createUser(self.authToken, userInfo)
@@ -192,11 +192,11 @@ class GeekNote(object):
 
     @EdamException
     def createNote(self, title, content, tags=None, notebook=None, created=None, resources=None):
-        
+
         def make_resource(filename):
             try:
                 mtype = mimetypes.guess_type(filename)[0]
-                    
+
                 if mtype.split('/')[0] == "text":
                     rmode = "r"
                 else:
@@ -210,10 +210,10 @@ class GeekNote(object):
                     data = f.read()
                     md5 = hashlib.md5()
                     md5.update(data)
-                    
-                    resource.data.bodyHash = md5.hexdigest() 
+
+                    resource.data.bodyHash = md5.hexdigest()
                     resource.data.body = data
-                    resource.data.size = len(data) 
+                    resource.data.size = len(data)
                     resource.mime = mtype
                     resource.attributes = Types.ResourceAttributes()
                     resource.attributes.fileName = os.path.basename(filename)
@@ -237,10 +237,10 @@ class GeekNote(object):
         if resources:
             """ make EverNote API resources """
             note.resources = map(make_resource, resources)
-            
+
             """ add to content """
             resource_nodes = ""
-            
+
             for resource in note.resources:
                 resource_nodes += '<en-media type="%s" hash="%s" />' % (resource.mime, resource.data.bodyHash)
 
@@ -356,7 +356,7 @@ class GeekNoteConnector(object):
     storage = None
 
     def connectToEvertone(self):
-        out.preloader.setMessage("Connect to Evernote...")
+        out.preloader.setMessage("Connecting to Evernote...")
         self.evernote = GeekNote()
 
     def getEvernote(self):
@@ -397,7 +397,7 @@ class User(GeekNoteConnector):
         if self.getEvernote().auth():
             out.successMessage("You have successfully logged in.")
         else:
-            out.failureMessage("Login error.")
+            out.failureMessage("Error: could not log in.")
             return tools.exitErr()
 
     @GeekNoneDBConnectOnly
@@ -413,7 +413,7 @@ class User(GeekNoteConnector):
         if result:
             out.successMessage("You have successfully logged out.")
         else:
-            out.failureMessage("Logout error.")
+            out.failureMessage("Error: could not log out.")
             return tools.exitErr()
 
     @GeekNoneDBConnectOnly
@@ -424,10 +424,10 @@ class User(GeekNoteConnector):
                 editor = storage.getUserprop('editor')
                 if not editor:
                     editor = config.DEF_WIN_EDITOR if sys.platform == 'win32' else config.DEF_UNIX_EDITOR
-                out.successMessage("Current editor is: %s" % editor)
+                out.successMessage("Current editor: %s" % editor)
             else:
                 storage.setUserprop('editor', editor)
-                out.successMessage("Changes have been saved.")
+                out.successMessage("Changes saved.")
         else:
             settings = ('Geeknote',
                         '*' * 30,
@@ -461,9 +461,9 @@ class Tags(GeekNoteConnector):
         result = self.getEvernote().createTag(name=title)
 
         if result:
-            out.successMessage("Tag has been successfully created.")
+            out.successMessage("Tag successfully created.")
         else:
-            out.failureMessage("Error while the process of creating the tag.")
+            out.failureMessage("Error: tag could not be created.")
             return tools.exitErr()
 
         return result
@@ -475,25 +475,25 @@ class Tags(GeekNoteConnector):
         result = self.getEvernote().updateTag(guid=tag.guid, name=title)
 
         if result:
-            out.successMessage("Tag has been successfully updated.")
+            out.successMessage("Tag successfully updated.")
         else:
-            out.failureMessage("Error while the updating the tag.")
+            out.failureMessage("Error: tag could not be updated.")
             return tools.exitErr()
 
     def remove(self, tagname, force=None):
         tag = self._searchTag(tagname)
 
         if not force and not out.confirm('Are you sure you want to '
-                                         'delete this tag: "%s"?' % tag.name):
+                                         'delete the tag "%s"?' % tag.name):
             return tools.exit()
 
         out.preloader.setMessage("Deleting tag...")
         result = self.getEvernote().removeTag(guid=tag.guid)
 
         if result:
-            out.successMessage("Tag has been successfully removed.")
+            out.successMessage("Tag successfully removed.")
         else:
-            out.failureMessage("Error while removing the tag.")
+            out.failureMessage("Error: tag could not be removed.")
 
     def _searchTag(self, tag):
         result = self.getEvernote().findTags()
@@ -521,10 +521,9 @@ class Notebooks(GeekNoteConnector):
         result = self.getEvernote().createNotebook(name=title)
 
         if result:
-            out.successMessage("Notebook has been successfully created.")
+            out.successMessage("Notebook successfully created.")
         else:
-            out.failureMessage("Error while the process "
-                               "of creating the notebook.")
+            out.failureMessage("Error: could not create notebook.")
             return tools.exitErr()
 
         return result
@@ -537,9 +536,9 @@ class Notebooks(GeekNoteConnector):
                                                    name=title)
 
         if result:
-            out.successMessage("Notebook has been successfully updated.")
+            out.successMessage("Notebook successfully updated.")
         else:
-            out.failureMessage("Error while the updating the notebook.")
+            out.failureMessage("Error: could not update notebook.")
             return tools.exitErr()
 
     def remove(self, notebook, force=None):
@@ -553,9 +552,9 @@ class Notebooks(GeekNoteConnector):
         result = self.getEvernote().removeNotebook(guid=notebook.guid)
 
         if result:
-            out.successMessage("Notebook has been successfully removed.")
+            out.successMessage("Notebook successfully removed.")
         else:
-            out.failureMessage("Error while removing the notebook.")
+            out.failureMessage("Error: could not remove notebook.")
 
     def _searchNotebook(self, notebook):
 
@@ -643,9 +642,9 @@ class Notes(GeekNoteConnector):
             result = bool(self.getEvernote().createNote(**inputData))
 
         if result:
-            out.successMessage("Note has been successfully created.")
+            out.successMessage("Note successfully created.")
         else:
-            out.failureMessage("Error while creating the note.")
+            out.failureMessage("Error: could not create note.")
 
     def edit(self, note, title=None, content=None, tags=None, notebook=None, resource=None):
 
@@ -661,9 +660,9 @@ class Notes(GeekNoteConnector):
             result = bool(self.getEvernote().updateNote(guid=note.guid, **inputData))
 
         if result:
-            out.successMessage("Note has been successfully saved.")
+            out.successMessage("Note successfully saved.")
         else:
-            out.failureMessage("Error while saving the note.")
+            out.failureMessage("Error: could not save note.")
 
     def remove(self, note, force=None):
 
@@ -678,9 +677,9 @@ class Notes(GeekNoteConnector):
         result = self.getEvernote().removeNote(note.guid)
 
         if result:
-            out.successMessage("Note has been successful deleted.")
+            out.successMessage("Note successfully deleted.")
         else:
-            out.failureMessage("Error while deleting the note.")
+            out.failureMessage("Error: could not delete note.")
 
     def show(self, note, raw=None):
 
