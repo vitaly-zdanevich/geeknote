@@ -20,7 +20,7 @@ class GeekNoteOver(GeekNote):
 
     def updateNote(self, guid=None, **inputData):
         # HACK for testing: this assumes that the guid represents a "note" itself
-        # see do_test_editWithEditorInThread below
+        # see check_editWithEditorInThread below
         guid.content = inputData["content"]
 
 
@@ -77,7 +77,7 @@ class testNotes(unittest.TestCase):
         )
         self.assertEqual(testData["tags"], ["tag1", "tag2"])
 
-    def do_test_editWithEditorInThread(self, txt, expected):
+    def check_editWithEditorInThread(self, txt, expected):
         testNote = tools.Struct(title="note title",
                                 content=txt)
         # hack to make updateNote work - see above
@@ -91,11 +91,11 @@ class testNotes(unittest.TestCase):
 
     # def test_editWithEditorInThread(self):
     #     txt = "Please do not change this file"
-    #     self.do_test_editWithEditorInThread(txt, txt + '\n')
+    #     self.check_editWithEditorInThread(txt, txt + '\n')
 
     def test_editWithEditorInThread2(self):
         txt = "Please delete this line, save, and quit the editor"
-        self.do_test_editWithEditorInThread(txt, "\n")
+        self.check_editWithEditorInThread(txt, "\n\n")
 
     def test_createSearchRequest1(self):
         testRequest = self.notes._createSearchRequest(

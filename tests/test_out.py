@@ -145,7 +145,7 @@ Time: None
 Done: None
 ----------------- CONTENT -----------------
 Tags: tag1, tag2, tag3
-##note content\n\n'''
+##note content\n\n\n'''
         showNote(NoteStub(), UserStub().id, UserStub().shardId)
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), note)
