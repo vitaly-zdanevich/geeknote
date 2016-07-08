@@ -153,7 +153,7 @@ The main functionality that we need is creating notes in Evernote.
 ``` sh
 geeknote create --title <title>
                [--content <content>]
-               [--tags <list of tags>]
+               [--tag <tag>]
                [--created <date and time>]
                [--resource <attachment filename>]
                [--notebook <notebook where to save>]
@@ -166,7 +166,7 @@ geeknote create --title <title>
 |------------|----------|-------------|
 | ‑‑title    | title    | With this option we specify the title of new note we want to create. |
 | ‑‑content  | content  | Specify the content of new note. The content must not contain double quotes. |
-| ‑‑tags     | list of tags, like: tag1, tag2 | Specify tags that our note will have. Multiple tags are separated with comma. |
+| ‑‑tag      | tag      | Specify tag that our note will have. May be repeated. |
 | ‑‑created  | date     | Set note creation date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format. |
 | ‑‑resource | attachment filename, like: document.pdf |Specify file to be attached to the note.  May be repeated. |
 | ‑‑notebook | notebook where to save | Specify the notebook where new note should be saved. This option is not required. If it isn't given, the note will be saved in default notebook. If notebook doesn't exist Geeknote will create it automatically. |
@@ -185,7 +185,7 @@ geeknote create --title "Shopping list"
                 --content "Don't forget to buy milk, turkey and chips."
                 --resource shoppinglist.pdf
                 --notebook "Family"
-                --tags "shop, holiday, important"
+                --tag "shop" --tag "holiday" --tag "important"
 ```
 
 Creating a new note and editing content in editor (notice the lack of `content` argument):
@@ -193,7 +193,7 @@ Creating a new note and editing content in editor (notice the lack of `content` 
 ``` sh
 geeknote create --title "Meeting with customer"
                 --notebook "Meetings"
-                --tags "projectA, important, report"
+                --tag "projectA" --tag "important" --tag "report"
                 --created "2015-10-23 14:30"
 
 ```
@@ -206,7 +206,7 @@ You can easily search notes in Evernote with Geeknote and output results in the 
 
 ``` sh
 geeknote find --search <text to find>
-             [--tags <tag list>]
+             [--tag <tag>]
              [--notebooks <notebook list>]
              [--date <date or date range>]
              [--count <how many results to show>]
@@ -242,7 +242,7 @@ That will show you the note "Gift Shopping List".
 | Option             | Argument        | Description |
 |--------------------|-----------------|-------------|
 | ‑‑search           | text to find    | Set the text to find. You can use &quot;&#042;&quot; like this: *--search &quot;Shop&#042;&quot;* |
-| ‑‑tags             | list of tags    | Filter by tag. Tags can be separated with comma. |
+| ‑‑tag              | tag             | Filter by tag. May be repeated. |
 | ‑‑notebooks        | list of notebooks to search | Search just in notebook/notebooks you need. The list of notebooks specify by comma. |
 | ‑‑date             | date or range   | Filter by date. You can set a single date in 'yyyy-mm-dd' format or a range with 'yyyy-mm-dd/yyyy-mm-dd' |
 | ‑‑count            | how many results to show | Limits the number of displayed results. |
@@ -273,7 +273,7 @@ geeknote edit --note <title or GUID of note to edit>
              [--title <the new title>]
              [--content <new content or "WRITE">]
              [--resource <attachment filename>]
-             [--tags <new list of data>]
+             [--tag <tag>]
              [--created <date and time>]
              [--notebook <new notebook>]
              [--reminder <date and time>]
@@ -287,7 +287,7 @@ geeknote edit --note <title or GUID of note to edit>
 | ‑‑title    | a new title | Use this option if you want to rename your note. Just set a new title, and Geeknote will rename the old one. |
 | ‑‑content  | new content or "WRITE" | Enter the new content of your notes in text, or write instead the option "WRITE". In the first case the old content of the note will be replaced with the new content. In the second case Geeknote will get the current content and open it in Markdown in a text editor. |
 | ‑‑resource | attachment filename, like: document.pdf | Specify file to be attached to the note.  May be repeated.  Will replace existing resources. |
-| ‑‑tags     | list of tags, like: tag1, tag2 | The same for tags - you can set a new list of tags for your note. |
+| ‑‑tag      | tag      | Tag to be assigned to the note.  May be repeated.  Will replace existing tags. |
 | ‑‑created  | date     | Set note creation date date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format. |
 | ‑‑notebook | target notebook | With this option you can change the notebook which contains your note. |
 | ‑‑reminder | date     | Set reminder date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format. Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectively, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note. |

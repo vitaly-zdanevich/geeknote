@@ -54,18 +54,18 @@ class testNotes(unittest.TestCase):
         time.tzset()
 
     def test_parseInput1(self):
-        testData = self.notes._parseInput("title", "test body", "tag1", None, None, ["res 1", "res 2"])
+        testData = self.notes._parseInput("title", "test body", ["tag1"], None, None, ["res 1", "res 2"])
         self.assertTrue(isinstance(testData, dict))
         if not isinstance(testData, dict):
             return
 
         self.assertEqual(testData['title'], "title")
         self.assertEqual(testData['content'], Editor.textToENML("test body"))
-        self.assertEqual(testData["tags"], ["tag1", ])
+        self.assertEqual(testData["tags"], ["tag1"])
         self.assertEqual(testData["resources"], ["res 1", "res 2"])
 
     def test_parseInput2(self):
-        testData = self.notes._parseInput("title", "WRITE", "tag1, tag2", None, None, self.testNote)
+        testData = self.notes._parseInput("title", "WRITE", ["tag1", "tag2"], None, None, self.testNote)
         self.assertTrue(isinstance(testData, dict))
         if not isinstance(testData, dict):
             return
@@ -84,7 +84,7 @@ class testNotes(unittest.TestCase):
         testNote.guid = testNote
         testData = self.notes._parseInput("title",
                                           txt,
-                                          "tag1, tag2",
+                                          ["tag1", "tag2"],
                                           None, None, testNote)
         result = self.notes._editWithEditorInThread(testData, testNote)
         self.assertEqual(Editor.ENMLtoText(testNote.content), expected)
@@ -100,7 +100,7 @@ class testNotes(unittest.TestCase):
     def test_createSearchRequest1(self):
         testRequest = self.notes._createSearchRequest(
             search="test text",
-            tags="tag1",
+            tags=["tag1"],
             notebooks="test notebook",
             date="2000-01-01",
             exact_entry=True,
@@ -113,7 +113,7 @@ class testNotes(unittest.TestCase):
     def test_createSearchRequest2(self):
         testRequest = self.notes._createSearchRequest(
             search="test text",
-            tags="tag1, tag2",
+            tags=["tag1", "tag2"],
             notebooks="notebook1, notebook2",
             date="1999-12-31/2000-12-31",
             exact_entry=False,

@@ -802,13 +802,13 @@ class Notes(GeekNoteConnector):
         else:
             out.failureMessage("Edited note could not be saved, so it remains in %s" % editor.tempfile)
 
-    def create(self, title, content=None, tags=None, created=None, notebook=None, resource=None, reminder=None, raw=None):
+    def create(self, title, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, raw=None):
         self.connectToEvernote()
 
         # Optional Content.
         content = content or " "
 
-        inputData = self._parseInput(title, content, tags, created, notebook, resource, reminder=reminder)
+        inputData = self._parseInput(title, content, tag, created, notebook, resource, reminder=reminder)
 
         if inputData['content'] == config.EDITOR_OPEN:
             result = self._editWithEditorInThread(inputData, raw=raw)
@@ -876,7 +876,7 @@ class Notes(GeekNoteConnector):
         else:
             out.showNote(note, self.getEvernote().getUserInfo().id, self.getEvernote().getUserInfo().shardId)
 
-    def _parseInput(self, title=None, content=None, tags=None, created=None, notebook=None, resources=[], note=None, reminder=None):
+    def _parseInput(self, title=None, content=None, tags=[], created=None, notebook=None, resources=[], note=None, reminder=None):
         result = {
             "title": title,
             "content": content,
@@ -889,8 +889,14 @@ class Notes(GeekNoteConnector):
         result = tools.strip(result)
 
         # if get note without params
-        if (note and title is None and content is None and tags is None
-                and created is None and reminder is None and notebook is None):
+        if (note and
+            title is None and
+            content is None and
+            tags is [] and
+            created is None and
+            notebook is None and
+            resources is [] and
+            reminder is none):
             content = config.EDITOR_OPEN
 
         if title is None and note:
@@ -905,9 +911,6 @@ class Notes(GeekNoteConnector):
                 logging.debug("Convert content")
                 content = Editor.textToENML(content)
             result['content'] = content
-
-        if tags:
-            result['tags'] = tools.strip(tags.split(','))
 
         if created:
             try:
@@ -1114,7 +1117,7 @@ class Notes(GeekNoteConnector):
                 request += _formatExpression('notebook', notebook)
 
         if tags:
-            for tag in tools.strip(tags.split(',')):
+            for tag in tags:
                 request += _formatExpression('tag', tag)
 
         if date:
