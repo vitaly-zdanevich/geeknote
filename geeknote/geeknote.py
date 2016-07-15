@@ -1050,9 +1050,9 @@ class Notes(GeekNoteConnector):
             limit = min(total, count)
             stillDownloadingResults = len(notes) < total and len(notes) < count
             out.printLine("Downloaded metadata for "
-                          + len(result.notes) + " notes ("
-                          + len(notes) + "/" + limit
-                          + " of " + count + ")")
+                          + str(len(result.notes)) + " notes ("
+                          + str(len(notes)) + "/" + str(limit)
+                          + " of " + str(count) + ")")
 
         if total == 0:
             out.failureMessage("Notes have not been found.")
@@ -1083,7 +1083,7 @@ class Notes(GeekNoteConnector):
                 out.printLine("Deleting \"" + note.title
                               + "\" created " + out.printDate(note.created)
                               + " with guid " + note.guid
-                              + " (" + removed_total + "/" + total_dups + ")")
+                              + " (" + str(removed_total) + "/" + str(total_dups) + ")")
                 evernote.removeNote(note.guid)
 
         out.printLine("removed " + removed_total + "duplicates")
