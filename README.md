@@ -37,7 +37,7 @@ cd geeknote
 
 # Installation
 python setup.py build
-sudo pip install .
+pip install --upgrade .
 ```
 
 ##### Testing
@@ -45,7 +45,7 @@ Geeknote has a non-destructive unit test suite with fair coverage.
 
 Ensure pytest framework is installed
 ``` sh
-sudo apt-get install python-pip; sudo pip install -U pytest
+pip install --upgrade pytest
 ```
 
 Execute the tests
