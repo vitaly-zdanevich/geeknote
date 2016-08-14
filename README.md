@@ -53,6 +53,20 @@ Execute the tests
 py.test
 ```
 
+##### Un-installation
+
+If originally installed via homebrew,
+
+``` sh
+brew remove geeknote
+```
+
+If originally installed from source,
+
+``` sh
+pip uninstall geeknote
+```
+
 ## Geeknote Settings
 ##### Authorizing Geeknote
 After installation, Geeknote must be authorized with Evernote prior to use. To authorize your Geeknote in Evernote launch the command *login*:
