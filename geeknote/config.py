@@ -27,8 +27,6 @@ NOTE_SORT_ORDER = "UPDATED"
 
 # Evernote config
 
-VERSION = 0.1
-
 try:
     IS_IN_TERMINAL = sys.stdin.isatty()
     IS_OUT_TERMINAL = sys.stdout.isatty()

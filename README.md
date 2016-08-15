@@ -114,12 +114,12 @@ For more information, see:
 $ geeknote settings
 Geeknote
 ******************************
-Version: 0.1
+Version: 2.0.0
 App dir: /Users/username/.geeknote
 Error log: /Users/username/.geeknote/error.log
 Current editor: vim
 Markdown2 Extras: None
-Note extension: .markdown,.org
+Note extension: .markdown, .org
 ******************************
 Username: username
 Id: 11111111

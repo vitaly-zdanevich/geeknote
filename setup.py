@@ -5,7 +5,6 @@ import sys
 import os
 import shutil
 import codecs
-import geeknote
 from setuptools import setup
 from setuptools.command.install import install
 import traceback
@@ -51,20 +50,22 @@ class full_install(install):
         copy_autocomplete('completion/zsh_completion/_geeknote',self.zsh_completion_dir)
 
 
+with open('geeknote/__init__.py') as f: exec(f.read()) # read __version__
+
 setup(
     name='geeknote',
-    version=geeknote.__version__,
+    version=__version__,
     license='GPL',
-    author='Vitaliy Rodnenko',
-    author_email='vitaliy@rodnenko.ru',
+    author='Jeff Kowalski',
+    #author_email='',
     description='Geeknote - is a command line client for Evernote, '
                 'that can be use on Linux, FreeBSD and OS X.',
     long_description=read("README.md"),
-    url='http://www.geeknote.me',
+    url='http://github.com/jeffkowalski/geeknote',
     packages=['geeknote'],
 
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: End Users/Desktop',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Environment :: Console',

@@ -5,7 +5,8 @@ import os
 import time
 import unittest
 from cStringIO import StringIO
-from geeknote.config import VERSION, USER_BASE_URL
+from geeknote import __version__
+from geeknote.config import USER_BASE_URL
 from geeknote.out import printDate, printLine, printAbout,\
     separator, failureMessage, successMessage, showUser, showNote, \
     printList, SearchResult
@@ -73,7 +74,7 @@ class outTestsWithHackedStdout(unittest.TestCase):
         about = '''Version: %s
 Geeknote - a command line client for Evernote.
 Use geeknote --help to read documentation.
-And visit www.geeknote.me to check for updates.\n''' % VERSION
+And visit www.geeknote.me to check for updates.\n''' % __version__
         printAbout()
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), about)

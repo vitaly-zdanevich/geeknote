@@ -8,6 +8,7 @@ import datetime
 import sys
 import os.path
 
+from . import __version__
 import tools
 import config
 
@@ -335,9 +336,8 @@ def printLine(line, endLine="\n", out=None):
         pass
     out.flush()
 
-
 def printAbout():
-    printLine('Version: %s' % str(config.VERSION))
+    printLine('Version: %s' % __version__)
     printLine('Geeknote - a command line client for Evernote.')
     printLine('Use geeknote --help to read documentation.')
     printLine('And visit www.geeknote.me to check for updates.')

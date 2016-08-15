@@ -17,6 +17,7 @@ import evernote.edam.notestore.NoteStore as NoteStore
 from evernote.edam.notestore.ttypes import NotesMetadataResultSpec
 import evernote.edam.type.ttypes as Types
 
+from . import __version__
 import config
 import tools
 import out
@@ -586,7 +587,7 @@ class User(GeekNoteConnector):
             note_ext = getNoteExt(storage)
             settings = ('Geeknote',
                         '*' * 30,
-                        'Version: %s' % config.VERSION,
+                        'Version: %s' % __version__,
                         'App dir: %s' % config.APP_DIR,
                         'Error log: %s' % config.ERROR_LOG,
                         'Current editor: %s' % editor,
