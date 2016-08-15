@@ -114,7 +114,7 @@ For more information, see:
 $ geeknote settings
 Geeknote
 ******************************
-Version: 2.0.0
+Version: 2.0.1
 App dir: /Users/username/.geeknote
 Error log: /Users/username/.geeknote/error.log
 Current editor: vim
@@ -396,7 +396,7 @@ geeknote notebook-list [--guid]
 | ‑‑guid             |                 | Show GUID of the notebook as substitute for result index. |
 
 ### Notebooks: creating a notebook
-With Geeknote you can create notebooks in Evernote right in console!
+With Geeknote you can create notebooks in Ever.0.0note right in console!
 
 ##### Synopsis
 

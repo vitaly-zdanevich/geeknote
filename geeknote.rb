@@ -1,6 +1,6 @@
 class Geeknote < Formula
   desc "Command-line client for Evernote"
-  homepage 'http://www.geeknote.me/'
+  homepage 'https://github.com/jeffkowalski/geeknote'
   head 'https://github.com/jeffkowalski/geeknote.git'
 
   depends_on :python
@@ -45,14 +45,21 @@ class Geeknote < Formula
     sha256 "dfbc3d3bd19d396718dab05abaf46d93ae8005e2df798ef02e32793cd963877e"
   end
 
-  resource "proxyenv" do
-    url "https://pypi.python.org/packages/69/98/46baccf9ce353828726e0d302dad201e634fe4b50f6f61891f0721f40789/proxyenv-0.5.1.tar.gz"
-    sha256 "e73caf8b063b7fbfb93b67e725a71469768262a9dddb4d9dfb79bb1e84cab4b9"
+  # for proxyenv
+  resource "docker-py" do
+    url "https://pypi.python.org/packages/d7/32/1e6be8c9ebc7d02fe74cb1a050008bc9d7e2eb9219f5d5e257648166e275/docker-py-1.9.0.tar.gz"
+    sha256 "6dc6b914a745786d97817bf35bfc1559834c08517c119f846acdfda9cc7f6d7e"
   end
 
+  # for proxyenv
   resource "htpasswd" do
     url "https://pypi.python.org/packages/b9/2f/8b76f8b77125b75c3532966f3291f9e8787268be65fc4c9694887cba9375/htpasswd-2.3.tar.gz"
     sha256 "565f0b647a32549c663ccfddd1f501891daaf29242bbc6174bdd448120383e3d"
+  end
+
+  resource "proxyenv" do
+    url "https://pypi.python.org/packages/69/98/46baccf9ce353828726e0d302dad201e634fe4b50f6f61891f0721f40789/proxyenv-0.5.1.tar.gz"
+    sha256 "e73caf8b063b7fbfb93b67e725a71469768262a9dddb4d9dfb79bb1e84cab4b9"
   end
 
   def install
