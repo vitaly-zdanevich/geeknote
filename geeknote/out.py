@@ -340,4 +340,3 @@ def printAbout():
     printLine('Version: %s' % __version__)
     printLine('Geeknote - a command line client for Evernote.')
     printLine('Use geeknote --help to read documentation.')
-    printLine('And visit www.geeknote.me to check for updates.')
