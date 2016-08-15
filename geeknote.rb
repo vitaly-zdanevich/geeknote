@@ -45,6 +45,11 @@ class Geeknote < Formula
     sha256 "dfbc3d3bd19d396718dab05abaf46d93ae8005e2df798ef02e32793cd963877e"
   end
 
+  resource "future" do
+    url "https://pypi.python.org/packages/5a/f4/99abde815842bc6e97d5a7806ad51236630da14ca2f3b1fce94c0bb94d3d/future-0.15.2.tar.gz"
+    sha256 "3d3b193f20ca62ba7d8782589922878820d0a023b885882deec830adbf639b97"
+  end
+
   # for proxyenv
   resource "docker-py" do
     url "https://pypi.python.org/packages/d7/32/1e6be8c9ebc7d02fe74cb1a050008bc9d7e2eb9219f5d5e257648166e275/docker-py-1.9.0.tar.gz"
