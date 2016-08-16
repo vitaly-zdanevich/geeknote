@@ -8,6 +8,7 @@ import os
 import mimetypes
 import hashlib
 import re
+import traceback
 
 import thrift.protocol.TBinaryProtocol as TBinaryProtocol
 import thrift.transport.THttpClient as THttpClient
@@ -103,7 +104,8 @@ class GeekNote(object):
                 logging.error("Error: %s : %s", func.__name__, str(e))
 
                 if not hasattr(e, 'errorCode'):
-                    out.failureMessage("Operation failed!.")
+                    out.failureMessage("Operation failed!")
+                    traceback.print_exc()
                     tools.exitErr()
 
                 errorCode = int(e.errorCode)
@@ -388,7 +390,7 @@ class GeekNote(object):
         return self.getNoteStore().listNotebooks(self.authToken)
 
     @EdamException
-    def createNotebook(self, name, stack):
+    def createNotebook(self, name, stack=None):
         notebook = Types.Notebook()
         notebook.name = name
         if stack:
