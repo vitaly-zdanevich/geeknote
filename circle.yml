@@ -1,13 +1,9 @@
-machine:
-  python:
-    version: 2.7.11
-
 dependencies:
   pre:
     - pip install pytest
 
   override:
-    - pip install .
+    - pip install . --user
 
 test:
   pre:
