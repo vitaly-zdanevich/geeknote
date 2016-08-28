@@ -45,7 +45,7 @@ class full_install(install):
                 print('cannot copy autocomplete script %s to %s, got root ?' % (src,dst))
                 print(traceback.format_exc())
 
-        print "installing autocomplete"
+        print("installing autocomplete")
         copy_autocomplete('completion/bash_completion/_geeknote',self.bash_completion_dir)
         copy_autocomplete('completion/zsh_completion/_geeknote',self.zsh_completion_dir)
 
