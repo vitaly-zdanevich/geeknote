@@ -36,8 +36,14 @@ git clone git://github.com/jeffkowalski/geeknote.git
 cd geeknote
 
 # Installation
+
+# - if you have only a python2 environment,
 python setup.py build
 pip install --upgrade .
+
+# - or, to force python2 in python3 environments
+python2 setup.py build
+pip2 install --upgrade .
 ```
 
 ##### Testing
