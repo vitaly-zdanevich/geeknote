@@ -18,7 +18,7 @@ import evernote.edam.notestore.NoteStore as NoteStore
 from evernote.edam.notestore.ttypes import NotesMetadataResultSpec
 import evernote.edam.type.ttypes as Types
 
-from . import __version__
+from __init__ import __version__
 import config
 import tools
 import out

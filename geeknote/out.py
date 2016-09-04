@@ -8,7 +8,7 @@ import datetime
 import sys
 import os.path
 
-from . import __version__
+from __init__ import __version__
 import tools
 import config
 
