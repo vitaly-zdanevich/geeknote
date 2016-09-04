@@ -81,10 +81,6 @@ def all_notebooks():
     geeknote = GeekNote()
     return [notebook.name for notebook in geeknote.findNotebooks()]
 
-def all_notebooks():
-    geeknote = GeekNote()
-    return [notebook.name for notebook in geeknote.findNotebooks()]
-
 
 class GNSync:
 
@@ -207,7 +203,6 @@ class GNSync:
                         if f['mtime'] < n.updated:
                             self._update_file(f, n)
                             break
-                        os.utime(f, (n.updated, n.updated))
 
                 if not self.nodownsync:
                     if not has_file:
@@ -313,6 +308,7 @@ class GNSync:
         GeekNote().loadNoteContent(note)
         content = Editor.ENMLtoText(note.content)
         open(file_note['path'], "w").write(content)
+        os.utime(file_note['path'], (-1, note.updated / 1000))
 
     @log
     def _create_note(self, file_note, title=None, content=None, tags=None):
@@ -367,6 +363,7 @@ class GNSync:
         content = Editor.ENMLtoText(note.content, self.imageOptions)
         path = os.path.join(self.path, note.title + self.extension)
         open(path, "w").write(content)
+        os.utime(path, (-1, note.updated / 1000))
 
         return True
 
