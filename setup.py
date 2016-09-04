@@ -59,7 +59,7 @@ setup(
     author='Jeff Kowalski',
     #author_email='',
     description='Geeknote - is a command line client for Evernote, '
-                'that can be use on Linux, FreeBSD and OS X.',
+                'that can be used on Linux, FreeBSD and OS X.',
     long_description=read("README.md"),
     url='http://github.com/jeffkowalski/geeknote',
     packages=['geeknote'],
