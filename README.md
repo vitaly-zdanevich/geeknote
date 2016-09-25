@@ -29,6 +29,7 @@ brew install --HEAD https://raw.githubusercontent.com/jeffkowalski/geeknote/mast
 ``` sh
 # Install dependencies. (This example for Debian-based systems):
 sudo apt-get update; sudo apt-get -y install python-setuptools
+pip install wheel
 
 # Download the repository.
 git clone git://github.com/jeffkowalski/geeknote.git
