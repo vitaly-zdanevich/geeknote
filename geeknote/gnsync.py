@@ -308,7 +308,8 @@ class GNSync:
         GeekNote().loadNoteContent(note)
         content = Editor.ENMLtoText(note.content)
         open(file_note['path'], "w").write(content)
-        os.utime(file_note['path'], (-1, note.updated / 1000))
+        updated_seconds = note.updated / 1000.0
+        os.utime(file_note['path'], (updated_seconds, updated_seconds))
 
     @log
     def _create_note(self, file_note, title=None, content=None, tags=None):
@@ -363,8 +364,8 @@ class GNSync:
         content = Editor.ENMLtoText(note.content, self.imageOptions)
         path = os.path.join(self.path, note.title + self.extension)
         open(path, "w").write(content)
-        os.utime(path, (-1, note.updated / 1000))
-
+        updated_seconds = note.updated / 1000.0
+        os.utime(path, (updated_seconds, updated_seconds))
         return True
 
     @log
