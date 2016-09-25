@@ -258,7 +258,7 @@ class GeekNote(object):
                 note.tagNames.append(tag.name)
 
     @EdamException
-    def createNote(self, title, content, tags=None, created=None, notebook=None, resources=None, reminder=None):
+    def createNote(self, title, content, tags=None, created=None, notebook=None, resources=None, reminder=None, url=None):
         note = Types.Note()
         note.title = title
         try:
@@ -289,8 +289,9 @@ class GeekNote(object):
         # Allow creating a completed reminder (for task tracking purposes),
         # skip reminder creation steps if we have a DELETE
         if reminder and reminder != config.REMINDER_DELETE:
+            if not note.attributes:  # in case no attributes available
+                note.attributes = Types.NoteAttributes()
             now = int(round(time.time() * 1000))
-            note.attributes = Types.NoteAttributes()
             if reminder == config.REMINDER_NONE:
                 note.attributes.reminderOrder = now
             elif reminder == config.REMINDER_DONE:
@@ -304,6 +305,11 @@ class GeekNote(object):
                     out.failureMessage("Error: reminder must be in the future.")
                     tools.exitErr()
 
+        if url:
+            if note.attributes is None:
+                note.attributes = Types.NoteAttributes()
+            note.attributes.sourceURL = url
+
         logging.debug("New note : %s", note)
 
         return self.getNoteStore().createNote(self.authToken, note)
@@ -311,7 +317,7 @@ class GeekNote(object):
     @EdamException
     def updateNote(self, guid, title=None, content=None,
                    tags=None, created=None, notebook=None,
-                   resources=None, reminder=None):
+                   resources=None, reminder=None, url=None):
         note = Types.Note()
         note.guid = guid
         if title:
@@ -346,9 +352,9 @@ class GeekNote(object):
             note.content = note.content.replace("</en-note>", resource_nodes + "</en-note>")
 
         if reminder:
-            now = int(round(time.time() * 1000))
             if not note.attributes:  # in case no attributes available
                 note.attributes = Types.NoteAttributes()
+            now = int(round(time.time() * 1000))
             if reminder == config.REMINDER_NONE:
                 note.attributes.reminderDoneTime = None
                 note.attributes.reminderTime = None
@@ -372,6 +378,12 @@ class GeekNote(object):
                 else:
                     out.failureMessage("Sorry, reminder must be in the future.")
                     tools.exitErr()
+
+        if url:
+            if not note.attributes:  # in case no attributes available
+                note.attributes = Types.NoteAttributes()
+            note.attributes.sourceURL = url
+
         logging.debug("Update note : %s", note)
 
         self.getNoteStore().updateNote(self.authToken, note)
@@ -805,13 +817,13 @@ class Notes(GeekNoteConnector):
         else:
             out.failureMessage("Edited note could not be saved, so it remains in %s" % editor.tempfile)
 
-    def create(self, title, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, raw=None):
+    def create(self, title, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, url=None, raw=None):
         self.connectToEvernote()
 
         # Optional Content.
         content = content or " "
 
-        inputData = self._parseInput(title, content, tag, created, notebook, resource, reminder=reminder)
+        inputData = self._parseInput(title, content, tag, created, notebook, resource, None, reminder, url)
 
         if inputData['content'] == config.EDITOR_OPEN:
             result = self._editWithEditorInThread(inputData, raw=raw)
@@ -825,11 +837,11 @@ class Notes(GeekNoteConnector):
             out.failureMessage("Error: could not create note.")
             return tools.exitErr()
 
-    def edit(self, note, title=None, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, raw=None):
+    def edit(self, note, title=None, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, url=None, raw=None):
         self.connectToEvernote()
         note = self._searchNote(note)
 
-        inputData = self._parseInput(title, content, tag, created, notebook, resource, note, reminder=reminder)
+        inputData = self._parseInput(title, content, tag, created, notebook, resource, note, reminder, url)
 
         if inputData['content'] == config.EDITOR_OPEN:
             result = self._editWithEditorInThread(inputData, note, raw=raw)
@@ -844,7 +856,6 @@ class Notes(GeekNoteConnector):
             return tools.exitErr()
 
     def remove(self, note, force=None):
-
         self.connectToEvernote()
         note = self._searchNote(note)
         if note:
@@ -866,7 +877,6 @@ class Notes(GeekNoteConnector):
             return tools.exitErr()
 
     def show(self, note, raw=None):
-
         self.connectToEvernote()
 
         note = self._searchNote(note)
@@ -879,7 +889,7 @@ class Notes(GeekNoteConnector):
         else:
             out.showNote(note, self.getEvernote().getUserInfo().id, self.getEvernote().getUserInfo().shardId)
 
-    def _parseInput(self, title=None, content=None, tags=[], created=None, notebook=None, resources=[], note=None, reminder=None):
+    def _parseInput(self, title=None, content=None, tags=[], created=None, notebook=None, resources=[], note=None, reminder=None, url=None):
         result = {
             "title": title,
             "content": content,
@@ -888,6 +898,7 @@ class Notes(GeekNoteConnector):
             "notebook": notebook,
             "resources": resources,
             "reminder": reminder,
+            "url": url,
         }
         result = tools.strip(result)
 
@@ -899,7 +910,8 @@ class Notes(GeekNoteConnector):
             created is None and
             notebook is None and
             resources is [] and
-            reminder is none):
+            reminder is None and
+            url is None):
             content = config.EDITOR_OPEN
 
         if title is None and note:
@@ -946,6 +958,9 @@ class Notes(GeekNoteConnector):
                                         time.strftime(config.DEF_DATE_FORMAT, time.strptime('20151231', "%Y%m%d")),
                                         time.strftime(config.DEF_DATE_AND_TIME_FORMAT, time.strptime('201512311430', "%Y%m%d%H%M"))))
                     return tools.exitErr()
+
+        if url is None and note:
+            result['url'] = note.url
 
         return result
 

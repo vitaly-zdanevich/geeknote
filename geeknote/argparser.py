@@ -75,6 +75,8 @@ COMMANDS_DICT = {
                                      "\n             NONE for a reminder "
                                      "without a time. Use DONE to mark a "
                                      "reminder as completed."},
+            "--url":        {"altname": "-u",
+                             "help": "Set the URL for the note."}
         },
         "flags": {
             "--raw":        {"altName": "-r",
@@ -172,6 +174,8 @@ COMMANDS_DICT = {
                                      "reminder as completed."
                                      "\n             Use DELETE to remove "
                                      "reminder from a note."},
+            "--url":        {"altname": "-u",
+                             "help": "Set the URL for the note."}
         },
         "flags": {
             "--raw":        {"altName": "-r",

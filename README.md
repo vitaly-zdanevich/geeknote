@@ -179,6 +179,7 @@ geeknote create --title <title>
                [--resource <attachment filename>]
                [--notebook <notebook where to save>]
                [--reminder <date and time>]
+               [--url <url>]
 ```
 
 ##### Options
@@ -192,6 +193,7 @@ geeknote create --title <title>
 | ‑‑resource | attachment filename, like: document.pdf |Specify file to be attached to the note.  May be repeated. |
 | ‑‑notebook | notebook where to save | Specify the notebook where new note should be saved. This option is not required. If it isn't given, the note will be saved in default notebook. If notebook doesn't exist Geeknote will create it automatically. |
 | ‑‑reminder | date     | Set reminder date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format. Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectively, NONE for a reminder without a time. Use DONE to mark a reminder as completed. |
+| --urls     | url      | Set the URL for the note. |
 | --raw      |          | A flag signifying the content is in raw ENML format. |
 
 ##### Description
@@ -298,6 +300,7 @@ geeknote edit --note <title or GUID of note to edit>
              [--created <date and time>]
              [--notebook <new notebook>]
              [--reminder <date and time>]
+             [--url <url>]
 ```
 
 ##### Options
@@ -312,6 +315,7 @@ geeknote edit --note <title or GUID of note to edit>
 | ‑‑created  | date     | Set note creation date date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format. |
 | ‑‑notebook | target notebook | With this option you can change the notebook which contains your note. |
 | ‑‑reminder | date     | Set reminder date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format. Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectively, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note. |
+| --urls     | url      | Set the URL for the note. |
 | --raw      |          | A flag signifying the content is in raw ENML format. |
 
 ##### Examples
