@@ -15,7 +15,6 @@ import config
 
 def preloaderPause(fn, *args, **kwargs):
     def wrapped(*args, **kwargs):
-
         if not preloader.isLaunch:
             return fn(*args, **kwargs)
 
@@ -30,7 +29,6 @@ def preloaderPause(fn, *args, **kwargs):
 
 def preloaderStop(fn, *args, **kwargs):
     def wrapped(*args, **kwargs):
-
         if not preloader.isLaunch:
             return fn(*args, **kwargs)
 
@@ -42,7 +40,6 @@ def preloaderStop(fn, *args, **kwargs):
 
 
 class preloader(object):
-
     progress = (">  ", ">> ", ">>>", " >>", "  >", "   ")
     clearLine = "\r" + " " * 40 + "\r"
     message = None
@@ -202,6 +199,7 @@ def showNote(note, id, shardId):
     separator("#", "TITLE")
     printLine(note.title)
     separator("=", "META")
+    printLine("Notebook: %s" % note.notebookName)
     printLine("Created: %s" % printDate(note.created))
     printLine("Updated: %s" % printDate(note.updated))
     for key, value in note.attributes.__dict__.items():
@@ -278,11 +276,11 @@ def printList(listItems, title="", showSelector=False,
 
         printLine("%s : %s%s%s%s%s%s" % (
             item.guid if showGUID and hasattr(item, 'guid') else str(key).rjust(3, " "),
-            printDate(item.created).ljust(18, " ") if hasattr(item, 'created') else '',
-            printDate(item.updated).ljust(18, " ") if hasattr(item, 'updated') else '',
+            printDate(item.created).ljust(11, " ") if hasattr(item, 'created') else '',
+            printDate(item.updated).ljust(11, " ") if hasattr(item, 'updated') else '',
+            item.notebookName.ljust(18, " ") if showNotebook and hasattr(item, 'notebookName') else '',
             item.title if hasattr(item, 'title') else item.name,
             "".join(map(lambda s: " #" + s, item.tagGuids)) if showTags and hasattr(item, 'tagGuids') and item.tagGuids else '',
-            " @" + item.notebookGuid if showNotebook and hasattr(item, 'notebookGuid') else '',
             " " + (">>> " + config.NOTE_WEBCLIENT_URL % item.guid) if showUrl else '',))
 
         if showByStep != 0 and key % showByStep == 0 and key < total:

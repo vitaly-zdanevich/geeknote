@@ -40,6 +40,7 @@ class NoteStub(object):
     updated = 1095292800000
     content = '##note content'
     tagNames = ['tag1', 'tag2', 'tag3']
+    notebookName = 'geeknotes'
     guid = 12345
     attributes = AttributesStub()
 
@@ -137,6 +138,7 @@ WebClientURL: https://www.evernote.com/Home.action?#n=12345
 ################## TITLE ##################
 testnote
 =================== META ==================
+Notebook: geeknotes
 Created: 2004-09-17
 Updated: 2004-09-17
 |||||||||||||||| REMINDERS ||||||||||||||||
@@ -152,8 +154,8 @@ Tags: tag1, tag2, tag3
 
     def test_print_list_without_title_success(self):
         notes_list = '''Found 2 items
-  1 : 2004-09-17        2004-09-17        testnote
-  2 : 2004-09-17        2004-09-17        testnote\n'''
+  1 : 2004-09-17 2004-09-17 testnote
+  2 : 2004-09-17 2004-09-17 testnote\n'''
         printList([NoteStub() for _ in xrange(2)])
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), notes_list)
@@ -161,8 +163,8 @@ Tags: tag1, tag2, tag3
     def test_print_list_with_title_success(self):
         notes_list = '''=================== test ==================
 Found 2 items
-  1 : 2004-09-17        2004-09-17        testnote
-  2 : 2004-09-17        2004-09-17        testnote\n'''
+  1 : 2004-09-17 2004-09-17 testnote
+  2 : 2004-09-17 2004-09-17 testnote\n'''
         printList([NoteStub() for _ in xrange(2)], title='test')
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), notes_list)
@@ -170,8 +172,8 @@ Found 2 items
     def test_print_list_with_urls_success(self):
         notes_list = '''=================== test ==================
 Found 2 items
-  1 : 2004-09-17        2004-09-17        testnote >>> https://{url}/Home.action?#n=12345
-  2 : 2004-09-17        2004-09-17        testnote >>> https://{url}/Home.action?#n=12345
+  1 : 2004-09-17 2004-09-17 testnote >>> https://{url}/Home.action?#n=12345
+  2 : 2004-09-17 2004-09-17 testnote >>> https://{url}/Home.action?#n=12345
 '''.format(url=USER_BASE_URL)
         printList([NoteStub() for _ in xrange(2)], title='test', showUrl=True)
         sys.stdout.seek(0)
@@ -181,8 +183,8 @@ Found 2 items
         out.rawInput = lambda x: 2
         notes_list = '''=================== test ==================
 Found 2 items
-  1 : 2004-09-17        2004-09-17        testnote
-  2 : 2004-09-17        2004-09-17        testnote
+  1 : 2004-09-17 2004-09-17 testnote
+  2 : 2004-09-17 2004-09-17 testnote
   0 : -Cancel-\n'''
         out.printList([NoteStub() for _ in xrange(2)], title='test', showSelector=True)
         sys.stdout.seek(0)
@@ -191,8 +193,8 @@ Found 2 items
     def test_search_result_success(self):
         result = '''Search request: test
 Found 2 items
-  1 : 2004-09-17        2004-09-17        testnote
-  2 : 2004-09-17        2004-09-17        testnote\n'''
+  1 : 2004-09-17 2004-09-17 testnote
+  2 : 2004-09-17 2004-09-17 testnote\n'''
         SearchResult([NoteStub() for _ in xrange(2)], 'test')
         sys.stdout.seek(0)
         self.assertEquals(sys.stdout.read(), result)

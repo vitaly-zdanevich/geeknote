@@ -71,7 +71,6 @@ def make_resource(filename):
 
 
 class GeekNote(object):
-
     userStoreUri = config.USER_STORE_URI
     consumerKey = config.CONSUMER_KEY
     consumerSecret = config.CONSUMER_SECRET
@@ -257,6 +256,8 @@ class GeekNote(object):
                 tag = self.getNoteStore().getTag(self.authToken, guid)
                 note.tagNames.append(tag.name)
 
+        note.notebookName = self.getNoteStore().getNotebook(self.authToken, note.notebookGuid).name
+
     @EdamException
     def createNote(self, title, content, tags=None, created=None, notebook=None, resources=None, reminder=None, url=None):
         note = Types.Note()
@@ -433,7 +434,6 @@ class GeekNote(object):
 
     @EdamException
     def findTags(self):
-        """ WORK WITH TAGS """
         return self.getNoteStore().listTags(self.authToken)
 
     @EdamException
@@ -527,8 +527,6 @@ def getNoteExt(storage):
 
 
 class User(GeekNoteConnector):
-    """ Work with auth User """
-
     @GeekNoneDBConnectOnly
     def user(self, full=None):
         if not self.getEvernote().checkAuth():
@@ -621,8 +619,6 @@ class User(GeekNoteConnector):
 
 
 class Tags(GeekNoteConnector):
-    """ Work with auth Notebooks """
-
     def list(self, guid=None):
         result = self.getEvernote().findTags()
         out.printList(result, showGUID=guid)
@@ -682,8 +678,6 @@ class Tags(GeekNoteConnector):
 
 
 class Notebooks(GeekNoteConnector):
-    """ Work with auth Notebooks """
-
     def list(self, guid=None):
         result = self.getEvernote().findNotebooks()
         out.printList(result, showGUID=guid)
@@ -731,7 +725,6 @@ class Notebooks(GeekNoteConnector):
             return tools.exitErr()
 
     def _searchNotebook(self, notebook):
-
         result = self.getEvernote().findNotebooks()
         notebook = [item for item in result if item.name == notebook]
 
@@ -743,7 +736,7 @@ class Notebooks(GeekNoteConnector):
         logging.debug("Selected notebook: %s" % str(notebook))
         return notebook
 
-    def getNoteGUID(self, notebook):
+    def _getNotebookGUID(self, notebook):
         if len(notebook) == 36 and notebook.find("-") == 4:
             return notebook
 
@@ -756,8 +749,6 @@ class Notebooks(GeekNoteConnector):
 
 
 class Notes(GeekNoteConnector):
-    """ Work with Notes """
-
     findExactOnUpdate = False
     selectFirstOnUpdate = False
 
@@ -937,12 +928,12 @@ class Notes(GeekNoteConnector):
                 return tools.exitErr()
 
         if notebook:
-            notepadGuid = Notebooks().getNoteGUID(notebook)
-            if notepadGuid is None:
-                newNotepad = Notebooks().create(notebook)
-                notepadGuid = newNotepad.guid
+            notebookGuid = Notebooks()._getNotebookGUID(notebook)
+            if notebookGuid is None:
+                newNotebook = Notebooks().create(notebook)
+                notebookGuid = newNotebook.guid
 
-            result['notebook'] = notepadGuid
+            result['notebook'] = notebookGuid
             logging.debug("Search notebook")
 
         if reminder:
@@ -1037,12 +1028,20 @@ class Notes(GeekNoteConnector):
         for note in result.notes:
             self.getStorage().setNote(note)
 
+        if with_notebook:
+            noteStore = self.getEvernote().getNoteStore()
+            notebookNameFromGuid = dict()
+            for note in result.notes:
+                if note.notebookGuid not in notebookNameFromGuid:
+                    notebookNameFromGuid[note.notebookGuid] = noteStore.getNotebook(self.getEvernote().authToken, note.notebookGuid).name
+                note.notebookName = notebookNameFromGuid[note.notebookGuid]
+
         out.SearchResult(result.notes, request, showUrl=with_url, showTags=with_tags,
                          showNotebook=with_notebook, showGUID=guid)
 
     def dedup(self, search=None, tag=None, notebooks=None,
               date=None, exact_entry=None, content_search=None,
-              with_url=None, count=None, ):
+              with_url=None, count=None):
 
         request = self._createSearchRequest(search, tag, notebooks,
                                             date, exact_entry,
@@ -1269,6 +1268,7 @@ def main(args=None):
 
     # exit preloader
     tools.exit('exit', exit_status_code)
+
 
 if __name__ == "__main__":
     main()
