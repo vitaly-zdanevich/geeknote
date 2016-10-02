@@ -230,7 +230,7 @@ You can easily search notes in Evernote with Geeknote and output results in the 
 ``` sh
 geeknote find --search <text to find>
              [--tag <tag>]
-             [--notebooks <notebook list>]
+             [--notebook <notebook>]
              [--date <date or date range>]
              [--count <how many results to show>]
              [--exact-entry]
@@ -284,7 +284,7 @@ That will show you the note "Gift Shopping List".
 |--------------------|-----------------|-------------|
 | ‑‑search           | text to find    | Set the text to find. You can use &quot;&#042;&quot; like this: *--search &quot;Shop&#042;&quot;* |
 | ‑‑tag              | tag             | Filter by tag. May be repeated. |
-| ‑‑notebooks        | list of notebooks to search | Search just in notebook/notebooks you need. The list of notebooks specify by comma. |
+| ‑‑notebook         | notebook        | Filter by notebook. |
 | ‑‑date             | date or range   | Filter by date. You can set a single date in 'yyyy-mm-dd' format or a range with 'yyyy-mm-dd/yyyy-mm-dd' |
 | ‑‑count            | how many results to show | Limits the number of displayed results. |
 | ‑‑content-search   |                 | *find* command searches by note's title. If you want to search by note's content - set this flag.                         |
@@ -299,8 +299,8 @@ That will show you the note "Gift Shopping List".
 ##### Examples
 
 ``` sh
-geeknote find --search "How to patch KDE2" --notebooks "jokes" --date 2015-10-14/2015-10-28
-geeknote find --search "apt-get install apache nginx" --content-search --notebooks "manual"
+geeknote find --search "How to patch KDE2" --notebook "jokes" --date 2015-10-14/2015-10-28
+geeknote find --search "apt-get install apache nginx" --content-search --notebook "manual"
 ```
 
 ### Notes: Editing notes

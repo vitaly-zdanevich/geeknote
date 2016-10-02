@@ -95,8 +95,8 @@ COMMANDS_DICT = {
             "--tag":        {"altName": "-tg",
                              "help": "Tag sought on the notes.",
                              "repetitive": True},
-            "--notebooks":  {"altName": "-nb",
-                             "help": "In which notebook search the note."},
+            "--notebook":   {"altName": "-nb",
+                             "help": "Notebook containing the notes."},
             "--date":       {"altName": "-d",
                              "help": "Set date in 'yyyy-mm-dd' format or "
                                      "date range 'yyyy-mm-dd/yyyy-mm-dd' format."},

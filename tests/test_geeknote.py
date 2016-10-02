@@ -101,7 +101,7 @@ class testNotes(unittest.TestCase):
         testRequest = self.notes._createSearchRequest(
             search="test text",
             tags=["tag1"],
-            notebooks="test notebook",
+            notebook="test notebook",
             date="2000-01-01",
             exact_entry=True,
             content_search=True
@@ -114,12 +114,12 @@ class testNotes(unittest.TestCase):
         testRequest = self.notes._createSearchRequest(
             search="test text",
             tags=["tag1", "tag2"],
-            notebooks="notebook1, notebook2",
+            notebook="notebook1",
             date="1999-12-31/2000-12-31",
             exact_entry=False,
             content_search=False
         )
-        response = 'notebook:notebook1 notebook:notebook2 tag:tag1' \
+        response = 'notebook:notebook1 tag:tag1' \
                    ' tag:tag2 created:19991230T000000Z -created:20001231T000000Z' \
                    ' intitle:test text'
         self.assertEqual(testRequest, response)

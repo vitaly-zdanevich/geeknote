@@ -998,12 +998,12 @@ class Notes(GeekNoteConnector):
         note = self.getEvernote().getNote(note.guid)
         return note
 
-    def find(self, search=None, tag=None, notebooks=None,
+    def find(self, search=None, tag=None, notebook=None,
              date=None, exact_entry=None, content_search=None,
              with_url=None, with_tags=None, with_notebook=None,
              count=None, ignore_completed=None, reminders_only=None, guid=None):
 
-        request = self._createSearchRequest(search, tag, notebooks,
+        request = self._createSearchRequest(search, tag, notebook,
                                             date, exact_entry,
                                             content_search,
                                             ignore_completed, reminders_only)
@@ -1039,11 +1039,11 @@ class Notes(GeekNoteConnector):
         out.SearchResult(result.notes, request, showUrl=with_url, showTags=with_tags,
                          showNotebook=with_notebook, showGUID=guid)
 
-    def dedup(self, search=None, tag=None, notebooks=None,
+    def dedup(self, search=None, tag=None, notebook=None,
               date=None, exact_entry=None, content_search=None,
               with_url=None, count=None):
 
-        request = self._createSearchRequest(search, tag, notebooks,
+        request = self._createSearchRequest(search, tag, notebook,
                                             date, exact_entry,
                                             content_search)
 
@@ -1106,7 +1106,7 @@ class Notes(GeekNoteConnector):
         out.printLine("removed " + removed_total + "duplicates")
 
     def _createSearchRequest(self, search=None, tags=None,
-                             notebooks=None, date=None,
+                             notebook=None, date=None,
                              exact_entry=None, content_search=None,
                              ignore_completed=None, reminders_only=None):
 
@@ -1129,9 +1129,8 @@ class Notes(GeekNoteConnector):
             expression += '%s:%s ' % (label, value)
             return expression
 
-        if notebooks:
-            for notebook in tools.strip(notebooks.split(',')):
-                request += _formatExpression('notebook', notebook)
+        if notebook:
+            request += _formatExpression('notebook', notebook)
 
         if tags:
             for tag in tags:
