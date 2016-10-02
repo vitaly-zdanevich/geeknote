@@ -252,10 +252,28 @@ For example:
 $ geeknote find --search "Shopping"
 
 Total found: 2
-  1 : Grocery Shopping List
-  2 : Gift Shopping List
+  1 : 2006-06-02 2009-01-19 Grocery Shopping List
+  2 : 2015-02-22 2015-02-24 Gift Shopping List
 
 $ geeknote show 2
+################### URL ###################
+NoteLink: https://www.evernote.com/shard/s1/nl/2079/7aecf253-c0d9-407e-b4e2-54cd5510ead6
+WebClientURL: https://www.evernote.com/Home.action?#n=7aecf253-c0d9-407e-b4e2-54cd5510ead6
+################## TITLE ##################
+Gift Shopping List
+=================== META ==================
+Notebook: EverNote
+Created: 2015-02-22
+Updated: 2012-02-24
+|||||||||||||||| REMINDERS ||||||||||||||||
+Order: None
+Time: None
+Done: None
+----------------- CONTENT -----------------
+Tags: shopping
+Socks
+Silly Putty
+Furby
 ```
 
 That will show you the note "Gift Shopping List".
@@ -274,7 +292,7 @@ That will show you the note "Gift Shopping List".
 | ‑‑guid             |                 | Show GUID of the note as substitute for result index. |
 | ‑‑ignore-completed |                 | Include only unfinished reminders. |
 | ‑‑reminders-only   |                 | Include only notes with a reminder. |
-| ‑‑with-notebook    |                 | Show notebook which contains the note after note title. |
+| ‑‑with-notebook    |                 | Show notebook containing the note. |
 | ‑‑with-tags        |                 | Show tags of the note after note title. |
 | ‑‑with-url         |                 | Show results as a list of URLs to each note in Evernote's web-client. |
 
