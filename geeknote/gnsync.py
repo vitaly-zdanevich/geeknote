@@ -344,17 +344,19 @@ class GNSync:
         """
         GeekNote().loadNoteContent(note)
 
+        escaped_title = re.sub(os.sep,'-', note.title)
+
         # Save images
         if 'saveImages' in self.imageOptions and self.imageOptions['saveImages']:
             imageList = Editor.getImages(note.content)
             if imageList:
                 if 'imagesInSubdir' in self.imageOptions and self.imageOptions['imagesInSubdir']:
-                    os.mkdir(os.path.join(self.path, note.title + "_images"))
-                    imagePath = os.path.join(self.path, note.title + "_images", note.title)
-                    self.imageOptions['baseFilename'] = note.title + "_images/" + note.title
+                    os.mkdir(os.path.join(self.path, escaped_title + "_images"))
+                    imagePath = os.path.join(self.path, escaped_title + "_images", escaped_title)
+                    self.imageOptions['baseFilename'] = escaped_title + "_images/" + escaped_title
                 else:
-                    imagePath = os.path.join(self.path, note.title)
-                    self.imageOptions['baseFilename'] = note.title
+                    imagePath = os.path.join(self.path, escaped_title)
+                    self.imageOptions['baseFilename'] = escaped_title
                 for imageInfo in imageList:
                     filename = "{}-{}.{}".format(imagePath, imageInfo['hash'], imageInfo['extension'])
                     logger.info('Saving image to {}'.format(filename))
@@ -362,7 +364,7 @@ class GNSync:
                     GeekNote().saveMedia(note.guid, binaryHash, filename)
 
         content = Editor.ENMLtoText(note.content, self.imageOptions)
-        path = os.path.join(self.path, note.title + self.extension)
+        path = os.path.join(self.path, escaped_title + self.extension)
         open(path, "w").write(content)
         updated_seconds = note.updated / 1000.0
         os.utime(path, (updated_seconds, updated_seconds))
@@ -484,7 +486,8 @@ def main():
                 logger.info("Syncing notebook %s", notebook)
                 notebook_path = os.path.join(path, notebook)
                 if not os.path.exists(notebook_path):
-                    os.mkdir(notebook_path)
+                    escaped_notebook_path = re.sub(os.sep,'-', notebook_path)
+                    os.mkdir(escaped_notebook_path)
                 GNS = GNSync(notebook, notebook_path, mask, format, twoway, download_only, nodownsync, imageOptions)
                 GNS.sync()
         else:
