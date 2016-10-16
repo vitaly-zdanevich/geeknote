@@ -268,7 +268,8 @@ COMMANDS_DICT = {
         "help": "Create new notebook.",
         "arguments": {
             "--title": {"altName": "-t",
-                        "help": "Set the title of new notebook."},
+                        "help": "Set the title of new notebook.",
+                        "required": True},
             "--stack": {"help": "Specify notebook stack container."},
         }
     },
@@ -277,7 +278,8 @@ COMMANDS_DICT = {
         "firstArg": "--notebook",
         "arguments": {
             "--notebook":   {"altName": "-nb",
-                             "help": "The name of a notebook to rename."},
+                             "help": "The name of a notebook to rename.",
+                             "required": True},
             "--title":      {"altName": "-t",
                              "help": "Set the new name of notebook."},
         }
@@ -296,7 +298,8 @@ COMMANDS_DICT = {
     "tag-create": {
         "help": "Create new tag.",
         "arguments": {
-            "--title": {"altName": "-t", "help": "Set the title of new tag."},
+            "--title": {"altName": "-t", "help": "Set the title of new tag.",
+                        "required": True},
         }
     },
     "tag-edit": {
@@ -304,7 +307,8 @@ COMMANDS_DICT = {
         "firstArg": "--tagname",
         "arguments": {
             "--tagname":    {"altName": "-tgn",
-                             "help": "The name of a tag to rename."},
+                             "help": "The name of a tag to rename.",
+                             "required": True},
             "--title":      {"altName": "-t",
                              "help": "Set the new name of tag."},
         }
@@ -315,7 +319,8 @@ COMMANDS_DICT = {
         "help": "Remove tag.",
         "firstArg": "--tagname",
         "arguments": {
-            "--tagname": {"help": "The name of a tag to remove."},
+            "--tagname": {"help": "The name of a tag to remove.",
+                          "required": True},
         },
         "flags": {
             "--force": {"help": "Don't ask about removing.",
@@ -327,7 +332,8 @@ COMMANDS_DICT = {
         "help": "Remove notebook.",
         "firstArg": "--notebook",
         "arguments": {
-            "--notebook": {"help": "The name of a notebook to remove."},
+            "--notebook": {"help": "The name of a notebook to remove.",
+                           "required": True},
         },
         "flags": {
             "--force": {"help": "Don't ask about removing.",
