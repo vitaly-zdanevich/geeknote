@@ -951,7 +951,8 @@ class Notes(GeekNoteConnector):
                     return tools.exitErr()
 
         if url is None and note:
-            result['url'] = note.url
+            if note.attributes is not None:
+                result['url'] = note.attributes.sourceURL
 
         return result
 
