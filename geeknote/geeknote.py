@@ -897,10 +897,10 @@ class Notes(GeekNoteConnector):
         if (note and
             title is None and
             content is None and
-            tags is [] and
+            tags is None and
             created is None and
             notebook is None and
-            resources is [] and
+            resources is None and
             reminder is None and
             url is None):
             content = config.EDITOR_OPEN
