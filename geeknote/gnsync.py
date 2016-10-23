@@ -484,10 +484,10 @@ def main():
         if args.all:
             for notebook in all_notebooks():
                 logger.info("Syncing notebook %s", notebook)
-                notebook_path = os.path.join(path, notebook)
+                escaped_notebook_path = re.sub(os.sep,'-', notebook)
+                notebook_path = os.path.join(path, escaped_notebook_path)
                 if not os.path.exists(notebook_path):
-                    escaped_notebook_path = re.sub(os.sep,'-', notebook_path)
-                    os.mkdir(escaped_notebook_path)
+                    os.mkdir(notebook_path)
                 GNS = GNSync(notebook, notebook_path, mask, format, twoway, download_only, nodownsync, imageOptions)
                 GNS.sync()
         else:
