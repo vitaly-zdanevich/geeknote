@@ -81,7 +81,7 @@ class GeekNote(object):
     storage = None
     skipInitConnection = False
 
-    def __init__(self, skipInitConnection=False):
+    def __init__(self, skipInitConnection=False, sleepOnRateLimit=False):
         if skipInitConnection:
             self.skipInitConnection = True
 
@@ -95,44 +95,55 @@ class GeekNote(object):
         if not self.checkAuth():
             self.auth()
 
+        self.sleepOnRateLimit = sleepOnRateLimit
+
     def EdamException(func):
-        def wrapper(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except Exception, e:
-                logging.error("Error: %s : %s", func.__name__, str(e))
+        def wrapper(wrapped_object, *args, **kwargs):
+            sleepOnRateLimit = wrapped_object.sleepOnRateLimit
+            while True:
+                try:
+                    result = func(wrapped_object, *args, **kwargs)
+                except Exception, e:
+                    logging.error("Error: %s : %s", func.__name__, str(e))
 
-                if not hasattr(e, 'errorCode'):
-                    out.failureMessage("Operation failed!")
-                    traceback.print_exc()
-                    tools.exitErr()
+                    if hasattr(e, 'errorCode'):
+                        errorCode = int(e.errorCode)
 
-                errorCode = int(e.errorCode)
+                        # auth-token error, re-auth
+                        if errorCode == 9:
+                            storage = Storage()
+                            storage.removeUser()
+                            GeekNote()
+                            return func(*args, **kwargs)
 
-                # auth-token error, re-auth
-                if errorCode == 9:
-                    storage = Storage()
-                    storage.removeUser()
-                    GeekNote()
-                    return func(*args, **kwargs)
+                        elif errorCode == 3:
+                            out.failureMessage("Sorry, you are not authorized "
+                                            "to perform this operation.")
+                            tools.exitErr()
 
-                elif errorCode == 3:
-                    out.failureMessage("Sorry, you are not authorized "
-                                       "to perform this operation.")
+                        # Rate limited
+                        # Patched because otherwise if you get rate limited you still keep
+                        # hammering the server on scripts
+                        elif errorCode == 19:
+                            if sleepOnRateLimit:
+                                print("\nRate Limit Hit: Sleeping %s seconds before continuing" %
+                                    str(e.rateLimitDuration))
+                                time.sleep(e.rateLimitDuration)
+                            else:
+                                print("\nRate Limit Hit: Please wait %s seconds before continuing" %
+                                    str(e.rateLimitDuration))
+                                tools.exitErr()
+                        else:
+                            out.failureMessage("Unknown error")
+                            tools.exitErr()
 
-                # Rate limited
-                # Patched because otherwise if you get rate limited you still keep
-                # hammering the server on scripts
-                elif errorCode == 19:
-                    print("\nRate Limit Hit: Please wait %s seconds before continuing" %
-                          str(e.rateLimitDuration))
-                    tools.exitErr()
+                    else:
+                        out.failureMessage("Operation failed")
+                        traceback.print_exc()
+                        tools.exitErr()
 
                 else:
-                    print e
-                    return False
-
-                tools.exitErr()
+                    return result
 
         return wrapper
 
