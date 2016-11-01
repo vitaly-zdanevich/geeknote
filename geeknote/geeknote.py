@@ -17,6 +17,7 @@ import evernote.edam.userstore.constants as UserStoreConstants
 import evernote.edam.notestore.NoteStore as NoteStore
 from evernote.edam.notestore.ttypes import NotesMetadataResultSpec
 import evernote.edam.type.ttypes as Types
+from evernote.edam.limits.constants import EDAM_USER_NOTES_MAX
 
 from __init__ import __version__
 import config
@@ -226,6 +227,8 @@ class GeekNote(object):
         meta.includeNotebookGuid = True
         meta.includeAttributes = True
         meta.includeTagGuids = True
+        meta.includeLargestResourceMime = True
+        meta.includeLargestResourceSize = True
 
         result = self.getNoteStore().findNotesMetadata(self.authToken, noteFilter, offset, count, meta)
 
@@ -1040,71 +1043,79 @@ class Notes(GeekNoteConnector):
         out.SearchResult(result.notes, request, showUrl=with_url, showTags=with_tags,
                          showNotebook=with_notebook, showGUID=guid)
 
-    def dedup(self, search=None, tag=None, notebook=None,
-              date=None, exact_entry=None, content_search=None,
-              with_url=None, count=None):
+    def dedup(self, notebook=None):
+        logging.debug("Retrieving note metadata")
 
-        request = self._createSearchRequest(search, tag, notebook,
-                                            date, exact_entry,
-                                            content_search)
-
-        if not count:
-            count = 20
-        else:
-            count = int(count)
-
-        logging.debug("Search count: %s", count)
-
-        createFilter = True if search == "*" else False
-
-        notes = []
+        request = self._createSearchRequest(None, None, notebook, None, None, None)
+        logging.debug(request)
         evernote = self.getEvernote()
-        stillDownloadingResults = True
-        while stillDownloadingResults:
-            offset = len(notes)
-            result = evernote.findNotes(request, count, createFilter, offset)
-            notes += result.notes
-            total = result.totalNotes
-            limit = min(total, count)
-            stillDownloadingResults = len(notes) < total and len(notes) < count
-            out.printLine("Downloaded metadata for "
-                          + str(len(result.notes)) + " notes ("
-                          + str(len(notes)) + "/" + str(limit)
-                          + " of " + str(count) + ")")
+        out.preloader.setMessage("Retrieving metadata...")
+        result = evernote.findNotes(request, EDAM_USER_NOTES_MAX, False, 0)
+        notes = result.notes
 
-        if total == 0:
-            out.failureMessage("Notes have not been found.")
-            return tools.exitErr()
-
+        logging.debug("First pass, comparing metadata of " + str(len(result.notes)) + " notes")
         notes_dict = {}
 
         for note in notes:
-            noteId = note.title + ":" + note.contentHash
+            # Use note title, contentLength and resource descriptors
+            # as the best "unique" key we can make out of the metadata.
+            # Anything more unique requires us to inspect the content,
+            # which we try to avoid since it requires a per-note API call.
+            # This will create false positives, which we resolve in another pass,
+            # actually inspecting note content of a hopefully smaller
+            # set of potential duplicates.
+            noteId = note.title + " (" + str(note.contentLength) + ") with " + str(note.largestResourceMime) + " (" + str(note.largestResourceSize) + ")"
             if noteId in notes_dict:
                 notes_dict[noteId].append(note)
-                out.printLine("found dup! \"" + note.title
+                logging.debug(" note:  " + noteId
                               + "\" with guid " + note.guid
-                              + ", duplicated " + len(notes_dict[noteId]))
+                              + " potentially duplicated " + str(len(notes_dict[noteId])))
             else:
                 notes_dict[noteId] = [note]
-                out.printLine("new note \"" + note.title + "\" with guid " + note.guid)
+#                logging.debug(" note:  " + noteId
+#                              + "\" with guid " + note.guid)
 
         all_dups = [dups for id, dups in notes_dict.iteritems() if len(dups) > 1]  # list of lists
         total_dups = sum(map(len, all_dups))  # count total
-        removed_total = 0
 
+        logging.debug("Second pass, testing content among " + str(len(all_dups)) + " groups, " + str(total_dups) + " notes")
+        notes_dict = {}
         for dup_group in all_dups:
-            group_size = len(dup_group)
-            out.printLine("Deleting " + group_size + " notes titled \"" + dup_group[0].title + "\"")
             for note in dup_group:
-                removed_total += 1
-                out.printLine("Deleting \"" + note.title
+                out.preloader.setMessage("Retrieving content...")
+                self.getEvernote().loadNoteContent(note)
+                md5 = hashlib.md5()
+                md5.update(note.content)
+                noteHash = md5.hexdigest()
+                noteId = md5.hexdigest() + " " + note.title
+                if noteId in notes_dict:
+                    notes_dict[noteId].append(note)
+                    logging.debug("duplicate \"" + noteId
+                                  + "\" with guid " + note.guid
+                                  + ", duplicated " + str(len(notes_dict[noteId])))
+                else:
+                    notes_dict[noteId] = [note]
+                    logging.debug("new note  \"" + noteId
+                                  + "\" with guid " + note.guid)
+
+        all_dups = [dups for id, dups in notes_dict.iteritems() if len(dups) > 1]  # list of lists
+        total_dups = sum(map(len, all_dups))  # count total
+
+        logging.debug("Third pass, deleting " + str(len(all_dups)) + " groups, " + str(total_dups) + " notes")
+        removed_count = 0
+        for dup_group in all_dups:
+            dup_group.pop() # spare the last one, delete the rest
+            for note in dup_group:
+                removed_count += 1
+                logging.debug("Deleting \"" + note.title
                               + "\" created " + out.printDate(note.created)
                               + " with guid " + note.guid
-                              + " (" + str(removed_total) + "/" + str(total_dups) + ")")
+                              + " (" + str(removed_count) + "/" + str(total_dups) + ")")
+                out.preloader.setMessage("Removing note...")
                 evernote.removeNote(note.guid)
 
-        out.printLine("removed " + removed_total + "duplicates")
+        out.successMessage("Removed " + str(removed_count) + " duplicates within " + str(len(result.notes)) + " total notes")
+
 
     def _createSearchRequest(self, search=None, tags=None,
                              notebook=None, date=None,
