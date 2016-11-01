@@ -407,6 +407,33 @@ geeknote remove --note <note name or GUID>
 geeknote remove --note "Shopping list"
 ```
 
+### Notes: De-duplicating notes
+Geeknote can find and remove duplicate notes.
+
+##### Synopsis
+
+``` sh
+geeknote dedup [--notebook <notebook>]
+```
+
+##### Options
+
+| Option             | Argument        | Description |
+|--------------------|-----------------|-------------|
+| ‑‑notebook         | notebook        | Filter by notebook. |
+
+##### Description
+
+Geeknote can locate notes that have the same title and content, and move duplicate notes to the trash.
+For large accounts, this process can take some time and might trigger the API rate limit.
+For that reason, it's possible to scope the de-duplication to a notebook at a time.
+
+##### Examples
+
+``` sh
+geeknote dedup --notebook Contacts
+```
+
 ## Working with Notebooks
 ### Notebooks: show the list of notebooks
 
