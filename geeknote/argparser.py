@@ -217,11 +217,40 @@ COMMANDS_DICT = {
         }
     },
     "dedup": {
-        "help": "Find and remove duplicate notes in Evernote.",
+        "help": "Search notes in Evernote.",
+        "firstArg": "--search",
         "arguments": {
-            "--notebook": {"altName": "-nb",
-                           "help": "In which notebook search for duplicates."},
+            "--search":     {"altName": "-s",
+                             "help": "Text to search.",
+                             "emptyValue": "*"},
+            "--tag":        {"altName": "-tg",
+                             "help": "Tag sought on the notes.",
+                             "repetitive": True},
+            "--notebooks":  {"altName": "-nb",
+                             "help": "In which notebook search the note."},
+            "--date":       {"altName": "-d",
+                             "help": "Set date in 'yyyy-mm-dd' format or "
+                                     "date range 'yyyy-mm-dd/yyyy-mm-dd' format."},
+            "--count":      {"altName": "-cn",
+                             "help": "How many notes show in the result list.",
+                             "type": int},
         },
+        "flags": {
+            "--with-url":       {"altName": "-wu",
+                                 "help": "Add direct url of each note "
+                                         "in results to Evernote web-version.",
+                                 "value": True,
+                                 "default": False},
+            "--exact-entry":    {"altName": "-ee",
+                                 "help": "Search for exact "
+                                         "entry of the request.",
+                                 "value": True,
+                                 "default": False},
+            "--content-search": {"altName": "-cs",
+                                 "help": "Search by content, not by title.",
+                                 "value": True,
+                                 "default": False},
+        }
     },
 
     # Notebooks
