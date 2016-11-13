@@ -5,6 +5,21 @@ class Geeknote < Formula
 
   depends_on :python
 
+  resource "websocket-client" do
+    url "https://pypi.python.org/packages/a3/1e/b717151e29a70e8f212edae9aebb7812a8cae8477b52d9fe990dcaec9bbd/websocket_client-0.37.0.tar.gz"
+    sha256 "678b246d816b94018af5297e72915160e2feb042e0cde1a9397f502ac3a52f41"
+  end
+
+  resource "ipaddress" do
+    url "https://pypi.python.org/packages/bb/26/3b64955ff73f9e3155079b9ed31812afdfa5333b5c76387454d651ef593a/ipaddress-1.0.17.tar.gz"
+    sha256 "3a21c5a15f433710aaa26f1ae174b615973a25182006ae7f9c26de151cd51716"
+  end
+
+  resource "orderedmultidict" do
+    url "https://pypi.python.org/packages/10/a5/a9596229782ffcb465f288588dff39ccd7f64fc453d64f75f5ef442315a8/orderedmultidict-0.7.11.tar.gz"
+    sha256 "dc2320ca694d90dca4ecc8b9c5fdf71ca61d6c079d6feb085ef8d41585419a36"
+  end
+
   resource "oauth2" do
     url "https://pypi.python.org/packages/source/o/oauth2/oauth2-1.9.0.post1.tar.gz"
     sha256 "c006a85e7c60107c7cc6da1b184b5c719f6dd7202098196dfa6e55df669b59bf"
