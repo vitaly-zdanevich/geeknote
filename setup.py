@@ -82,7 +82,8 @@ setup(
         'markdown2',
         'beautifulsoup4',
         'thrift',
-        'proxyenv'
+        'proxyenv',
+        'lxml'
     ],
 
     entry_points={
