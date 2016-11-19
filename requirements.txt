@@ -6,3 +6,4 @@ thrift
 beautifulsoup4
 proxyenv
 pysqlite
+lxml
