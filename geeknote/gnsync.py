@@ -46,7 +46,7 @@ def log(func):
         try:
             return func(*args, **kwargs)
         except Exception, e:
-            logger.error("%s", str(e))
+            logger.exception("%s", str(e))
     return wrapper
 
 
@@ -77,8 +77,8 @@ def reset_logpath(logpath):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-def all_notebooks():
-    geeknote = GeekNote()
+def all_notebooks(sleep_on_ratelimit=False):
+    geeknote = GeekNote(sleepOnRateLimit=sleep_on_ratelimit)
     return [notebook.name for notebook in geeknote.findNotebooks()]
 
 
@@ -288,12 +288,16 @@ class GNSync:
         Updates note from file
         """
         # content = self._get_file_content(file_note['path']) if content is None else content
+        try:
+            tags=tags or note.tagNames
+        except AttributeError:
+            tags=None
 
         result = GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).updateNote(
             guid=note.guid,
             title=title or note.title,
             content=content or self._get_file_content(file_note['path']),
-            tags=tags or note.tagNames,
+            tags=tags,
             notebook=self.notebook_guid)
 
         if result:
@@ -486,7 +490,7 @@ def main():
         reset_logpath(logpath)
 
         if args.all:
-            for notebook in all_notebooks():
+            for notebook in all_notebooks(sleep_on_ratelimit=args.sleep_on_ratelimit):
                 logger.info("Syncing notebook %s", notebook)
                 escaped_notebook_path = re.sub(os.sep,'-', notebook)
                 notebook_path = os.path.join(path, escaped_notebook_path)

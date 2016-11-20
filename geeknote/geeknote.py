@@ -113,7 +113,7 @@ class GeekNote(object):
                         if errorCode == 9:
                             storage = Storage()
                             storage.removeUser()
-                            GeekNote()
+                            GeekNote(sleepOnRateLimit=sleepOnRateLimit)
                             return func(*args, **kwargs)
 
                         elif errorCode == 3:
