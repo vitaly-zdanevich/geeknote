@@ -46,7 +46,7 @@ def log(func):
         try:
             return func(*args, **kwargs)
         except Exception, e:
-            logger.error("%s", str(e))
+            logger.exception("%s", str(e))
     return wrapper
 
 
@@ -77,8 +77,8 @@ def reset_logpath(logpath):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-def all_notebooks():
-    geeknote = GeekNote()
+def all_notebooks(sleep_on_ratelimit=False):
+    geeknote = GeekNote(sleepOnRateLimit=sleep_on_ratelimit)
     return [notebook.name for notebook in geeknote.findNotebooks()]
 
 
@@ -93,9 +93,10 @@ class GNSync:
 
     notebook_guid = None
     all_set = False
+    sleep_on_ratelimit = False
 
     @log
-    def __init__(self, notebook_name, path, mask, format, twoway=False, download_only=False, nodownsync=False, imageOptions={'saveImages': False, 'imagesInSubdir': False}):
+    def __init__(self, notebook_name, path, mask, format, twoway=False, download_only=False, nodownsync=False, sleep_on_ratelimit=False, imageOptions={'saveImages': False, 'imagesInSubdir': False}):
         # check auth
         if not Storage().getUserToken():
             raise Exception("Auth error. There is not any oAuthToken.")
@@ -144,6 +145,8 @@ class GNSync:
         # all is Ok
         self.all_set = True
 
+        self.sleep_on_ratelimit = sleep_on_ratelimit
+
     @log
     def sync(self):
         """
@@ -178,7 +181,7 @@ class GNSync:
                         has_note = True
                         if f['mtime'] > n.updated:
                             if self.format == 'html':
-                                gn = GeekNote()
+                                gn = GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit)
                                 note.guid = n.guid
                                 gn.getNoteStore().updateNote(gn.authToken, note)
                                 logger.info('Note "{0}" was updated'.format(note.title))
@@ -188,7 +191,7 @@ class GNSync:
 
                 if not has_note:
                     if self.format == 'html':
-                        gn = GeekNote()
+                        gn = GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit)
                         gn.getNoteStore().createNote(gn.authToken, note)
                         logger.info('Note "{0}" was created'.format(note.title))
                     else:
@@ -285,12 +288,16 @@ class GNSync:
         Updates note from file
         """
         # content = self._get_file_content(file_note['path']) if content is None else content
+        try:
+            tags=tags or note.tagNames
+        except AttributeError:
+            tags=None
 
-        result = GeekNote().updateNote(
+        result = GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).updateNote(
             guid=note.guid,
             title=title or note.title,
             content=content or self._get_file_content(file_note['path']),
-            tags=tags or note.tagNames,
+            tags=tags,
             notebook=self.notebook_guid)
 
         if result:
@@ -305,7 +312,7 @@ class GNSync:
         """
         Updates file from note
         """
-        GeekNote().loadNoteContent(note)
+        GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).loadNoteContent(note)
         content = Editor.ENMLtoText(note.content)
         open(file_note['path'], "w").write(content)
         updated_seconds = note.updated / 1000.0
@@ -322,7 +329,7 @@ class GNSync:
         if content is None:
             return
 
-        result = GeekNote().createNote(
+        result = GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).createNote(
             title=title or file_note['name'],
             content=content,
             notebook=self.notebook_guid,
@@ -342,7 +349,7 @@ class GNSync:
         """
         Creates file from note
         """
-        GeekNote().loadNoteContent(note)
+        GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).loadNoteContent(note)
 
         escaped_title = re.sub(os.sep,'-', note.title)
 
@@ -361,7 +368,7 @@ class GNSync:
                     filename = "{}-{}.{}".format(imagePath, imageInfo['hash'], imageInfo['extension'])
                     logger.info('Saving image to {}'.format(filename))
                     binaryHash = binascii.unhexlify(imageInfo['hash'])
-                    GeekNote().saveMedia(note.guid, binaryHash, filename)
+                    GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).saveMedia(note.guid, binaryHash, filename)
 
         content = Editor.ENMLtoText(note.content, self.imageOptions)
         path = os.path.join(self.path, escaped_title + self.extension)
@@ -395,7 +402,7 @@ class GNSync:
         Get notebook guid and name.
         Takes default notebook if notebook's name does not select.
         """
-        notebooks = GeekNote().findNotebooks()
+        notebooks = GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).findNotebooks()
 
         if not notebook_name:
             notebook_name = os.path.basename(os.path.realpath(path))
@@ -406,7 +413,7 @@ class GNSync:
             guid = notebook[0].guid
 
         if not guid:
-            notebook = GeekNote().createNotebook(notebook_name)
+            notebook = GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).createNotebook(notebook_name)
 
             if(notebook):
                 logger.info('Notebook "{0}" was'
@@ -445,7 +452,7 @@ class GNSync:
         Get notes from evernote.
         """
         keywords = 'notebook:"{0}"'.format(tools.strip(self.notebook_name))
-        return GeekNote().findNotes(keywords, EDAM_USER_NOTES_MAX).notes
+        return GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).findNotes(keywords, EDAM_USER_NOTES_MAX).notes
 
 
 def main():
@@ -461,6 +468,7 @@ def main():
         parser.add_argument('--download-only', action='store_true', help='Only download from evernote; no upload', default=False)
         parser.add_argument('--nodownsync', '-d', action='store', help='Sync from Evernote only if the file is already local.')
         parser.add_argument('--save-images', action='store_true', help='save images along with text')
+        parser.add_argument('--sleep-on-ratelimit', action='store_true', help='sleep on being ratelimited')
         parser.add_argument('--images-in-subdir', action='store_true', help='save images in a subdirectory (instead of same directory as file)')
 
         args = parser.parse_args()
@@ -482,16 +490,16 @@ def main():
         reset_logpath(logpath)
 
         if args.all:
-            for notebook in all_notebooks():
+            for notebook in all_notebooks(sleep_on_ratelimit=args.sleep_on_ratelimit):
                 logger.info("Syncing notebook %s", notebook)
                 escaped_notebook = re.sub(os.sep, '-', notebook)
                 notebook_path = os.path.join(path, escaped_notebook)
                 if not os.path.exists(notebook_path):
                     os.mkdir(escaped_notebook_path)
-                GNS = GNSync(notebook, notebook_path, mask, format, twoway, download_only, nodownsync, imageOptions)
+                GNS = GNSync(notebook, notebook_path, mask, format, twoway, download_only, nodownsync, sleep_on_ratelimit=args.sleep_on_ratelimit, imageOptions=imageOptions)
                 GNS.sync()
         else:
-            GNS = GNSync(notebook, path, mask, format, twoway, download_only, nodownsync, imageOptions)
+            GNS = GNSync(notebook, path, mask, format, twoway, download_only, nodownsync, sleep_on_ratelimit=args.sleep_on_ratelimit, imageOptions=imageOptions)
             GNS.sync()
 
     except (KeyboardInterrupt, SystemExit, tools.ExitException):
