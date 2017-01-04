@@ -473,7 +473,7 @@ def main():
 
         args = parser.parse_args()
 
-        path = args.path if args.path else None
+        path = args.path if args.path else "."
         mask = args.mask if args.mask else None
         format = args.format if args.format else None
         notebook = args.notebook if args.notebook else None
@@ -495,7 +495,7 @@ def main():
                 escaped_notebook = re.sub(os.sep, '-', notebook)
                 notebook_path = os.path.join(path, escaped_notebook)
                 if not os.path.exists(notebook_path):
-                    os.mkdir(escaped_notebook_path)
+                    os.mkdir(notebook_path)
                 GNS = GNSync(notebook, notebook_path, mask, format, twoway, download_only, nodownsync, sleep_on_ratelimit=args.sleep_on_ratelimit, imageOptions=imageOptions)
                 GNS.sync()
         else:
