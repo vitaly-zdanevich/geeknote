@@ -184,6 +184,19 @@ COMMANDS_DICT = {
                              "default": False}
         }
     },
+    "edit-linked": {
+        "help": "Edit linked note in a shared notebook.",
+        "firstArg": "--notebook",
+        "arguments": {
+            "--notebook" : {"altName": "-nb",
+                            "help": "Name of the linked Notebook in which"
+                                    "the note resides.",
+                         "required": True},
+            "--note" : {"altName": "-n",
+                         "help": "Title of the Note you want to edit.",
+                         "required": True},
+        }
+    },
     "show": {
         "help": "Output note in the terminal.",
         "firstArg": "--note",
