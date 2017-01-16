@@ -82,6 +82,8 @@ class GeekNote(object):
     noteStore = None
     storage = None
     skipInitConnection = False
+    sharedAuthToken = None
+    sharedNoteStore = None
 
     def __init__(self, skipInitConnection=False):
         if skipInitConnection:
@@ -263,12 +265,12 @@ class GeekNote(object):
         note.notebookName = self.getNoteStore().getNotebook(self.authToken, note.notebookGuid).name
 
     @EdamException
-    def loadLinkedNoteContent(self, note, sharedNoteStore, sharedAuthToken):
-        if not isinstance(note, obejct):
+    def loadLinkedNoteContent(self, note):
+        if not isinstance(note, object):
             raise Excetion("Note content must be an "
                            "instance of Note, '%s' given." % type(note))
 
-        note.content = sharedNoteStore.getNoteContent(sharedAuthToken, note.guid)
+        note.content = self.sharedNoteStore.getNoteContent(self.sharedAuthToken, note.guid)
         # TODO
         pass 
 
@@ -800,7 +802,7 @@ class Notes(GeekNoteConnector):
         noteExt_userprop = getNoteExt(self.getStorage()).split(',')[bool(raw)]
         if note:
             if sharedNote:
-                pass
+                self.getEvernote().loadLinkedNoteContent(note)
             else:
                 self.getEvernote().loadNoteContent(note)
             editor = Editor(editor_userprop, note.content, noteExt_userprop, raw)
@@ -831,7 +833,7 @@ class Notes(GeekNoteConnector):
                     else:
                         result = False
                 else:
-                    if not fake:
+                    if not sharedNote:
                         result = bool(self.getEvernote().updateNote(guid=note.guid, **inputData))
                     else:
                         out.printLine("Got this far!")
@@ -900,6 +902,9 @@ class Notes(GeekNoteConnector):
         sharedAuthToken         = sharedAuthResult.authenticationToken
         sharedNotebook          = sharedNoteStore.getSharedNotebookByAuth(sharedAuthToken)
 
+        self.getEvernote().sharedAuthToken = sharedAuthToken
+        self.getEvernote().sharedNoteStore = sharedNoteStore
+
         my_filter = NoteStore.NoteFilter(notebookGuid = sharedNotebook.notebookGuid)
         noteList = sharedNoteStore.findNotes(sharedAuthToken, my_filter, 0, 10)
 
@@ -919,6 +924,8 @@ class Notes(GeekNoteConnector):
         #TODO add ability to let user resolve ambiguity
         if len(candidate_notes) > 1:
             out.failureMessage("Error: multiple notes match the specified note title.")
+            for n in candidate_notes:
+                print n.title
             return tools.exitErr()
 
         
@@ -926,11 +933,7 @@ class Notes(GeekNoteConnector):
 
         inputData = self._parseInput(None, None, None, None, None, None, the_note, None, None, True)
 
-        print inputData
-        print sharedNoteStore.getNoteContent(sharedAuthToken, the_note.guid)
-
-        result = self._editWithEditorInThread(inputData, the_note, raw=False, sharedNote=True fake=True)
-
+        result = self._editWithEditorInThread(inputData, the_note, raw=False, sharedNote=True, fake=True)
         pass 
     def edit(self, note, title=None, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, url=None, raw=None):
         self.connectToEvernote()
