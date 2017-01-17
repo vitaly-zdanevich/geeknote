@@ -334,7 +334,7 @@ class GeekNote(object):
     @EdamException
     def updateNote(self, guid, title=None, content=None,
                    tags=None, created=None, notebook=None,
-                   resources=None, reminder=None, url=None):
+                   resources=None, reminder=None, url=None, shared=False):
         note = Types.Note()
         note.guid = guid
         if title:
@@ -403,7 +403,10 @@ class GeekNote(object):
 
         logging.debug("Update note : %s", note)
 
-        self.getNoteStore().updateNote(self.authToken, note)
+        if not shared:
+            self.getNoteStore().updateNote(self.authToken, note)
+        else:
+            self.sharedNoteStore.updateNote(self.sharedAuthToken, note)
         return True
 
     @EdamException
@@ -834,9 +837,12 @@ class Notes(GeekNoteConnector):
                         result = False
                 else:
                     if not sharedNote:
+                        print note
                         result = bool(self.getEvernote().updateNote(guid=note.guid, **inputData))
                     else:
-                        out.printLine("Got this far!")
+#                        out.printLine("Got this far!")
+                        print note
+                        result = bool(self.getEvernote().updateNote(shared=True, guid=note.guid, **inputData))
                     # TODO: log error if result is False
 
                 if result:
@@ -874,6 +880,48 @@ class Notes(GeekNoteConnector):
         else:
             out.failureMessage("Error: could not create note.")
             return tools.exitErr()
+
+    def createLinked(self, title, notebook):
+        # find the linked notebook in which the user wants to edit a
+        # note
+        my_shared_notebook = None
+        for nb in self.getEvernote().findLinkedNotebooks():
+            #case-insensitive
+            if notebook.lower() in nb.shareName.lower():
+                my_shared_notebook = nb
+                break
+
+        # can't find the notebook
+        if my_shared_notebook == None:
+            out.failureMessage("Error: could not find specified Linked Notebook")
+            return tools.exitErr()
+
+        sharedNoteStoreClient   = THttpClient.THttpClient(my_shared_notebook.noteStoreUrl)
+        sharedNoteStoreProtocol = TBinaryProtocol.TBinaryProtocol(sharedNoteStoreClient)
+        sharedNoteStore         = NoteStore.Client(sharedNoteStoreProtocol)
+
+        
+        sharedAuthResult        = sharedNoteStore.authenticateToSharedNotebook(my_shared_notebook.shareKey, self.getEvernote().authToken)
+
+
+        sharedAuthToken         = sharedAuthResult.authenticationToken
+        sharedNotebook          = sharedNoteStore.getSharedNotebookByAuth(sharedAuthToken)
+
+
+        self.getEvernote().sharedAuthToken = sharedAuthToken
+        self.getEvernote().sharedNoteStore = sharedNoteStore
+
+
+        new_note = Types.Note()
+        new_note.title = title
+        new_note.content = Editor.textToENML("")
+        new_note.notebookGuid = sharedNotebook.notebookGuid
+        
+
+        #sharedNoteStore.createNote(self.getEvernote().authToken, new_note)
+        sharedNoteStore.createNote(sharedAuthToken, new_note)
+        
+
 
     def editLinked(self, note, notebook):
         """ Edit a Note from a Linked Notebook """
@@ -935,6 +983,8 @@ class Notes(GeekNoteConnector):
 
         result = self._editWithEditorInThread(inputData, the_note, raw=False, sharedNote=True, fake=True)
         pass 
+
+
     def edit(self, note, title=None, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, url=None, raw=None):
         self.connectToEvernote()
         note = self._searchNote(note)
@@ -1336,6 +1386,9 @@ def main(args=None):
         # Notes
         if COMMAND == 'create':
             Notes().create(**ARGS)
+
+        if COMMAND == 'create-linked':
+            Notes().createLinked(**ARGS)
 
         if COMMAND == 'edit':
             Notes().edit(**ARGS)

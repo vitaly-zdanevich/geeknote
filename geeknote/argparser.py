@@ -85,6 +85,19 @@ COMMANDS_DICT = {
                              "default": False}
         }
     },
+    "create-linked":{
+        "help": "Create Linked note in Evernote",
+        "firstArg": "--notebook",
+        "arguments": {
+            "--title":  {"altName": "-t",
+                           "help" : "The note title.",
+                        "required": True},
+            "--notebook": {"alt-name": "-nb",
+                            "help": "Name of the linked notebook in "
+                            "which to create this note.",
+                            "required": True}
+        }
+    },
     "find": {
         "help": "Search notes in Evernote.",
         "firstArg": "--search",
