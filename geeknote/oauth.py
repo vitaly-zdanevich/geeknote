@@ -299,7 +299,7 @@ class GeekNoteAuth(object):
         if 'JSESSIONID' not in self.cookies:
             logging.error("Not found value JSESSIONID in the response cookies")
             tools.exitErr()
-        
+
         access = self.postData['access']
         access['oauth_token'] = self.tmpOAuthToken
         access['oauth_callback'] = ""
