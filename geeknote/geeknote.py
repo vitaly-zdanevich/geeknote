@@ -954,7 +954,7 @@ class Notes(GeekNoteConnector):
         self.getEvernote().sharedNoteStore = sharedNoteStore
 
         my_filter = NoteStore.NoteFilter(notebookGuid = sharedNotebook.notebookGuid)
-        noteList = sharedNoteStore.findNotes(sharedAuthToken, my_filter, 0, 10)
+        noteList = sharedNoteStore.findNotes(sharedAuthToken, my_filter, 0, 50)
 
         if len(noteList.notes) == 0:
             out.failureMessage("Error: Could not find any notes in the specified linked notebook.")
