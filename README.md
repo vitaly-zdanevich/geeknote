@@ -121,7 +121,7 @@ For more information, see:
 $ geeknote settings
 Geeknote
 ******************************
-Version: 2.0.10
+Version: 2.0.11
 App dir: /Users/username/.geeknote
 Error log: /Users/username/.geeknote/error.log
 Current editor: vim
