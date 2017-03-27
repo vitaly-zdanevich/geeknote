@@ -85,6 +85,19 @@ COMMANDS_DICT = {
                              "default": False}
         }
     },
+    "create-linked":{
+        "help": "Create Linked note in Evernote",
+        "firstArg": "--notebook",
+        "arguments": {
+            "--title":  {"altName": "-t",
+                           "help" : "The note title.",
+                        "required": True},
+            "--notebook": {"alt-name": "-nb",
+                            "help": "Name of the linked notebook in "
+                            "which to create this note.",
+                            "required": True}
+        }
+    },
     "find": {
         "help": "Search notes in Evernote.",
         "firstArg": "--search",
@@ -182,6 +195,19 @@ COMMANDS_DICT = {
                              "help": "Edit note with raw ENML",
                              "value": True,
                              "default": False}
+        }
+    },
+    "edit-linked": {
+        "help": "Edit linked note in a shared notebook.",
+        "firstArg": "--notebook",
+        "arguments": {
+            "--notebook" : {"altName": "-nb",
+                            "help": "Name of the linked Notebook in which"
+                                    "the note resides.",
+                         "required": True},
+            "--note" : {"altName": "-n",
+                         "help": "Title of the Note you want to edit.",
+                         "required": True},
         }
     },
     "show": {

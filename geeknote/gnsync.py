@@ -22,6 +22,12 @@ from storage import Storage
 from editor import Editor
 import tools
 
+# for prototyping...
+# refactor should move code depending on these modules elsewhere
+import thrift.protocol.TBinaryProtocol as TBinaryProtocol
+import thrift.transport.THttpClient as THttpClient
+import urlparse
+import evernote.edam.notestore.NoteStore as NoteStore
 
 # set default logger (write log to file)
 def_logpath = os.path.join(config.APP_DIR, 'gnsync.log')
@@ -81,6 +87,10 @@ def all_notebooks(sleep_on_ratelimit=False):
     geeknote = GeekNote(sleepOnRateLimit=sleep_on_ratelimit)
     return [notebook.name for notebook in geeknote.findNotebooks()]
 
+def all_linked_notebooks():
+    geeknote = GeekNote()
+    return geeknote.findLinkedNotebooks()
+
 
 class GNSync:
 
@@ -106,7 +116,7 @@ class GNSync:
             raise Exception("Path to sync directories does not select.")
 
         if not os.path.exists(path):
-            raise Exception("Path to sync directories does not exist.")
+            raise Exception("Path to sync directories does not exist.  %s" % path)
 
         self.path = path
 
@@ -463,6 +473,7 @@ def main():
         parser.add_argument('--format', '-f', action='store', default='plain', choices=['plain', 'markdown', 'html'], help='The format of the file contents. Default is "plain". Valid values are "plain" "html" and "markdown"')
         parser.add_argument('--notebook', '-n', action='store', help='Notebook name for synchronize. Default is default notebook unless all is selected')
         parser.add_argument('--all', '-a', action='store_true', help='Synchronize all notebooks', default=False)
+        parser.add_argument('--all-linked', action='store_true', help='Get all linked notebooks')
         parser.add_argument('--logpath', '-l', action='store', help='Path to log file. Default is GeekNoteSync in home dir')
         parser.add_argument('--two-way', '-t', action='store_true', help='Two-way sync (also download from evernote)', default=False)
         parser.add_argument('--download-only', action='store_true', help='Only download from evernote; no upload', default=False)
@@ -489,11 +500,50 @@ def main():
 
         reset_logpath(logpath)
 
+        
+        geeknote = GeekNote()
+        
+
+        if args.all_linked:
+            my_map = {}
+            for notebook in all_linked_notebooks():
+                print "Syncing notebook: " + notebook.shareName
+                notebook_url = urlparse.urlparse(notebook.noteStoreUrl)
+                sharedNoteStoreClient = THttpClient.THttpClient(notebook.noteStoreUrl)
+                sharedNoteStoreProtocol = TBinaryProtocol.TBinaryProtocol(sharedNoteStoreClient)
+                sharedNoteStore = NoteStore.Client(sharedNoteStoreProtocol) 
+
+                sharedAuthResult = sharedNoteStore.authenticateToSharedNotebook(notebook.shareKey, geeknote.authToken)
+                sharedAuthToken = sharedAuthResult.authenticationToken
+                sharedNotebook = sharedNoteStore.getSharedNotebookByAuth(sharedAuthToken)
+
+                my_filter = NoteStore.NoteFilter(notebookGuid = sharedNotebook.notebookGuid)
+
+                noteList = sharedNoteStore.findNotes(sharedAuthToken, my_filter, 0, 10)
+
+                print "Found " + str(noteList.totalNotes) + " shared notes."
+            
+                print noteList.notes
+
+                filename = notebook.shareName + '-' + noteList.notes[0].title + '.html'
+
+                filename = filename.replace(' ','-').replace('/', '-')
+
+                content = sharedNoteStore.getNoteContent(sharedAuthToken, noteList.notes[0].guid) 
+
+
+                with open(filename, 'w') as f:
+                    f.write(content)
+                
+            
+
+            return
+
         if args.all:
             for notebook in all_notebooks(sleep_on_ratelimit=args.sleep_on_ratelimit):
                 logger.info("Syncing notebook %s", notebook)
-                escaped_notebook = re.sub(os.sep, '-', notebook)
-                notebook_path = os.path.join(path, escaped_notebook)
+                escaped_notebook_path = re.sub(os.sep, '-', notebook)
+                notebook_path = os.path.join(path, escaped_notebook_path)
                 if not os.path.exists(notebook_path):
                     os.mkdir(notebook_path)
                 GNS = GNSync(notebook, notebook_path, mask, format, twoway, download_only, nodownsync, sleep_on_ratelimit=args.sleep_on_ratelimit, imageOptions=imageOptions)
@@ -501,6 +551,8 @@ def main():
         else:
             GNS = GNSync(notebook, path, mask, format, twoway, download_only, nodownsync, sleep_on_ratelimit=args.sleep_on_ratelimit, imageOptions=imageOptions)
             GNS.sync()
+
+        
 
     except (KeyboardInterrupt, SystemExit, tools.ExitException):
         pass

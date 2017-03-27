@@ -279,7 +279,7 @@ def printList(listItems, title="", showSelector=False,
             printDate(item.created).ljust(11, " ") if hasattr(item, 'created') else '',
             printDate(item.updated).ljust(11, " ") if hasattr(item, 'updated') else '',
             item.notebookName.ljust(18, " ") if showNotebook and hasattr(item, 'notebookName') else '',
-            item.title if hasattr(item, 'title') else item.name,
+            item.title if hasattr(item, 'title') else item.name if hasattr(item, 'name') else item.shareName,
             "".join(map(lambda s: " #" + s, item.tagGuids)) if showTags and hasattr(item, 'tagGuids') and item.tagGuids else '',
             " " + (">>> " + config.NOTE_WEBCLIENT_URL % item.guid) if showUrl else '',))
 

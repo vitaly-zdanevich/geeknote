@@ -31,6 +31,7 @@ from storage import Storage
 from log import logging
 
 
+
 def GeekNoneDBConnectOnly(func):
     """ operator to disable evernote connection
     or create instance of GeekNote """
@@ -81,6 +82,8 @@ class GeekNote(object):
     noteStore = None
     storage = None
     skipInitConnection = False
+    sharedAuthToken = None
+    sharedNoteStore = None
 
     def __init__(self, skipInitConnection=False, sleepOnRateLimit=False):
         if skipInitConnection:
@@ -273,6 +276,16 @@ class GeekNote(object):
         note.notebookName = self.getNoteStore().getNotebook(self.authToken, note.notebookGuid).name
 
     @EdamException
+    def loadLinkedNoteContent(self, note):
+        if not isinstance(note, object):
+            raise Excetion("Note content must be an "
+                           "instance of Note, '%s' given." % type(note))
+
+        note.content = self.sharedNoteStore.getNoteContent(self.sharedAuthToken, note.guid)
+        # TODO
+        pass 
+
+    @EdamException
     def createNote(self, title, content, tags=None, created=None, notebook=None, resources=None, reminder=None, url=None):
         note = Types.Note()
         note.title = title
@@ -332,7 +345,7 @@ class GeekNote(object):
     @EdamException
     def updateNote(self, guid, title=None, content=None,
                    tags=None, created=None, notebook=None,
-                   resources=None, reminder=None, url=None):
+                   resources=None, reminder=None, url=None, shared=False):
         note = Types.Note()
         note.guid = guid
         if title:
@@ -401,7 +414,10 @@ class GeekNote(object):
 
         logging.debug("Update note : %s", note)
 
-        self.getNoteStore().updateNote(self.authToken, note)
+        if not shared:
+            self.getNoteStore().updateNote(self.authToken, note)
+        else:
+            self.sharedNoteStore.updateNote(self.sharedAuthToken, note)
         return True
 
     @EdamException
@@ -415,6 +431,10 @@ class GeekNote(object):
     def findNotebooks(self):
         """ WORK WITH NOTEBOOKS """
         return self.getNoteStore().listNotebooks(self.authToken)
+
+    @EdamException
+    def findLinkedNotebooks(self):
+        return self.getNoteStore().listLinkedNotebooks(self.authToken)
 
     @EdamException
     def createNotebook(self, name, stack=None):
@@ -694,6 +714,27 @@ class Tags(GeekNoteConnector):
 class Notebooks(GeekNoteConnector):
     def list(self, guid=None):
         result = self.getEvernote().findNotebooks()
+        result_linked = self.getEvernote().findLinkedNotebooks()
+        out.printList(result, showGUID=guid)
+
+        # also show linked notebooks for good measure 
+        out.printList(result_linked, showGUID=guid)
+
+        # print result_linked[0].__dict___
+        # {'username': 'bentoncalhoun', 
+        #  'businessId': None, 
+        #  'shareName': 'KevinLeachBenNotes', 
+        #  'uri': None, 
+        #  'shareKey': '12917-s82',
+        #  'shardId': 's82', 
+        #  'updateSequenceNum': 9, 
+        #  'webApiUrlPrefix': 'https://www.evernote.com/shard/s82/', 
+        #  'guid': '6c912ee3-4479-47d6-ad37-2a477645199e', 
+        #  'stack': None,
+        #  'noteStoreUrl': 'https://www.evernote.com/shard/s82/notestore'}
+
+    def list_linked(self, guid=None):
+        result = self.getEvernote().findLinkedNotebooks()
         out.printList(result, showGUID=guid)
 
     def create(self, title, stack=None):
@@ -770,11 +811,14 @@ class Notes(GeekNoteConnector):
         self.findExactOnUpdate = bool(findExactOnUpdate)
         self.selectFirstOnUpdate = bool(selectFirstOnUpdate)
 
-    def _editWithEditorInThread(self, inputData, note=None, raw=None):
+    def _editWithEditorInThread(self, inputData, note=None, raw=None, sharedNote=False, fake=False):
         editor_userprop = getEditor(self.getStorage())
         noteExt_userprop = getNoteExt(self.getStorage()).split(',')[bool(raw)]
         if note:
-            self.getEvernote().loadNoteContent(note)
+            if sharedNote:
+                self.getEvernote().loadLinkedNoteContent(note)
+            else:
+                self.getEvernote().loadNoteContent(note)
             editor = Editor(editor_userprop, note.content, noteExt_userprop, raw)
         else:
             editor = Editor(editor_userprop, '', noteExt_userprop, raw)
@@ -803,7 +847,13 @@ class Notes(GeekNoteConnector):
                     else:
                         result = False
                 else:
-                    result = bool(self.getEvernote().updateNote(guid=note.guid, **inputData))
+                    if not sharedNote:
+                        print note
+                        result = bool(self.getEvernote().updateNote(guid=note.guid, **inputData))
+                    else:
+#                        out.printLine("Got this far!")
+                        print note
+                        result = bool(self.getEvernote().updateNote(shared=True, guid=note.guid, **inputData))
                     # TODO: log error if result is False
 
                 if result:
@@ -841,6 +891,110 @@ class Notes(GeekNoteConnector):
         else:
             out.failureMessage("Error: could not create note.")
             return tools.exitErr()
+
+    def createLinked(self, title, notebook):
+        # find the linked notebook in which the user wants to edit a
+        # note
+        my_shared_notebook = None
+        for nb in self.getEvernote().findLinkedNotebooks():
+            #case-insensitive
+            if notebook.lower() in nb.shareName.lower():
+                my_shared_notebook = nb
+                break
+
+        # can't find the notebook
+        if my_shared_notebook == None:
+            out.failureMessage("Error: could not find specified Linked Notebook")
+            return tools.exitErr()
+
+        sharedNoteStoreClient   = THttpClient.THttpClient(my_shared_notebook.noteStoreUrl)
+        sharedNoteStoreProtocol = TBinaryProtocol.TBinaryProtocol(sharedNoteStoreClient)
+        sharedNoteStore         = NoteStore.Client(sharedNoteStoreProtocol)
+
+        
+        sharedAuthResult        = sharedNoteStore.authenticateToSharedNotebook(my_shared_notebook.shareKey, self.getEvernote().authToken)
+
+
+        sharedAuthToken         = sharedAuthResult.authenticationToken
+        sharedNotebook          = sharedNoteStore.getSharedNotebookByAuth(sharedAuthToken)
+
+
+        self.getEvernote().sharedAuthToken = sharedAuthToken
+        self.getEvernote().sharedNoteStore = sharedNoteStore
+
+
+        new_note = Types.Note()
+        new_note.title = title
+        new_note.content = Editor.textToENML("")
+        new_note.notebookGuid = sharedNotebook.notebookGuid
+        
+
+        #sharedNoteStore.createNote(self.getEvernote().authToken, new_note)
+        sharedNoteStore.createNote(sharedAuthToken, new_note)
+        
+
+
+    def editLinked(self, note, notebook):
+        """ Edit a Note from a Linked Notebook """
+        
+        # find the linked notebook in which the user wants to edit a
+        # note
+        my_shared_notebook = None
+        for nb in self.getEvernote().findLinkedNotebooks():
+            #case-insensitive
+            if notebook.lower() in nb.shareName.lower():
+                my_shared_notebook = nb
+                break
+
+        # can't find the notebook
+        if my_shared_notebook == None:
+            out.failureMessage("Error: could not find specified Linked Notebook")
+            return tools.exitErr()
+
+        
+        sharedNoteStoreClient   = THttpClient.THttpClient(my_shared_notebook.noteStoreUrl)
+        sharedNoteStoreProtocol = TBinaryProtocol.TBinaryProtocol(sharedNoteStoreClient)
+        sharedNoteStore         = NoteStore.Client(sharedNoteStoreProtocol)
+
+        sharedAuthResult        = sharedNoteStore.authenticateToSharedNotebook(my_shared_notebook.shareKey, self.getEvernote().authToken)
+       
+        sharedAuthToken         = sharedAuthResult.authenticationToken
+        sharedNotebook          = sharedNoteStore.getSharedNotebookByAuth(sharedAuthToken)
+
+        self.getEvernote().sharedAuthToken = sharedAuthToken
+        self.getEvernote().sharedNoteStore = sharedNoteStore
+
+        my_filter = NoteStore.NoteFilter(notebookGuid = sharedNotebook.notebookGuid)
+        noteList = sharedNoteStore.findNotes(sharedAuthToken, my_filter, 0, 50)
+
+        if len(noteList.notes) == 0:
+            out.failureMessage("Error: Could not find any notes in the specified linked notebook.")
+            return tools.exitErr()
+
+        candidate_notes = []
+        for n in noteList.notes:
+            if note.lower() in str(n.title).lower():
+                candidate_notes.append(n)
+
+        if len(candidate_notes) == 0:
+            out.failureMessage("Error: Could not find specified note in the linked notebook.")
+            return tools.exitErr()
+
+        #TODO add ability to let user resolve ambiguity
+        if len(candidate_notes) > 1:
+            out.failureMessage("Error: multiple notes match the specified note title.")
+            for n in candidate_notes:
+                print n.title
+            return tools.exitErr()
+
+        
+        the_note = candidate_notes[0]
+
+        inputData = self._parseInput(None, None, None, None, None, None, the_note, None, None, True)
+
+        result = self._editWithEditorInThread(inputData, the_note, raw=False, sharedNote=True, fake=True)
+        pass 
+
 
     def edit(self, note, title=None, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, url=None, raw=None):
         self.connectToEvernote()
@@ -894,7 +1048,7 @@ class Notes(GeekNoteConnector):
         else:
             out.showNote(note, self.getEvernote().getUserInfo().id, self.getEvernote().getUserInfo().shardId)
 
-    def _parseInput(self, title=None, content=None, tags=[], created=None, notebook=None, resources=[], note=None, reminder=None, url=None):
+    def _parseInput(self, title=None, content=None, tags=[], created=None, notebook=None, resources=[], note=None, reminder=None, url=None, shared=False):
         result = {
             "title": title,
             "content": content,
@@ -967,6 +1121,11 @@ class Notes(GeekNoteConnector):
         if url is None and note:
             if note.attributes is not None:
                 result['url'] = note.attributes.sourceURL
+
+        if shared:
+            pass
+            # TODO don't want to mess up dict structure...
+#            result['shared'] = True
 
         return result
 
@@ -1239,8 +1398,14 @@ def main(args=None):
         if COMMAND == 'create':
             Notes().create(**ARGS)
 
+        if COMMAND == 'create-linked':
+            Notes().createLinked(**ARGS)
+
         if COMMAND == 'edit':
             Notes().edit(**ARGS)
+
+        if COMMAND == 'edit-linked':
+            Notes().editLinked(**ARGS)
 
         if COMMAND == 'remove':
             Notes().remove(**ARGS)
