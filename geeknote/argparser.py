@@ -82,7 +82,12 @@ COMMANDS_DICT = {
             "--raw":        {"altName": "-r",
                              "help": "Edit note with raw ENML",
                              "value": True,
+                             "default": False},
+            "--rawmd":        {"altName": "-rm",
+                             "help": "Edit note with raw markdown",
+                             "value": True,
                              "default": False}
+
         }
     },
     "create-linked":{
@@ -193,6 +198,10 @@ COMMANDS_DICT = {
         "flags": {
             "--raw":        {"altName": "-r",
                              "help": "Edit note with raw ENML",
+                             "value": True,
+                             "default": False},
+            "--rawmd":        {"altName": "-rm",
+                             "help": "Edit note with raw markdown",
                              "value": True,
                              "default": False}
         }
