@@ -811,7 +811,8 @@ class Notes(GeekNoteConnector):
         self.findExactOnUpdate = bool(findExactOnUpdate)
         self.selectFirstOnUpdate = bool(selectFirstOnUpdate)
 
-    def _editWithEditorInThread(self, inputData, note=None, raw=None, sharedNote=False, fake=False):
+    def _editWithEditorInThread(self, inputData, note=None, raw=None, rawmd=None, sharedNote=False, fake=False):
+
         editor_userprop = getEditor(self.getStorage())
         noteExt_userprop = getNoteExt(self.getStorage()).split(',')[bool(raw)]
         if note:
@@ -838,7 +839,7 @@ class Notes(GeekNoteConnector):
                     fmt = fmt[0]
 
                 inputData['content'] = newContent if raw \
-                    else Editor.textToENML(newContent, format=fmt)
+                    else Editor.textToENML(newContent, format=fmt, rawmd=rawmd)
                 if not note:
                     result = self.getEvernote().createNote(**inputData)
                     # TODO: log error if result is False or None
@@ -872,16 +873,17 @@ class Notes(GeekNoteConnector):
         else:
             out.failureMessage("Edited note could not be saved, so it remains in %s" % editor.tempfile)
 
-    def create(self, title, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, url=None, raw=None):
+    def create(self, title, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, url=None, raw=None, rawmd=None):
+
         self.connectToEvernote()
 
         # Optional Content.
         content = content or " "
 
-        inputData = self._parseInput(title, content, tag, created, notebook, resource, None, reminder, url)
+        inputData = self._parseInput(title, content, tag, created, notebook, resource, None, reminder, url, rawmd=rawmd)
 
         if inputData['content'] == config.EDITOR_OPEN:
-            result = self._editWithEditorInThread(inputData, raw=raw)
+            result = self._editWithEditorInThread(inputData, raw=raw, rawmd=rawmd)
         else:
             out.preloader.setMessage("Creating note...")
             result = bool(self.getEvernote().createNote(**inputData))
@@ -996,14 +998,15 @@ class Notes(GeekNoteConnector):
         pass 
 
 
-    def edit(self, note, title=None, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, url=None, raw=None):
+    def edit(self, note, title=None, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, url=None, raw=None, rawmd=None):
+
         self.connectToEvernote()
         note = self._searchNote(note)
 
-        inputData = self._parseInput(title, content, tag, created, notebook, resource, note, reminder, url)
+        inputData = self._parseInput(title, content, tag, created, notebook, resource, note, reminder, url, rawmd=rawmd)
 
         if inputData['content'] == config.EDITOR_OPEN:
-            result = self._editWithEditorInThread(inputData, note, raw=raw)
+            result = self._editWithEditorInThread(inputData, note, raw=raw, rawmd=rawmd)
         else:
             out.preloader.setMessage("Saving note...")
             result = bool(self.getEvernote().updateNote(guid=note.guid, **inputData))
@@ -1048,7 +1051,7 @@ class Notes(GeekNoteConnector):
         else:
             out.showNote(note, self.getEvernote().getUserInfo().id, self.getEvernote().getUserInfo().shardId)
 
-    def _parseInput(self, title=None, content=None, tags=[], created=None, notebook=None, resources=[], note=None, reminder=None, url=None, shared=False):
+    def _parseInput(self, title=None, content=None, tags=[], created=None, notebook=None, resources=[], note=None, reminder=None, url=None, shared=False, rawmd=False):
         result = {
             "title": title,
             "content": content,
@@ -1083,7 +1086,7 @@ class Notes(GeekNoteConnector):
                     content = open(content, "r").read()
 
                 logging.debug("Convert content")
-                content = Editor.textToENML(content)
+                content = Editor.textToENML(content, rawmd=rawmd)
             result['content'] = content
 
         if created:
