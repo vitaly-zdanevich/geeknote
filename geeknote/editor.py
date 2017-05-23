@@ -222,10 +222,11 @@ class Editor(object):
 #            todo_tag.insert_after(post)
 
     @staticmethod
-    def textToENML(content, raise_ex=False, format='markdown'):
+    def textToENML(content, raise_ex=False, format='markdown', rawmd=False):
         """
         Create an ENML format of note.
         """
+
         if not isinstance(content, str):
             content = ""
         try:
@@ -238,7 +239,9 @@ class Editor(object):
                 storage = Storage()
                 extras = storage.getUserprop('markdown2_extras')
 
-                content = Editor.HTMLEscapeTag(content)
+                if not rawmd:
+                    content = Editor.HTMLEscapeTag(content)
+
                 contentHTML = markdown.markdown(content, extras=extras)
 
                 soup = BeautifulSoup(contentHTML, 'html.parser')
