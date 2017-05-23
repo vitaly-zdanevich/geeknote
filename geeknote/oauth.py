@@ -170,25 +170,25 @@ class GeekNoteAuth(object):
         return dict(item.split('=', 1) for item in data.split('?')[-1].split('&'))
 
     def getToken(self):
-
-        # workaround for now
-        # https://github.com/jeffkowalski/geeknote/issues/75#issuecomment-297238062
-
+        # use developer token if set, otherwise authorize as usual
         import os
-        return os.environ.get('EVERNOTE_DEV_TOKEN')
-        # out.preloader.setMessage('Authorize...')
-        # self.getTmpOAuthToken()
+        token = os.environ.get('EVERNOTE_DEV_TOKEN')
+        if token:
+            return token
+        else:
+            out.preloader.setMessage('Authorize...')
+            self.getTmpOAuthToken()
 
-        # self.login()
+            self.login()
 
-        # out.preloader.setMessage('Allow Access...')
-        # self.allowAccess()
+            out.preloader.setMessage('Allow Access...')
+            self.allowAccess()
 
-        # out.preloader.setMessage('Getting Token...')
-        # self.getOAuthToken()
+            out.preloader.setMessage('Getting Token...')
+            self.getOAuthToken()
 
-        # # out.preloader.stop()
-        # return self.OAuthToken
+            # out.preloader.stop()
+            return self.OAuthToken
 
     def getTmpOAuthToken(self):
         response = self.loadPage(self.url['base'],
