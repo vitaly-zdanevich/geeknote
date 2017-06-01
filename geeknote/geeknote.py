@@ -253,8 +253,9 @@ class GeekNote(object):
         # notes to come whilst obeying count rules
         while ((result.totalNotes != len(result.notes)) and count != 0):
             offset = len(result.notes)
-            result.notes += self.getNoteStore().findNotesMetadata(self.authToken, noteFilter, offset, count, meta).notes
-            count = max(count - len(result.notes), 0)
+            newresult = self.getNoteStore().findNotesMetadata(self.authToken, noteFilter, offset, count, meta)
+            result.notes += newresult.notes
+            count = max(count - len(newresult.notes), 0)
 
         return result
 
