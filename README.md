@@ -195,6 +195,7 @@ geeknote create --title <title>
 | ‑‑reminder | date     | Set reminder date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format. Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectively, NONE for a reminder without a time. Use DONE to mark a reminder as completed. |
 | --urls     | url      | Set the URL for the note. |
 | --raw      |          | A flag signifying the content is in raw ENML format. |
+| --rawmd    |          | A flag signifying the content is in raw markdown format. |
 
 ##### Description
 This command allows us to create a new note in Evernote. Geeknote has designed for using in console, so we have some restrictions like inability to use double quotes in **--content** option. But there is a method to avoid it - use stdin stream or file synchronization, we show it later in documentation.
@@ -335,6 +336,7 @@ geeknote edit --note <title or GUID of note to edit>
 | ‑‑reminder | date     | Set reminder date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format. Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectively, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note. |
 | --urls     | url      | Set the URL for the note. |
 | --raw      |          | A flag signifying the content is in raw ENML format. |
+| --rawmd    |          | A flag signifying the content is in raw markdown format. |
 
 ##### Examples
 
