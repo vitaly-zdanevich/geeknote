@@ -232,8 +232,8 @@ class Editor(object):
         try:
             content = unicode(content, "utf-8")
             # add 2 space before new line in paragraph for creating br tags
-            # content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
-            content = re.sub(r'\r\n', '\n', content)
+            content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
+            # content = re.sub(r'\r\n', '\n', content)
 
             if format == 'markdown':
                 storage = Storage()
