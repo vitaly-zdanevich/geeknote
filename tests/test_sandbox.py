@@ -6,7 +6,8 @@ from geeknote.storage import Storage
 from geeknote.oauth import GeekNoteAuth
 from random import SystemRandom
 from string import hexdigits
-#from proxyenv.proxyenv import ProxyFactory
+if config.DEV_MODE:
+    from proxyenv.proxyenv import ProxyFactory
 
 
 # see https://docs.python.org/2.7/library/unittest.html §25.3.6
