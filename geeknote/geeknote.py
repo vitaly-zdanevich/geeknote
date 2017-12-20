@@ -225,7 +225,8 @@ class GeekNote(object):
 
         note = Types.Note()
         note.title = title
-        note.content = content
+        # below forces unicode string to str type with unicode encoding
+        note.content = content.encode('utf-8')
         note.created = created
 
         if tags:
