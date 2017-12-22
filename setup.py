@@ -77,7 +77,7 @@ setup(
 
     install_requires=[
         'evernote>=1.25',
-        'html2text',
+        'html2text==2016.9.19',
         'sqlalchemy',
         'markdown2',
         'beautifulsoup4',
