@@ -18,7 +18,6 @@ from xml.sax.saxutils import escape, unescape
 
 
 class EditorThread(threading.Thread):
-
     def __init__(self, editor):
         threading.Thread.__init__(self)
         self.editor = editor
@@ -33,8 +32,7 @@ class Editor(object):
     @staticmethod
     def getHtmlEscapeTable():
         return {'"': "&quot;",
-                "'": "&apos;",
-                '\n': "<br />"}
+                "'": "&apos;"}
 
     @staticmethod
     def getHtmlUnescapeTable():
@@ -55,7 +53,8 @@ class Editor(object):
     @staticmethod
     def getImages(contentENML):
         '''
-        creates a list of image resources to save. each has a hash and extension attribute
+        Creates a list of image resources to save.
+        Each has a hash and extension attribute.
         '''
         soup = BeautifulSoup(contentENML.decode('utf-8'))
         imageList = []
@@ -81,7 +80,7 @@ class Editor(object):
             checked = todo.attrs.get('checked', None) == "true"
             todo.replace_with("[x] " if checked else "[ ] ")
 
-            # EN checklist can appear anywhere, but if they appear at the beggining
+            # EN checklist can appear anywhere, but if they appear at the beginning
             # of a block element, transform it so it ressembles github markdown syntax
             if transform:
                 content = ''.join(unicode(child) for child in parent.children
@@ -154,13 +153,10 @@ class Editor(object):
             for section in soup.find_all('en-media'):
                 section.replace_with(str(section))
 
-#       content = html2text.html2text(soup.prettify())
-#       content = html2text.html2text(str(soup))
-#       content = html2text.html2text(unicode(soup))
         content = html2text.html2text(str(soup).decode('utf-8'), '')
 
         content = re.sub(r' *\n', os.linesep, content)
-        content = content.replace(unichr(160), " ")
+        content = content.replace(unichr(160), " ") # no-break space
         content = Editor.HTMLUnescape(content)
 
         return content.encode('utf-8')
@@ -175,14 +171,13 @@ class Editor(object):
     @staticmethod
     def checklistInSoupToENML(soup):
         '''
-        Transforms github style checklists `* [ ]` in the BeautifulSoup tree to
-        enml.
+        Transforms github style checklists `* [ ]` in the BeautifulSoup tree to ENML.
         '''
 
         checktodo_re = re.compile(r'\[([ x])\]')
 
-        # To be more github compatible, if in a list all elements begins with `[ ]``
-        # transform it to normal `[ ]` evernote elements
+        # To be more github compatible, if all elements in a list begin with '[ ]',
+        # convert them to en-todo evernote elements
         for ul in soup.find_all('ul'):
             tasks = []
             istodo = True
@@ -194,7 +189,6 @@ class Editor(object):
                 reg = checktodo_re.match(li.get_text())
                 istodo = istodo and reg
                 character = reg.group(1) if reg else None
-
                 if character == "x":
                     todo_tag['checked'] = "true"
 
@@ -204,38 +198,28 @@ class Editor(object):
                 tasks.append(task)
 
             if istodo:
-                for task in tasks:
+                for task in tasks[::-1]:
                     ul.insert_after(task)
                 ul.extract()
-
-#        # For the rest of elements just replace `[ ]` with the appropriate element
-#        for todo in soup.find_all(text=checktodo_re):
-#            str_re = re.match(r'(.*)\[(.)\](.*)',todo)
-#            pre = str_re.group(1)
-#            post = str_re.group(3)
-#
-#            todo_tag = soup.new_tag('en-todo')
-#            if str_re.group(2) == "x": todo_tag['checked']="true"
-#
-#            todo.replace_with(todo_tag)
-#            todo_tag.insert_before(pre)
-#            todo_tag.insert_after(post)
 
     @staticmethod
     def textToENML(content, raise_ex=False, format='markdown', rawmd=False):
         """
-        Create an ENML format of note.
+        Transform formatted text to ENML
         """
 
         if not isinstance(content, str):
             content = ""
         try:
             content = unicode(content, "utf-8")
-            # add 2 space before new line in paragraph for creating br tags
-            # content = re.sub(r'([^\r\n])([\r\n])([^\r\n])', r'\1  \n\3', content)
             content = re.sub(r'\r\n', '\n', content)
 
-            if format == 'markdown':
+            if format == 'pre':
+                # For the 'pre' format, simply wrap the content with a 'pre' tag.
+                # Do not perform any further parsing/mutation.
+                contentHTML = u''.join(('<pre>', content, '</pre>')).encode("utf-8")
+            elif format == 'markdown':
+                # Markdown format https://daringfireball.net/projects/markdown/basics
                 storage = Storage()
                 extras = storage.getUserprop('markdown2_extras')
 
@@ -246,26 +230,17 @@ class Editor(object):
 
                 soup = BeautifulSoup(contentHTML, 'html.parser')
                 Editor.checklistInSoupToENML(soup)
-
-                # Non-Pretty HTML output
                 contentHTML = str(soup)
-            elif format == 'pre':
-                #
-                # For the 'pre' format, simply wrap the content with a 'pre' tag. Do
-                # perform any parsing/mutation.
-                #
-                contentHTML = u''.join(('<pre>', content, '</pre>')).encode("utf-8")
             elif format == 'html':
                 # Html to ENML http://dev.evernote.com/doc/articles/enml.php
+                soup = BeautifulSoup(content, 'html.parser')
                 ATTR_2_REMOVE = ["id",
                                  "class",
                                  # "on*",
                                  "accesskey",
                                  "data",
                                  "dynsrc",
-                                 "tabindex"
-                                 ]
-                soup = BeautifulSoup(content, 'html.parser')
+                                 "tabindex"]
 
                 for tag in soup.findAll():
                     if hasattr(tag, 'attrs'):
@@ -275,6 +250,7 @@ class Editor(object):
                              or k.find('on') == 0])
                 contentHTML = str(soup)
             else:
+                # Plain text format
                 contentHTML = Editor.HTMLEscape(content)
 
                 tmpstr = ''
@@ -285,21 +261,18 @@ class Editor(object):
                         tmpstr = tmpstr + u'<div>' + l + u'</div>'
 
                 contentHTML = tmpstr.encode("utf-8")
-
-            contentHTML = contentHTML.replace('[x]', '<en-todo checked="true"></en-todo>')
-            contentHTML = contentHTML.replace('[ ]', '<en-todo></en-todo>')
+                contentHTML = contentHTML.replace('[x]', '<en-todo checked="true"></en-todo>')
+                contentHTML = contentHTML.replace('[ ]', '<en-todo></en-todo>')
 
             return Editor.wrapENML(contentHTML)
+
         except:
             import traceback
             traceback.print_exc()
             if raise_ex:
-                raise Exception("Error while parsing text to html."
-                                " Content must be an UTF-8 encode.")
-            logging.error("Error while parsing text to html. "
-                          "Content must be an UTF-8 encode.")
-            out.failureMessage("Error while parsing text to html. "
-                               "Content must be an UTF-8 encode.")
+                raise Exception("Error while parsing text to html.")
+            logging.error("Error while parsing text to html.")
+            out.failureMessage("Error while parsing text to html.")
             return tools.exitErr()
 
     def __init__(self, editor, content, noteExtension, raw=False):

@@ -18,16 +18,24 @@ _Line 2_
 **Line 3**
 
 """
-        self.HTML_TEXT = "<h1>Header 1</h1><h2>Header 2</h2><p>Line 1</p><p>"\
-                         "<em>Line 2</em></p><p><strong>Line 3</strong></p>"
+        self.HTML_TEXT = """<h1>Header 1</h1>
+<h2>Header 2</h2>
+<p>Line 1</p>
+<p><em>Line 2</em></p>
+<p><strong>Line 3</strong></p>
+"""
 
     def test_TextToENML(self):
-        self.assertEqual(Editor.textToENML(self.MD_TEXT).replace('\n', ''),
-                         Editor.wrapENML(self.HTML_TEXT).replace('\n', ''))
+        self.assertEqual(Editor.textToENML(self.MD_TEXT),
+                         Editor.wrapENML(self.HTML_TEXT))
 
     def test_ENMLToText(self):
         wrapped = Editor.wrapENML(self.HTML_TEXT)
         self.assertEqual(Editor.ENMLtoText(wrapped), self.MD_TEXT)
+
+    def test_TODO(self):
+        self.assertEqual(Editor.textToENML("- [ ] item 1\n- [x] item 2\n- [ ] item 3"),
+                         Editor.wrapENML("<div><en-todo></en-todo>item 1</div><div><en-todo checked=\"true\"></en-todo>item 2</div><div><en-todo></en-todo>item 3</div>\n"))
 
     def test_htmlEscape(self):
         wrapped = Editor.textToENML(content="<what ever>", format="markdown")
