@@ -165,6 +165,29 @@ $ geeknote settings --editor
 Current editor is: vim
 ```
 
+##### Enabling Markdown2 Extras
+
+You can enable [Markdown2 Extras](https://github.com/trentm/python-markdown2/wiki/Extras) you want to use while editing notes. To check which settings are currently enabled call:
+
+``` sh
+geeknote settings --extras
+```
+To change the Markdown2 Extras call:
+
+```sh
+geeknote settings --extras "tables, footnotes"
+```
+###### Example
+
+``` sh
+$ geeknote settings --extras
+current markdown2 extras is : ['None']
+$ geeknote settings --extras "tables, footnotes"
+Changes saved.
+$ geeknote settings --extras
+current markdown2 extras is : ['tables', 'footnotes']
+```
+
 ## Working with Notes
 ### Notes: Creating notes
 The main functionality that we need is creating notes in Evernote.
