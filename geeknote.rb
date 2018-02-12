@@ -5,7 +5,7 @@ class Geeknote < Formula
   homepage 'https://github.com/jeffkowalski/geeknote'
   head 'https://github.com/jeffkowalski/geeknote.git'
 
-  depends_on :python
+  depends_on "python"
 
   resource "websocket-client" do
     url "https://files.pythonhosted.org/packages/a7/2b/0039154583cb0489c8e18313aa91ccd140ada103289c5c5d31d80fd6d186/websocket_client-0.40.0.tar.gz"
