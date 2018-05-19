@@ -32,7 +32,8 @@ class Editor(object):
     @staticmethod
     def getHtmlEscapeTable():
         return {'"': "&quot;",
-                "'": "&apos;"}
+                "'": "&apos;",
+                '\n': "<br />"}
 
     @staticmethod
     def getHtmlUnescapeTable():
@@ -220,6 +221,10 @@ class Editor(object):
                 contentHTML = u''.join(('<pre>', content, '</pre>')).encode("utf-8")
             elif format == 'markdown':
                 # Markdown format https://daringfireball.net/projects/markdown/basics
+                storage = Storage()
+                extras = storage.getUserprop('markdown2_extras')
+
+                if not rawmd:
                 storage = Storage()
                 extras = storage.getUserprop('markdown2_extras')
 
