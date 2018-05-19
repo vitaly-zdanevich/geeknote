@@ -3,7 +3,7 @@
 import os
 import sys
 
-ALWAYS_USE_YINXIANG = True
+ALWAYS_USE_YINXIANG = False  # for 印象笔记 (Yìnxiàng bǐjì), set to True
 
 # !!! DO NOT EDIT !!! >>>
 if ALWAYS_USE_YINXIANG or os.getenv("GEEKNOTE_BASE") == "yinxiang":
