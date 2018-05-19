@@ -16,6 +16,10 @@ import config
 from log import logging
 
 
+class OAuthError(Exception):
+    '''Generic OAuth exception'''
+
+
 class GeekNoteAuth(object):
 
     consumerKey = config.CONSUMER_KEY
@@ -200,12 +204,12 @@ class GeekNoteAuth(object):
         if response.status != 200:
             logging.error("Unexpected response status on get "
                           "temporary oauth_token 200 != %s", response.status)
-            tools.exitErr()
+            raise OAuthError('OAuth token request failed')
 
         responseData = self.parseResponse(response.data)
         if 'oauth_token' not in responseData:
             logging.error("OAuth temporary not found")
-            tools.exitErr()
+            raise OAuthError('OAuth token request failed')
 
         self.tmpOAuthToken = responseData['oauth_token']
 
