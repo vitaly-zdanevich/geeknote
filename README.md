@@ -121,7 +121,7 @@ For more information, see:
 $ geeknote settings
 Geeknote
 ******************************
-Version: 2.0.12
+Version: 2.0.13
 App dir: /Users/username/.geeknote
 Error log: /Users/username/.geeknote/error.log
 Current editor: vim
@@ -165,6 +165,29 @@ $ geeknote settings --editor
 Current editor is: vim
 ```
 
+##### Enabling Markdown2 Extras
+
+You can enable [Markdown2 Extras](https://github.com/trentm/python-markdown2/wiki/Extras) you want to use while editing notes. To check which settings are currently enabled call:
+
+``` sh
+geeknote settings --extras
+```
+To change the Markdown2 Extras call:
+
+```sh
+geeknote settings --extras "tables, footnotes"
+```
+###### Example
+
+``` sh
+$ geeknote settings --extras
+current markdown2 extras is : ['None']
+$ geeknote settings --extras "tables, footnotes"
+Changes saved.
+$ geeknote settings --extras
+current markdown2 extras is : ['tables', 'footnotes']
+```
+
 ## Working with Notes
 ### Notes: Creating notes
 The main functionality that we need is creating notes in Evernote.
@@ -195,6 +218,7 @@ geeknote create --title <title>
 | ‑‑reminder | date     | Set reminder date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format. Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectively, NONE for a reminder without a time. Use DONE to mark a reminder as completed. |
 | --urls     | url      | Set the URL for the note. |
 | --raw      |          | A flag signifying the content is in raw ENML format. |
+| --rawmd    |          | A flag signifying the content is in raw markdown format. |
 
 ##### Description
 This command allows us to create a new note in Evernote. Geeknote has designed for using in console, so we have some restrictions like inability to use double quotes in **--content** option. But there is a method to avoid it - use stdin stream or file synchronization, we show it later in documentation.
@@ -335,6 +359,7 @@ geeknote edit --note <title or GUID of note to edit>
 | ‑‑reminder | date     | Set reminder date and time in either 'yyyy-mm-dd' or 'yyyy-mm-dd HH:MM' format. Alternatively use TOMORROW and WEEK for 24 hours and a week ahead respectively, NONE for a reminder without a time. Use DONE to mark a reminder as completed. Use DELETE to remove reminder from a note. |
 | --urls     | url      | Set the URL for the note. |
 | --raw      |          | A flag signifying the content is in raw ENML format. |
+| --rawmd    |          | A flag signifying the content is in raw markdown format. |
 
 ##### Examples
 
