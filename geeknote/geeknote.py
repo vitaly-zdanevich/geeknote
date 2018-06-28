@@ -26,7 +26,7 @@ import out
 from editor import Editor, EditorThread
 from gclient import GUserStore as UserStore
 from argparser import argparser
-from oauth import GeekNoteAuth
+from oauth import GeekNoteAuth, OAuthError
 from storage import Storage
 from log import logging
 
@@ -198,7 +198,21 @@ class GeekNote(object):
 
     def auth(self):
         GNA = GeekNoteAuth()
-        self.authToken = GNA.getToken()
+        try:
+            self.authToken = GNA.getToken()
+        except OAuthError as exc:
+            out.preloader.stop()
+            print exc.message
+
+            import getpass
+            token = getpass.getpass("If you have an Evernote developer token, "
+                                    "enter it here: ")
+            if token:
+                self.authToken = token
+            else:
+                logging.error("No token service and no dev token.")
+                return False
+
         userInfo = self.getUserInfo()
         if not isinstance(userInfo, object):
             logging.error("Could not get user info.")
