@@ -204,9 +204,7 @@ class GeekNote(object):
             out.preloader.stop()
             print exc.message
 
-            import getpass
-            token = getpass.getpass("If you have an Evernote developer token, "
-                                    "enter it here: ")
+            token = raw_input("If you have an Evernote developer token, enter it here: ")
             if token:
                 self.authToken = token
             else:
