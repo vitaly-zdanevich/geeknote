@@ -204,7 +204,9 @@ class GeekNote(object):
             out.preloader.stop()
             print exc.message
 
-            token = raw_input("If you have an Evernote developer token, enter it here: ")
+            import getpass
+            token = getpass.getpass("If you have an Evernote developer token, "
+                                    "enter it here: ").strip()
             if token:
                 self.authToken = token
                 # few user would read the source code and moidfy setting in config.py
