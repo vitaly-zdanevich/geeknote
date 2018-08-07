@@ -24,6 +24,7 @@ installed_files.txt
 .coverage
 .tox
 .cache
+.pytest_cache/
 
 #Translations
 *.mo
