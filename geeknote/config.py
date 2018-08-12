@@ -3,10 +3,14 @@
 import os
 import sys
 
+# Application path
+APP_DIR = os.path.join(os.getenv("HOME") or os.getenv("USERPROFILE"), ".geeknote")
+ERROR_LOG = os.path.join(APP_DIR, "error.log")
+
 ALWAYS_USE_YINXIANG = False  # for 印象笔记 (Yìnxiàng bǐjì), set to True
 
 # !!! DO NOT EDIT !!! >>>
-if ALWAYS_USE_YINXIANG or os.getenv("GEEKNOTE_BASE") == "yinxiang":
+if ALWAYS_USE_YINXIANG or os.getenv("GEEKNOTE_BASE") == "yinxiang" or os.path.isfile(os.path.join(APP_DIR,"isyinxiang")):
     USER_BASE_URL = "app.yinxiang.com"
 else:
     USER_BASE_URL = "www.evernote.com"
@@ -33,10 +37,6 @@ try:
 except:
     IS_IN_TERMINAL = False
     IS_OUT_TERMINAL = False
-
-# Application path
-APP_DIR = os.path.join(os.getenv("HOME") or os.getenv("USERPROFILE"), ".geeknote")
-ERROR_LOG = os.path.join(APP_DIR, "error.log")
 
 # Set default system editor
 DEF_UNIX_EDITOR = "nano"

@@ -214,8 +214,7 @@ class GeekNote(object):
                 if raw_input("Which service? [1]Evernote Global [2]Yinxiang China:  ") == "2":
                     # yinxiang
                     config.USER_BASE_URL = "app.yinxiang.com"
-                else:
-                    config.USER_BASE_URL = "www.evernote.com"
+                    open(os.path.join(config.APP_DIR, "isyinxiang"), "w+").close()
 
                 self.userStoreUri = "https://{0}/edam/user".format(config.USER_BASE_URL)
 
