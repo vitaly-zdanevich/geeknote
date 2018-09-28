@@ -873,11 +873,8 @@ class Notes(GeekNoteConnector):
                         result = False
                 else:
                     if not sharedNote:
-                        print note
                         result = bool(self.getEvernote().updateNote(guid=note.guid, **inputData))
                     else:
-#                        out.printLine("Got this far!")
-                        print note
                         result = bool(self.getEvernote().updateNote(shared=True, guid=note.guid, **inputData))
                     # TODO: log error if result is False
 
