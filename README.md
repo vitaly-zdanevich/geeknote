@@ -261,6 +261,7 @@ geeknote find --search <text to find>
              [--content-search]
              [--url-only]
              [--reminders-only]
+             [--deleted-only]
              [--ignore-completed]
              [--with-tags]
              [--with-notebook]
@@ -316,6 +317,7 @@ That will show you the note "Gift Shopping List".
 | ‑‑guid             |                 | Show GUID of the note as substitute for result index. |
 | ‑‑ignore-completed |                 | Include only unfinished reminders. |
 | ‑‑reminders-only   |                 | Include only notes with a reminder. |
+| ‑‑deleted-only     |                 | Include only notes that have been **deleted/trashed**. |
 | ‑‑with-notebook    |                 | Show notebook containing the note. |
 | ‑‑with-tags        |                 | Show tags of the note after note title. |
 | ‑‑with-url         |                 | Show results as a list of URLs to each note in Evernote's web-client. |
