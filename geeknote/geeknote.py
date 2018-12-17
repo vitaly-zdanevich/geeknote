@@ -246,7 +246,7 @@ class GeekNote(object):
                                            withResourcesAlternateData)
 
     @EdamException
-    def findNotes(self, keywords, count, createOrder=False, offset=0):
+    def findNotes(self, keywords, count, createOrder=False, offset=0, deletedOnly=False):
         """ WORK WITH NOTES """
         noteFilter = NoteStore.NoteFilter(order=Types.NoteSortOrder.RELEVANCE)
         noteFilter.order = getattr(Types.NoteSortOrder, self.noteSortOrder)
@@ -255,6 +255,9 @@ class GeekNote(object):
 
         if keywords:
             noteFilter.words = keywords
+
+        if deletedOnly:
+            noteFilter.inactive = True
 
         meta = NotesMetadataResultSpec()
         meta.includeTitle = True
@@ -1199,7 +1202,7 @@ class Notes(GeekNoteConnector):
     def find(self, search=None, tag=None, notebook=None,
              date=None, exact_entry=None, content_search=None,
              with_url=None, with_tags=None, with_notebook=None,
-             count=None, ignore_completed=None, reminders_only=None, guid=None):
+             count=None, ignore_completed=None, reminders_only=None, guid=None, deleted_only=None):
 
         request = self._createSearchRequest(search, tag, notebook,
                                             date, exact_entry,
@@ -1214,7 +1217,7 @@ class Notes(GeekNoteConnector):
         logging.debug("Search count: %s", count)
 
         createFilter = True if search == "*" else False
-        result = self.getEvernote().findNotes(request, count, createFilter)
+        result = self.getEvernote().findNotes(request, count, createFilter, deletedOnly=deleted_only)
 
         if result.totalNotes == 0:
             out.failureMessage("Notes have not been found.")
