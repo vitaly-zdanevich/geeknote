@@ -71,26 +71,11 @@ class Editor(object):
         '''
         Transforms Evernote checklist elements to github `* [ ]` task list style
         '''
-        transform_tags = ['p', 'div']
+        for section in soup.findAll('en-todo', checked='true'):
+            section.replace_with('<br />* [x]')
 
-        # soup.select cant be used with dashes: https://bugs.launchpad.net/beautifulsoup/+bug/1276211
-        for todo in soup.find_all('en-todo'):
-            parent = todo.parent
-            transform = parent.find() == todo and parent.name in transform_tags
-
-            checked = todo.attrs.get('checked', None) == "true"
-            todo.replace_with("[x] " if checked else "[ ] ")
-
-            # EN checklist can appear anywhere, but if they appear at the beginning
-            # of a block element, transform it so it ressembles github markdown syntax
-            if transform:
-                content = ''.join(unicode(child) for child in parent.children
-                                  if isinstance(child, NavigableString)
-                                  ).strip()
-
-                new_tag = soup.new_tag("li")
-                new_tag.string = content
-                parent.replace_with(new_tag)
+        for section in soup.findAll('en-todo'):
+            section.replace_with('<br />* [ ]')
 
     @staticmethod
     def ENMLtoText(contentENML, format='default', imageOptions={'saveImages': False}, imageFilename=""):
@@ -132,12 +117,6 @@ class Editor(object):
                         section.extract()
 
             Editor.checklistInENMLtoSoup(soup)
-
-            for section in soup.findAll('en-todo', checked='true'):
-                section.replace_with('[x]')
-
-            for section in soup.findAll('en-todo'):
-                section.replace_with('[ ]')
 
             # change <en-media> tags to <img> tags
             if 'saveImages' in imageOptions and imageOptions['saveImages']:
