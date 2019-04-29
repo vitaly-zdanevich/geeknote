@@ -34,8 +34,14 @@ _Line 2_
         self.assertEqual(Editor.ENMLtoText(wrapped), self.MD_TEXT)
 
     def test_TODO(self):
-        self.assertEqual(Editor.textToENML("- [ ] item 1\n- [x] item 2\n- [ ] item 3"),
-                         Editor.wrapENML("<div><en-todo></en-todo>item 1</div><div><en-todo checked=\"true\"></en-todo>item 2</div><div><en-todo></en-todo>item 3</div>\n"))
+        MD_TODO = "\n* [ ]item 1\n\n* [x]item 2\n\n* [ ]item 3\n\n"
+        HTML_TODO = "<div><en-todo></en-todo>item 1</div><div><en-todo checked=\"true\"></en-todo>item 2</div><div><en-todo></en-todo>item 3</div>\n"
+        self.assertEqual(Editor.textToENML(MD_TODO),
+                         Editor.wrapENML(HTML_TODO))
+
+        wrapped = Editor.wrapENML(HTML_TODO)
+        text = Editor.ENMLtoText(wrapped)
+        self.assertEqual(text, MD_TODO)
 
     def test_htmlEscape(self):
         wrapped = Editor.textToENML(content="<what ever>", format="markdown")
