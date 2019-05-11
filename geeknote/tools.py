@@ -15,7 +15,8 @@ def checkIsInt(value):
 
 def getch():
     """
-    Interrupting program until pressed any key
+    Pause program until any keyboard key is pressed
+    (Gets a character from the console without echo)
     """
     try:
         import msvcrt
