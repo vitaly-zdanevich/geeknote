@@ -352,19 +352,6 @@ COMMANDS_DICT = {
                         "default": False},
         }
     },
-    "notebook-remove": {
-        "help": "Remove notebook.",
-        "firstArg": "--notebook",
-        "arguments": {
-            "--notebook": {"help": "The name of a notebook to remove.",
-                           "required": True},
-        },
-        "flags": {
-            "--force": {"help": "Don't ask about removing.",
-                        "value": True,
-                        "default": False},
-        }
-    },
 """
 
 
