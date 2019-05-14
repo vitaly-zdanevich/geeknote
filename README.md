@@ -523,6 +523,31 @@ geeknote notebook-edit --notebook <old name>
 geeknote notebook-edit --notebook "Sport diets" --title "Hangover"
 ```
 
+### Notebooks: removing a notebook
+
+With Geeknote it's possible to remove existing notebooks in Evernote.
+
+##### Synopsis
+
+``` sh
+geeknote notebook-remove --notebook <notebook>
+                         [--force]
+```
+
+##### Options
+
+| Option             | Argument        | Description |
+|--------------------|-----------------|-------------|
+| ‑‑notebook         | notebook        | Name of existing notebook you want to delete. |
+| ‑‑force            |                 | A flag that says that Geeknote shouldn't ask for confirmation to remove notebook. |
+
+
+##### Examples
+
+``` sh
+geeknote notebook-remove --notebook "Sport diets" --force
+```
+
 ## Working with Tags
 ### Tags: showing the list of tags
 
