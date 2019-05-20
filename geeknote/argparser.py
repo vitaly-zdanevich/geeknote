@@ -294,6 +294,20 @@ COMMANDS_DICT = {
                              "help": "Set the new name of notebook."},
         }
     },
+    "notebook-remove": {
+        "help": "Remove notebook.",
+        "firstArg": "--notebook",
+        "arguments": {
+            "--notebook":   {"altName": "-nb",
+                             "help": "The name of a notebook to remove.",
+                             "required": True},
+        },
+        "flags": {
+            "--force": {"help": "Don't ask about removing notebook.",
+                        "value": True,
+                        "default": False},
+        }
+    },
 
     # Tags
     "tag-list": {
@@ -331,19 +345,6 @@ COMMANDS_DICT = {
         "arguments": {
             "--tagname": {"help": "The name of a tag to remove.",
                           "required": True},
-        },
-        "flags": {
-            "--force": {"help": "Don't ask about removing.",
-                        "value": True,
-                        "default": False},
-        }
-    },
-    "notebook-remove": {
-        "help": "Remove notebook.",
-        "firstArg": "--notebook",
-        "arguments": {
-            "--notebook": {"help": "The name of a notebook to remove.",
-                           "required": True},
         },
         "flags": {
             "--force": {"help": "Don't ask about removing.",
