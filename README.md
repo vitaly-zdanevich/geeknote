@@ -115,6 +115,29 @@ regulations.
 For more information, see:
 [Evernote Launches Separate Chinese Service](https://blog.evernote.com/blog/2012/05/09/evernote-launches-separate-chinese-service/)
 
+## Login with a developer token
+
+Geeknote requests a Developer token after an unsuccesfull oauth request.
+
+You can obtain one by following the next simple steps:
+
+- Create an API key for SANDBOX environment
+- Request your API key to be activated on production
+- Convert it to a personal token
+
+To do so, go to [Evernote FAQ](https://dev.evernote.com/support/faq.php#createkey)
+on the section "How do I create an API key?". You'll receive an e-mail with
+your key and secret. 
+
+Once you received your key and secret, activate your key, following the
+instructions on the ["How do I copy my API key from Sandbox to www (production)?"](https://dev.evernote.com/support/faq.php#activatekey) section of the FAQ.
+Specifying that your're using the key it for the "geeknote" application on the form.
+
+Finally, you will receive another email from devsupport (check on your spam
+folder) notifying that your key has been activated on production servers.  
+It will contain a link to get a [personal token](https://dev.evernote.com/get-token/) from that key that you can use as
+your "Evernote developer token" when logging in with geeknote.
+
 ##### Examining your settings
 
 ``` sh
