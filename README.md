@@ -117,7 +117,7 @@ For more information, see:
 
 ## Login with a developer token
 
-Geeknote requests a Developer token after an unsuccesfull oauth request.
+Geeknote requires a Developer token after an unsuccessful OAuth request.
 
 You can obtain one by following the next simple steps:
 
@@ -125,18 +125,19 @@ You can obtain one by following the next simple steps:
 - Request your API key to be activated on production
 - Convert it to a personal token
 
-To do so, go to [Evernote FAQ](https://dev.evernote.com/support/faq.php#createkey)
-on the section "How do I create an API key?". You'll receive an e-mail with
-your key and secret. 
+To do so, go to [Evernote FAQ](https://dev.evernote.com/support/faq.php#createkey) and refer to
+the section "How do I create an API key?". As directed, click on the
+"Get an API Key" button at the top of the page, and complete the
+revealed form.  You'll then receive an e-mail with your key and
+secret.
 
-Once you received your key and secret, activate your key, following the
+When you receive your key and secret, activate your key by following the
 instructions on the ["How do I copy my API key from Sandbox to www (production)?"](https://dev.evernote.com/support/faq.php#activatekey) section of the FAQ.
-Specifying that your're using the key it for the "geeknote" application on the form.
+Be sure to specify on the form that you're using the key for the "geeknote" application.
 
-Finally, you will receive another email from devsupport (check on your spam
-folder) notifying that your key has been activated on production servers.  
-It will contain a link to get a [personal token](https://dev.evernote.com/get-token/) from that key that you can use as
-your "Evernote developer token" when logging in with geeknote.
+Once your API key activation is processed by Evernote Developer
+Support, they will send you an email with further instructions on
+obtaining the personal token.
 
 ##### Examining your settings
 
