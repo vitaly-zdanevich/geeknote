@@ -380,7 +380,7 @@ class GNSync:
                     binaryHash = binascii.unhexlify(imageInfo['hash'])
                     GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).saveMedia(note.guid, binaryHash, filename)
 
-        content = Editor.ENMLtoText(note.content.encode('utf-8'), self.imageOptions)
+        content = Editor.ENMLtoText(note.content, self.imageOptions)
         path = os.path.join(self.path, escaped_title + self.extension)
         open(path, "w").write(content)
         updated_seconds = note.updated / 1000.0
