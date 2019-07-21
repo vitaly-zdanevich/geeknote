@@ -7,3 +7,4 @@ beautifulsoup4
 proxyenv
 pysqlite
 lxml
+mock
