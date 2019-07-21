@@ -57,7 +57,8 @@ _한국어 입력입니다. 잘 되나요?_
 
     @patch('geeknote.gnsync.logger', autospec=True)
     @patch('geeknote.gnsync.GeekNote', autospec=True)
-    def test_create_file_with_non_ascii_chars(self, mock_geeknote, mock_logger):
+    @patch('geeknote.gnsync.Storage', autospec=True)
+    def test_create_file_with_non_ascii_chars(self, mock_storage, mock_geeknote, mock_logger):
 
         # Mock GeekNote#loadNoteContent to provide some content with non-ascii
         def mock_note_load(note):
@@ -65,6 +66,10 @@ _한국어 입력입니다. 잘 되나요?_
                 note.content = f.read()
             note.notebookName = 'testNotebook'
         mock_geeknote.return_value.loadNoteContent.side_effect = mock_note_load
+
+        # Mock Storage().getUserToken() so the GNSync constructor doesn't throw
+        # an exception
+        mock_storage.return_value.getUserToken.return_value = True
 
         subject = GNSync('test_notebook', self.test_dir, '*.*',
                          'plain', download_only=True)

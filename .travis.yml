@@ -18,8 +18,6 @@ os:
 
 install:
   - pip install -r requirements.txt
-  - python setup.py build
-  - python setup.py install --bash-completion-dir=/tmp --zsh-completion-dir=/tmp
 
 # command to run tests
-script: py.test
+script: python -m pytest

@@ -7,4 +7,7 @@ beautifulsoup4
 proxyenv
 pysqlite
 lxml
+
+# Testing requirements
+pytest
 mock
