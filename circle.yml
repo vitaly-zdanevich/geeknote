@@ -4,6 +4,7 @@ machine:
 
 dependencies:
   pre:
+    - pip install mock
     - pip install pytest
 
   override:
