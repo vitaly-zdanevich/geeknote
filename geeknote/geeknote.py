@@ -579,9 +579,8 @@ def getNoteExt(storage):
     note_ext = None if storage is None else storage.getUserprop('note_ext')
     if not note_ext:
         note_ext = config.DEF_NOTE_EXT
-    # If there is only one extension saved (previous storage), we remove this
-    # setting as we don't now which extension it is
-    elif len(note_ext.split(',')) != 2:
+    # If there is only one extension saved (previous storage), remove it
+    elif len(note_ext) != 2:
         storage.delUserprop('note_ext')
         note_ext = config.DEF_NOTE_EXT
     return note_ext
@@ -646,13 +645,13 @@ class User(GeekNoteConnector):
                 out.successMessage("Changes saved.")
         if note_ext:
             if note_ext == '#GET#':
-                out.successMessage("Default note extension is: %s" % getNoteExt(storage))
+                out.successMessage("Current note extension is: %s" % getNoteExt(storage))
             else:
-                if len(note_ext.split(',')) == 2:
-                    storage.setUserprop('note_ext', note_ext.replace(" ",""))
+                if len(note_ext.split(",")) == 2:
+                    storage.setUserprop('note_ext', note_ext.replace(" ","").split(","))
                     out.successMessage("Changes saved.")
                 else:
-                    out.failureMessage("Error in note extension, format is '.markdown, .org'")
+                    out.failureMessage("Error in note extension, format is '.markdown_extension, .raw_extension'")
 
         if all([not editor, not extras, not note_ext]):
             editor = getEditor(storage)
@@ -663,8 +662,8 @@ class User(GeekNoteConnector):
                         'Version: %s' % __version__,
                         'App dir: %s' % config.APP_DIR,
                         'Error log: %s' % config.ERROR_LOG,
-                        'Current editor: %s' % editor,
-                        'Markdown2 Extras: %s' % (extras if extras is None else ','.join(extras)),
+                        'Editor: %s' % editor,
+                        'Markdown2 Extras: %s' % extras,
                         'Note extension: %s' % note_ext)
 
             user_settings = storage.getUserprops()
@@ -839,9 +838,8 @@ class Notes(GeekNoteConnector):
         self.selectFirstOnUpdate = bool(selectFirstOnUpdate)
 
     def _editWithEditorInThread(self, inputData, note=None, raw=None, rawmd=None, sharedNote=False, fake=False):
-
         editor_userprop = getEditor(self.getStorage())
-        noteExt_userprop = getNoteExt(self.getStorage()).split(',')[bool(raw)]
+        noteExt_userprop = getNoteExt(self.getStorage())[bool(raw)]
         if note:
             if sharedNote:
                 self.getEvernote().loadLinkedNoteContent(note)

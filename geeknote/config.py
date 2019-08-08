@@ -49,9 +49,8 @@ REMINDER_DELETE = "DELETE"
 # Shortcuts have a word and a number of seconds to add to the current time
 REMINDER_SHORTCUTS = {'TOMORROW': 86400000, 'WEEK': 604800000}
 
-# Default file extensions for editing markdown and raw ENML,
-# in the format ".markdown_ext, .html_ext"
-DEF_NOTE_EXT = ".markdown, .org"
+# Default file extensions for editing markdown and raw ENML, respectively
+DEF_NOTE_EXT = ['.markdown', '.org']
 # Accepted markdown extensions
 MARKDOWN_EXTENSIONS = ['.md', '.markdown']
 # Accepted html extensions
