@@ -72,7 +72,7 @@ class preloader(object):
     def exit(code=0):
         preloader.stop()
 
-        if threading.current_thread().__class__.__name__ == '_MainThread':
+        if threading.current_thread().__class__.__name__ == "_MainThread":
             sys.exit(code)
         else:
             thread.exit()
@@ -86,7 +86,14 @@ class preloader(object):
             while preloader.counter >= 0:
                 printLine(preloader.clearLine, "")
                 preloader.counter += 1
-                printLine("%s : %s" % (preloader.progress[preloader.counter % len(preloader.progress)], preloader.message), "")
+                printLine(
+                    "%s : %s"
+                    % (
+                        preloader.progress[preloader.counter % len(preloader.progress)],
+                        preloader.message,
+                    ),
+                    "",
+                )
 
                 time.sleep(0.3)
         except:
@@ -107,11 +114,14 @@ def _getCredentialsFromFile():
             try:
                 return credentials.split(":")
             except:
-                sys.stderr.write("""Error reading credentials from %s.
+                sys.stderr.write(
+                    """Error reading credentials from %s.
 Format should be:
 credentials="<username>:<password>:<two-factor auth code>"
 
-""" % creds)
+"""
+                    % creds
+                )
     return None
 
 
@@ -182,8 +192,7 @@ def confirm(message):
                 return True
             if answer.lower() in ["no", "n"]:
                 return False
-            failureMessage('Incorrect answer "%s", '
-                           'please try again:\n' % answer)
+            failureMessage('Incorrect answer "%s", ' "please try again:\n" % answer)
     except (KeyboardInterrupt, SystemExit), e:
         if e.message:
             tools.exit(e.message)
@@ -203,7 +212,7 @@ def showNote(note, id, shardId):
     printLine("Created: %s" % printDate(note.created))
     printLine("Updated: %s" % printDate(note.updated))
     for key, value in note.attributes.__dict__.items():
-        if value and key not in ('reminderOrder', 'reminderTime', 'reminderDoneTime'):
+        if value and key not in ("reminderOrder", "reminderTime", "reminderDoneTime"):
             printLine("%s: %s" % (key, value))
     separator("|", "REMINDERS")
     printLine("Order: %s" % str(note.attributes.reminderOrder))
@@ -211,16 +220,18 @@ def showNote(note, id, shardId):
     printLine("Done: %s" % printDate(note.attributes.reminderDoneTime))
     separator("-", "CONTENT")
     if note.tagNames:
-        printLine("Tags: %s" % ', '.join(note.tagNames))
+        printLine("Tags: %s" % ", ".join(note.tagNames))
 
     from editor import Editor
+
     printLine(Editor.ENMLtoText(note.content))
 
 
 @preloaderStop
 def showNoteRaw(note):
     from editor import Editor
-    printLine(Editor.ENMLtoText(note.content, 'pre'))
+
+    printLine(Editor.ENMLtoText(note.content, "pre"))
 
 
 @preloaderStop
@@ -232,8 +243,20 @@ def showUser(user, fullInfo):
     printLine("%s: %s" % ("Email".ljust(colWidth, " "), user.email))
 
     if fullInfo:
-        printLine("%s: %.2f MB" % ("Upload limit".ljust(colWidth, " "), (int(user.accounting.uploadLimit) / 1024 / 1024)))
-        printLine("%s: %s" % ("Upload limit end".ljust(colWidth, " "), printDate(user.accounting.uploadLimitEnd)))
+        printLine(
+            "%s: %.2f MB"
+            % (
+                "Upload limit".ljust(colWidth, " "),
+                (int(user.accounting.uploadLimit) / 1024 / 1024),
+            )
+        )
+        printLine(
+            "%s: %s"
+            % (
+                "Upload limit end".ljust(colWidth, " "),
+                printDate(user.accounting.uploadLimitEnd),
+            )
+        )
         printLine("%s: %s" % ("Timezone".ljust(colWidth, " "), user.timezone))
 
 
@@ -253,35 +276,62 @@ def separator(symbol="", title=""):
     size = 40
     if title:
         sw = (size - len(title) + 2) / 2
-        printLine("%s %s %s" % (symbol * sw,
-                                title,
-                                symbol * (sw - (len(title) + 1) % 2)))
+        printLine(
+            "%s %s %s" % (symbol * sw, title, symbol * (sw - (len(title) + 1) % 2))
+        )
 
     else:
         printLine(symbol * size + "\n")
 
 
 @preloaderStop
-def printList(listItems, title="", showSelector=False,
-              showByStep=0, showUrl=False, showTags=False,
-              showNotebook=False, showGUID=False):
+def printList(
+    listItems,
+    title="",
+    showSelector=False,
+    showByStep=0,
+    showUrl=False,
+    showTags=False,
+    showNotebook=False,
+    showGUID=False,
+):
 
     if title:
         separator("=", title)
 
     total = len(listItems)
-    printLine("Found %d item%s" % (total, ('s' if total != 1 else '')))
+    printLine("Found %d item%s" % (total, ("s" if total != 1 else "")))
     for key, item in enumerate(listItems):
         key += 1
 
-        printLine("%s : %s%s%s%s%s%s" % (
-            item.guid if showGUID and hasattr(item, 'guid') else str(key).rjust(3, " "),
-            printDate(item.created).ljust(11, " ") if hasattr(item, 'created') else '',
-            printDate(item.updated).ljust(11, " ") if hasattr(item, 'updated') else '',
-            item.notebookName.ljust(18, " ") if showNotebook and hasattr(item, 'notebookName') else '',
-            item.title if hasattr(item, 'title') else item.name if hasattr(item, 'name') else item.shareName,
-            "".join(map(lambda s: " #" + s, item.tagGuids)) if showTags and hasattr(item, 'tagGuids') and item.tagGuids else '',
-            " " + (">>> " + config.NOTE_WEBCLIENT_URL % item.guid) if showUrl else '',))
+        printLine(
+            "%s : %s%s%s%s%s%s"
+            % (
+                item.guid
+                if showGUID and hasattr(item, "guid")
+                else str(key).rjust(3, " "),
+                printDate(item.created).ljust(11, " ")
+                if hasattr(item, "created")
+                else "",
+                printDate(item.updated).ljust(11, " ")
+                if hasattr(item, "updated")
+                else "",
+                item.notebookName.ljust(18, " ")
+                if showNotebook and hasattr(item, "notebookName")
+                else "",
+                item.title
+                if hasattr(item, "title")
+                else item.name
+                if hasattr(item, "name")
+                else item.shareName,
+                "".join(map(lambda s: " #" + s, item.tagGuids))
+                if showTags and hasattr(item, "tagGuids") and item.tagGuids
+                else "",
+                " " + (">>> " + config.NOTE_WEBCLIENT_URL % item.guid)
+                if showUrl
+                else "",
+            )
+        )
 
         if showByStep != 0 and key % showByStep == 0 and key < total:
             printLine("-- More --", "\r")
@@ -295,10 +345,9 @@ def printList(listItems, title="", showSelector=False,
                 num = rawInput(": ")
                 if tools.checkIsInt(num) and 1 <= int(num) <= total:
                     return listItems[int(num) - 1]
-                if num == '0' or num == 'q':
+                if num == "0" or num == "q":
                     exit(1)
-                failureMessage('Incorrect number "%s", '
-                               'please try again:\n' % num)
+                failureMessage('Incorrect number "%s", ' "please try again:\n" % num)
         except (KeyboardInterrupt, SystemExit), e:
             if e.message:
                 tools.exit(e.message)
@@ -319,7 +368,10 @@ def printDate(timestamp):
     if timestamp is None:
         return "None"
     else:
-        return datetime.datetime.fromtimestamp(timestamp / 1000).strftime(config.DEF_DATE_FORMAT)
+        return datetime.datetime.fromtimestamp(timestamp / 1000).strftime(
+            config.DEF_DATE_FORMAT
+        )
+
 
 def printLine(line, endLine="\n", out=None):
     # "out = sys.stdout" makes it hard to mock
@@ -334,7 +386,8 @@ def printLine(line, endLine="\n", out=None):
         pass
     out.flush()
 
+
 def printAbout():
-    printLine('Version: %s' % __version__)
-    printLine('Geeknote - a command line client for Evernote.')
-    printLine('Use geeknote --help to read documentation.')
+    printLine("Version: %s" % __version__)
+    printLine("Geeknote - a command line client for Evernote.")
+    printLine("Use geeknote --help to read documentation.")

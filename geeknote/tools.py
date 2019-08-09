@@ -20,12 +20,14 @@ def getch():
     """
     try:
         import msvcrt
+
         return msvcrt.getch()
 
     except ImportError:
         import sys
         import tty
         import termios
+
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
         try:
@@ -42,16 +44,15 @@ def strip(data):
 
     if isinstance(data, dict):
         items = data.iteritems()
-        return dict([[key.strip(' \t\n\r\"\''), val] for key, val in items])
+        return dict([[key.strip(" \t\n\r\"'"), val] for key, val in items])
 
     if isinstance(data, list):
-        return map(lambda val: val.strip(' \t\n\r\"\''), data)
+        return map(lambda val: val.strip(" \t\n\r\"'"), data)
 
     if isinstance(data, str):
-        return data.strip(' \t\n\r\"\'')
+        return data.strip(" \t\n\r\"'")
 
-    raise Exception("Unexpected args type: "
-                    "%s. Expect list or dict" % type(data))
+    raise Exception("Unexpected args type: " "%s. Expect list or dict" % type(data))
 
 
 class ExitException(Exception):
@@ -64,11 +65,11 @@ def _exit(message, code):
     raise ExitException(message)
 
 
-def exit(message='exit', code=0):
+def exit(message="exit", code=0):
     _exit(message, code)
 
 
-def exitErr(message='exit', code=1):
+def exitErr(message="exit", code=1):
     _exit(message, code)
 
 

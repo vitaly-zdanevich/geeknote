@@ -31,13 +31,14 @@ from storage import Storage
 from log import logging
 
 
-
 def GeekNoneDBConnectOnly(func):
     """ operator to disable evernote connection
     or create instance of GeekNote """
+
     def wrapper(*args, **kwargs):
         GeekNote.skipInitConnection = True
         return func(*args, **kwargs)
+
     return wrapper
 
 
@@ -45,7 +46,7 @@ def make_resource(filename):
     try:
         mtype = mimetypes.guess_type(filename)[0]
 
-        if mtype and mtype.split('/')[0] == "text":
+        if mtype and mtype.split("/")[0] == "text":
             rmode = "r"
         else:
             rmode = "rb"
@@ -110,7 +111,7 @@ class GeekNote(object):
                 except Exception, e:
                     logging.error("Error: %s : %s", func.__name__, str(e))
 
-                    if hasattr(e, 'errorCode'):
+                    if hasattr(e, "errorCode"):
                         errorCode = int(e.errorCode)
 
                         # auth-token error, re-auth
@@ -121,8 +122,10 @@ class GeekNote(object):
                             return func(*args, **kwargs)
 
                         elif errorCode == 3:
-                            out.failureMessage("Sorry, you are not authorized "
-                                            "to perform this operation.")
+                            out.failureMessage(
+                                "Sorry, you are not authorized "
+                                "to perform this operation."
+                            )
                             tools.exitErr()
 
                         # Rate limited
@@ -130,12 +133,16 @@ class GeekNote(object):
                         # hammering the server on scripts
                         elif errorCode == 19:
                             if sleepOnRateLimit:
-                                print("\nRate Limit Hit: Sleeping %s seconds before continuing" %
-                                    str(e.rateLimitDuration))
+                                print (
+                                    "\nRate Limit Hit: Sleeping %s seconds before continuing"
+                                    % str(e.rateLimitDuration)
+                                )
                                 time.sleep(e.rateLimitDuration)
                             else:
-                                print("\nRate Limit Hit: Please wait %s seconds before continuing" %
-                                    str(e.rateLimitDuration))
+                                print (
+                                    "\nRate Limit Hit: Please wait %s seconds before continuing"
+                                    % str(e.rateLimitDuration)
+                                )
                                 tools.exitErr()
                         else:
                             out.failureMessage("Unknown error")
@@ -156,6 +163,7 @@ class GeekNote(object):
             return GeekNote.storage
 
         GeekNote.storage = Storage()
+
         return GeekNote.storage
 
     def getUserStore(self):
@@ -182,9 +190,11 @@ class GeekNote(object):
         return GeekNote.noteStore
 
     def checkVersion(self):
-        versionOK = self.getUserStore().checkVersion("Python EDAMTest",
-                                                     UserStoreConstants.EDAM_VERSION_MAJOR,
-                                                     UserStoreConstants.EDAM_VERSION_MINOR)
+        versionOK = self.getUserStore().checkVersion(
+            "Python EDAMTest",
+            UserStoreConstants.EDAM_VERSION_MAJOR,
+            UserStoreConstants.EDAM_VERSION_MINOR,
+        )
         if not versionOK:
             logging.error("Old EDAM version")
             return tools.exitErr()
@@ -205,13 +215,18 @@ class GeekNote(object):
             print exc.message
 
             import getpass
-            token = getpass.getpass("If you have an Evernote developer token, "
-                                    "enter it here: ").strip()
+
+            token = getpass.getpass(
+                "If you have an Evernote developer token, " "enter it here: "
+            ).strip()
             if token:
                 self.authToken = token
                 # few user would read the source code and moidfy setting in config.py
                 # so I add this option to make it friendly.
-                if raw_input("Which service? [1]Evernote Global [2]Yinxiang China:  ") == "2":
+                if (
+                    raw_input("Which service? [1]Evernote Global [2]Yinxiang China:  ")
+                    == "2"
+                ):
                     # yinxiang
                     config.USER_BASE_URL = "app.yinxiang.com"
                     open(os.path.join(config.APP_DIR, "isyinxiang"), "w+").close()
@@ -237,16 +252,29 @@ class GeekNote(object):
         return self.getStorage().removeUser()
 
     @EdamException
-    def getNote(self, guid, withContent=False, withResourcesData=False,
-                withResourcesRecognition=False, withResourcesAlternateData=False):
+    def getNote(
+        self,
+        guid,
+        withContent=False,
+        withResourcesData=False,
+        withResourcesRecognition=False,
+        withResourcesAlternateData=False,
+    ):
         """ GET A COMPLETE NOTE OBJECT """
         # Don't include data
-        return self.getNoteStore().getNote(self.authToken, guid, withContent,
-                                           withResourcesData, withResourcesRecognition,
-                                           withResourcesAlternateData)
+        return self.getNoteStore().getNote(
+            self.authToken,
+            guid,
+            withContent,
+            withResourcesData,
+            withResourcesRecognition,
+            withResourcesAlternateData,
+        )
 
     @EdamException
-    def findNotes(self, keywords, count, createOrder=False, offset=0, deletedOnly=False):
+    def findNotes(
+        self, keywords, count, createOrder=False, offset=0, deletedOnly=False
+    ):
         """ WORK WITH NOTES """
         noteFilter = NoteStore.NoteFilter(order=Types.NoteSortOrder.RELEVANCE)
         noteFilter.order = getattr(Types.NoteSortOrder, self.noteSortOrder)
@@ -270,16 +298,20 @@ class GeekNote(object):
         meta.includeLargestResourceMime = True
         meta.includeLargestResourceSize = True
 
-        result = self.getNoteStore().findNotesMetadata(self.authToken, noteFilter, offset, count, meta)
+        result = self.getNoteStore().findNotesMetadata(
+            self.authToken, noteFilter, offset, count, meta
+        )
 
         # Reduces the count by the amount of notes already retrieved
         count = max(count - len(result.notes), 0)
 
         # Evernote api will only return so many notes in one go. Checks for more
         # notes to come whilst obeying count rules
-        while ((result.totalNotes != len(result.notes)) and count != 0):
+        while (result.totalNotes != len(result.notes)) and count != 0:
             offset = len(result.notes)
-            newresult = self.getNoteStore().findNotesMetadata(self.authToken, noteFilter, offset, count, meta)
+            newresult = self.getNoteStore().findNotesMetadata(
+                self.authToken, noteFilter, offset, count, meta
+            )
             result.notes += newresult.notes
             count = max(count - len(newresult.notes), 0)
 
@@ -289,35 +321,51 @@ class GeekNote(object):
     def loadNoteContent(self, note):
         """ modify Note object """
         if not isinstance(note, object):
-            raise Exception("Note content must be an "
-                            "instance of Note, '%s' given." % type(note))
+            raise Exception(
+                "Note content must be an " "instance of Note, '%s' given." % type(note)
+            )
 
         note.content = self.getNoteStore().getNoteContent(self.authToken, note.guid)
         # fill the tags in
-        if note.tagGuids and not getattr(note, 'tagNames', None):
+        if note.tagGuids and not getattr(note, "tagNames", None):
             note.tagNames = []
             for guid in note.tagGuids:
                 tag = self.getNoteStore().getTag(self.authToken, guid)
                 note.tagNames.append(tag.name)
 
-        note.notebookName = self.getNoteStore().getNotebook(self.authToken, note.notebookGuid).name
+        note.notebookName = (
+            self.getNoteStore().getNotebook(self.authToken, note.notebookGuid).name
+        )
 
     @EdamException
     def loadLinkedNoteContent(self, note):
         if not isinstance(note, object):
-            raise Excetion("Note content must be an "
-                           "instance of Note, '%s' given." % type(note))
+            raise Excetion(
+                "Note content must be an " "instance of Note, '%s' given." % type(note)
+            )
 
-        note.content = self.sharedNoteStore.getNoteContent(self.sharedAuthToken, note.guid)
+        note.content = self.sharedNoteStore.getNoteContent(
+            self.sharedAuthToken, note.guid
+        )
         # TODO
-        pass 
+        pass
 
     @EdamException
-    def createNote(self, title, content, tags=None, created=None, notebook=None, resources=None, reminder=None, url=None):
+    def createNote(
+        self,
+        title,
+        content,
+        tags=None,
+        created=None,
+        notebook=None,
+        resources=None,
+        reminder=None,
+        url=None,
+    ):
         note = Types.Note()
         note.title = title
         try:
-            note.content = content.encode('utf-8')
+            note.content = content.encode("utf-8")
         except UnicodeDecodeError:
             note.content = content
 
@@ -337,9 +385,14 @@ class GeekNote(object):
             resource_nodes = ""
 
             for resource in note.resources:
-                resource_nodes += '<en-media type="%s" hash="%s" />' % (resource.mime, resource.data.bodyHash)
+                resource_nodes += '<en-media type="%s" hash="%s" />' % (
+                    resource.mime,
+                    resource.data.bodyHash,
+                )
 
-            note.content = note.content.replace("</en-note>", resource_nodes + "</en-note>")
+            note.content = note.content.replace(
+                "</en-note>", resource_nodes + "</en-note>"
+            )
 
         # Allow creating a completed reminder (for task tracking purposes),
         # skip reminder creation steps if we have a DELETE
@@ -370,9 +423,19 @@ class GeekNote(object):
         return self.getNoteStore().createNote(self.authToken, note)
 
     @EdamException
-    def updateNote(self, guid, title=None, content=None,
-                   tags=None, created=None, notebook=None,
-                   resources=None, reminder=None, url=None, shared=False):
+    def updateNote(
+        self,
+        guid,
+        title=None,
+        content=None,
+        tags=None,
+        created=None,
+        notebook=None,
+        resources=None,
+        reminder=None,
+        url=None,
+        shared=False,
+    ):
         note = Types.Note()
         note.guid = guid
         if title:
@@ -380,7 +443,7 @@ class GeekNote(object):
 
         if content:
             try:
-                note.content = content.encode('utf-8')
+                note.content = content.encode("utf-8")
             except UnicodeDecodeError:
                 note.content = content
 
@@ -400,11 +463,16 @@ class GeekNote(object):
             resource_nodes = ""
 
             for resource in note.resources:
-                resource_nodes += '<en-media type="%s" hash="%s" />' % (resource.mime, resource.data.bodyHash)
+                resource_nodes += '<en-media type="%s" hash="%s" />' % (
+                    resource.mime,
+                    resource.data.bodyHash,
+                )
 
             if not note.content:
                 note.content = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd"><en-note></en-note>'
-            note.content = note.content.replace("</en-note>", resource_nodes + "</en-note>")
+            note.content = note.content.replace(
+                "</en-note>", resource_nodes + "</en-note>"
+            )
 
         if reminder:
             if not note.attributes:  # in case no attributes available
@@ -417,7 +485,9 @@ class GeekNote(object):
                     note.attributes.reminderOrder = now
             elif reminder == config.REMINDER_DONE:
                 note.attributes.reminderDoneTime = now
-                if not note.attributes.reminderOrder:  # catch adding DONE to non-reminder
+                if (
+                    not note.attributes.reminderOrder
+                ):  # catch adding DONE to non-reminder
                     note.attributes.reminderOrder = now
                     note.attributes.reminderTime = None
             elif reminder == config.REMINDER_DELETE:
@@ -428,7 +498,9 @@ class GeekNote(object):
                 if reminder > now:  # future reminder only
                     note.attributes.reminderTime = reminder
                     note.attributes.reminderDoneTime = None
-                    if not note.attributes.reminderOrder:  # catch adding time to non-reminder
+                    if (
+                        not note.attributes.reminderOrder
+                    ):  # catch adding time to non-reminder
                         note.attributes.reminderOrder = now
                 else:
                     out.failureMessage("Sorry, reminder must be in the future.")
@@ -527,9 +599,15 @@ class GeekNote(object):
 
     @EdamException
     def saveMedia(self, guid, mediaHash, filename):
-        logging.debug("saveMedia: guid:{}, mediaHash:{}, filename:{}".format(guid, mediaHash, filename))
+        logging.debug(
+            "saveMedia: guid:{}, mediaHash:{}, filename:{}".format(
+                guid, mediaHash, filename
+            )
+        )
 
-        resource = self.getNoteStore().getResourceByHash(self.authToken, guid, mediaHash, True, False, False)
+        resource = self.getNoteStore().getResourceByHash(
+            self.authToken, guid, mediaHash, True, False, False
+        )
         open(filename, "w").write(resource.data.body)
         return True
 
@@ -558,30 +636,32 @@ class GeekNoteConnector(object):
 
 
 def getEditor(storage):
-    editor = None if storage is None else storage.getUserprop('editor')
+    editor = None if storage is None else storage.getUserprop("editor")
     if not editor:
         editor = os.environ.get("editor")
     if not editor:
         editor = os.environ.get("EDITOR")
     if not editor:
-        editor = config.DEF_WIN_EDITOR if sys.platform == 'win32' else config.DEF_UNIX_EDITOR
+        editor = (
+            config.DEF_WIN_EDITOR if sys.platform == "win32" else config.DEF_UNIX_EDITOR
+        )
     return editor
 
 
 def getExtras(storage):
-    extras = None if storage is None else storage.getUserprop('markdown2_extras')
+    extras = None if storage is None else storage.getUserprop("markdown2_extras")
     if not extras:
         extras = None
     return extras
 
 
 def getNoteExt(storage):
-    note_ext = None if storage is None else storage.getUserprop('note_ext')
+    note_ext = None if storage is None else storage.getUserprop("note_ext")
     if not note_ext:
         note_ext = config.DEF_NOTE_EXT
     # If there is only one extension saved (previous storage), remove it
     elif len(note_ext) != 2:
-        storage.delUserprop('note_ext')
+        storage.delUserprop("note_ext")
         note_ext = config.DEF_NOTE_EXT
     return note_ext
 
@@ -617,7 +697,7 @@ class User(GeekNoteConnector):
             out.failureMessage("You have already logged out.")
             return tools.exitErr()
 
-        if not force and not out.confirm('Are you sure you want to logout?'):
+        if not force and not out.confirm("Are you sure you want to logout?"):
             return tools.exit()
 
         result = self.getEvernote().removeUser()
@@ -632,50 +712,62 @@ class User(GeekNoteConnector):
         storage = self.getStorage()
 
         if editor:
-            if editor == '#GET#':
+            if editor == "#GET#":
                 out.successMessage("Current editor is: %s" % getEditor(storage))
             else:
-                storage.setUserprop('editor', editor)
+                storage.setUserprop("editor", editor)
                 out.successMessage("Changes saved.")
         if extras:
-            if extras == '#GET#':
-                out.successMessage("Current markdown2 extras is : %s" % getExtras(storage))
+            if extras == "#GET#":
+                out.successMessage(
+                    "Current markdown2 extras is : %s" % getExtras(storage)
+                )
             else:
-                storage.setUserprop('markdown2_extras', extras.split(','))
+                storage.setUserprop("markdown2_extras", extras.split(","))
                 out.successMessage("Changes saved.")
         if note_ext:
-            if note_ext == '#GET#':
-                out.successMessage("Current note extension is: %s" % getNoteExt(storage))
+            if note_ext == "#GET#":
+                out.successMessage(
+                    "Current note extension is: %s" % getNoteExt(storage)
+                )
             else:
                 if len(note_ext.split(",")) == 2:
-                    storage.setUserprop('note_ext', note_ext.replace(" ","").split(","))
+                    storage.setUserprop(
+                        "note_ext", note_ext.replace(" ", "").split(",")
+                    )
                     out.successMessage("Changes saved.")
                 else:
-                    out.failureMessage("Error in note extension, format is '.markdown_extension, .raw_extension'")
+                    out.failureMessage(
+                        "Error in note extension, format is '.markdown_extension, .raw_extension'"
+                    )
 
         if all([not editor, not extras, not note_ext]):
             editor = getEditor(storage)
             extras = getExtras(storage)
             note_ext = getNoteExt(storage)
-            settings = ('Geeknote',
-                        '*' * 30,
-                        'Version: %s' % __version__,
-                        'App dir: %s' % config.APP_DIR,
-                        'Error log: %s' % config.ERROR_LOG,
-                        'Editor: %s' % editor,
-                        'Markdown2 Extras: %s' % extras,
-                        'Note extension: %s' % note_ext)
+            settings = (
+                "Geeknote",
+                "*" * 30,
+                "Version: %s" % __version__,
+                "App dir: %s" % config.APP_DIR,
+                "Error log: %s" % config.ERROR_LOG,
+                "Editor: %s" % editor,
+                "Markdown2 Extras: %s" % extras,
+                "Note extension: %s" % note_ext,
+            )
 
             user_settings = storage.getUserprops()
 
             if user_settings:
-                user = user_settings[1]['info']
-                settings += ('*' * 30,
-                             'Username: %s' % user.username,
-                             'Id: %s' % user.id,
-                             'Email: %s' % user.email)
+                user = user_settings[1]["info"]
+                settings += (
+                    "*" * 30,
+                    "Username: %s" % user.username,
+                    "Id: %s" % user.id,
+                    "Email: %s" % user.email,
+                )
 
-            out.printLine('\n'.join(settings))
+            out.printLine("\n".join(settings))
 
 
 class Tags(GeekNoteConnector):
@@ -711,8 +803,9 @@ class Tags(GeekNoteConnector):
     def remove(self, tagname, force=None):
         tag = self._searchTag(tagname)
 
-        if not force and not out.confirm('Are you sure you want to '
-                                         'delete the tag "%s"?' % tag.name):
+        if not force and not out.confirm(
+            "Are you sure you want to " 'delete the tag "%s"?' % tag.name
+        ):
             return tools.exit()
 
         out.preloader.setMessage("Deleting tag...")
@@ -743,19 +836,19 @@ class Notebooks(GeekNoteConnector):
         result_linked = self.getEvernote().findLinkedNotebooks()
         out.printList(result, showGUID=guid)
 
-        # also show linked notebooks for good measure 
+        # also show linked notebooks for good measure
         out.printList(result_linked, showGUID=guid)
 
         # print result_linked[0].__dict___
-        # {'username': 'bentoncalhoun', 
-        #  'businessId': None, 
-        #  'shareName': 'KevinLeachBenNotes', 
-        #  'uri': None, 
+        # {'username': 'bentoncalhoun',
+        #  'businessId': None,
+        #  'shareName': 'KevinLeachBenNotes',
+        #  'uri': None,
         #  'shareKey': '12917-s82',
-        #  'shardId': 's82', 
-        #  'updateSequenceNum': 9, 
-        #  'webApiUrlPrefix': 'https://www.evernote.com/shard/s82/', 
-        #  'guid': '6c912ee3-4479-47d6-ad37-2a477645199e', 
+        #  'shardId': 's82',
+        #  'updateSequenceNum': 9,
+        #  'webApiUrlPrefix': 'https://www.evernote.com/shard/s82/',
+        #  'guid': '6c912ee3-4479-47d6-ad37-2a477645199e',
         #  'stack': None,
         #  'noteStoreUrl': 'https://www.evernote.com/shard/s82/notestore'}
 
@@ -780,8 +873,7 @@ class Notebooks(GeekNoteConnector):
         notebook = self._searchNotebook(notebook)
 
         out.preloader.setMessage("Updating notebook...")
-        result = self.getEvernote().updateNotebook(guid=notebook.guid,
-                                                   name=title)
+        result = self.getEvernote().updateNotebook(guid=notebook.guid, name=title)
 
         if result:
             out.successMessage("Notebook successfully updated.")
@@ -792,8 +884,9 @@ class Notebooks(GeekNoteConnector):
     def remove(self, notebook, force=None):
         notebook = self._searchNotebook(notebook)
 
-        if not force and not out.confirm('Are you sure you want to delete'
-                                         ' this notebook: "%s"?' % notebook.name):
+        if not force and not out.confirm(
+            "Are you sure you want to delete" ' this notebook: "%s"?' % notebook.name
+        ):
             return tools.exit()
 
         out.preloader.setMessage("Deleting notebook...")
@@ -837,7 +930,9 @@ class Notes(GeekNoteConnector):
         self.findExactOnUpdate = bool(findExactOnUpdate)
         self.selectFirstOnUpdate = bool(selectFirstOnUpdate)
 
-    def _editWithEditorInThread(self, inputData, note=None, raw=None, rawmd=None, sharedNote=False, fake=False):
+    def _editWithEditorInThread(
+        self, inputData, note=None, raw=None, rawmd=None, sharedNote=False, fake=False
+    ):
         editor_userprop = getEditor(self.getStorage())
         noteExt_userprop = getNoteExt(self.getStorage())[bool(raw)]
         if note:
@@ -847,7 +942,7 @@ class Notes(GeekNoteConnector):
                 self.getEvernote().loadNoteContent(note)
             editor = Editor(editor_userprop, note.content, noteExt_userprop, raw)
         else:
-            editor = Editor(editor_userprop, '', noteExt_userprop, raw)
+            editor = Editor(editor_userprop, "", noteExt_userprop, raw)
         thread = EditorThread(editor)
         thread.start()
 
@@ -855,16 +950,21 @@ class Notes(GeekNoteConnector):
         prevChecksum = editor.getTempfileChecksum()
         while True:
             if prevChecksum != editor.getTempfileChecksum() and result:
-                newContent = open(editor.tempfile, 'r').read()
+                newContent = open(editor.tempfile, "r").read()
                 ext = os.path.splitext(editor.tempfile)[1]
-                mapping = {'markdown': config.MARKDOWN_EXTENSIONS,
-                           'html': config.HTML_EXTENSIONS}
+                mapping = {
+                    "markdown": config.MARKDOWN_EXTENSIONS,
+                    "html": config.HTML_EXTENSIONS,
+                }
                 fmt = filter(lambda k: ext in mapping[k], mapping)
                 if fmt:
                     fmt = fmt[0]
 
-                inputData['content'] = newContent if raw \
+                inputData["content"] = (
+                    newContent
+                    if raw
                     else Editor.textToENML(newContent, format=fmt, rawmd=rawmd)
+                )
                 if not note:
                     result = self.getEvernote().createNote(**inputData)
                     # TODO: log error if result is False or None
@@ -874,9 +974,15 @@ class Notes(GeekNoteConnector):
                         result = False
                 else:
                     if not sharedNote:
-                        result = bool(self.getEvernote().updateNote(guid=note.guid, **inputData))
+                        result = bool(
+                            self.getEvernote().updateNote(guid=note.guid, **inputData)
+                        )
                     else:
-                        result = bool(self.getEvernote().updateNote(shared=True, guid=note.guid, **inputData))
+                        result = bool(
+                            self.getEvernote().updateNote(
+                                shared=True, guid=note.guid, **inputData
+                            )
+                        )
                     # TODO: log error if result is False
 
                 if result:
@@ -893,18 +999,43 @@ class Notes(GeekNoteConnector):
         if result:
             editor.deleteTempfile()
         else:
-            out.failureMessage("Edited note could not be saved, so it remains in %s" % editor.tempfile)
+            out.failureMessage(
+                "Edited note could not be saved, so it remains in %s" % editor.tempfile
+            )
 
-    def create(self, title, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, url=None, raw=None, rawmd=None):
+    def create(
+        self,
+        title,
+        content=None,
+        tag=None,
+        created=None,
+        notebook=None,
+        resource=None,
+        reminder=None,
+        url=None,
+        raw=None,
+        rawmd=None,
+    ):
 
         self.connectToEvernote()
 
         # Optional Content.
         content = content or " "
 
-        inputData = self._parseInput(title, content, tag, created, notebook, resource, None, reminder, url, rawmd=rawmd)
+        inputData = self._parseInput(
+            title,
+            content,
+            tag,
+            created,
+            notebook,
+            resource,
+            None,
+            reminder,
+            url,
+            rawmd=rawmd,
+        )
 
-        if inputData['content'] == config.EDITOR_OPEN:
+        if inputData["content"] == config.EDITOR_OPEN:
             result = self._editWithEditorInThread(inputData, raw=raw, rawmd=rawmd)
         else:
             out.preloader.setMessage("Creating note...")
@@ -921,7 +1052,7 @@ class Notes(GeekNoteConnector):
         # note
         my_shared_notebook = None
         for nb in self.getEvernote().findLinkedNotebooks():
-            #case-insensitive
+            # case-insensitive
             if notebook.lower() in nb.shareName.lower():
                 my_shared_notebook = nb
                 break
@@ -931,41 +1062,34 @@ class Notes(GeekNoteConnector):
             out.failureMessage("Error: could not find specified Linked Notebook")
             return tools.exitErr()
 
-        sharedNoteStoreClient   = THttpClient.THttpClient(my_shared_notebook.noteStoreUrl)
+        sharedNoteStoreClient = THttpClient.THttpClient(my_shared_notebook.noteStoreUrl)
         sharedNoteStoreProtocol = TBinaryProtocol.TBinaryProtocol(sharedNoteStoreClient)
-        sharedNoteStore         = NoteStore.Client(sharedNoteStoreProtocol)
-
-        
-        sharedAuthResult        = sharedNoteStore.authenticateToSharedNotebook(my_shared_notebook.shareKey, self.getEvernote().authToken)
-
-
-        sharedAuthToken         = sharedAuthResult.authenticationToken
-        sharedNotebook          = sharedNoteStore.getSharedNotebookByAuth(sharedAuthToken)
-
+        sharedNoteStore = NoteStore.Client(sharedNoteStoreProtocol)
+        sharedAuthResult = sharedNoteStore.authenticateToSharedNotebook(
+            my_shared_notebook.shareKey, self.getEvernote().authToken
+        )
+        sharedAuthToken = sharedAuthResult.authenticationToken
+        sharedNotebook = sharedNoteStore.getSharedNotebookByAuth(sharedAuthToken)
 
         self.getEvernote().sharedAuthToken = sharedAuthToken
         self.getEvernote().sharedNoteStore = sharedNoteStore
-
 
         new_note = Types.Note()
         new_note.title = title
         new_note.content = Editor.textToENML("")
         new_note.notebookGuid = sharedNotebook.notebookGuid
-        
 
-        #sharedNoteStore.createNote(self.getEvernote().authToken, new_note)
+        # sharedNoteStore.createNote(self.getEvernote().authToken, new_note)
         sharedNoteStore.createNote(sharedAuthToken, new_note)
-        
-
 
     def editLinked(self, note, notebook):
         """ Edit a Note from a Linked Notebook """
-        
+
         # find the linked notebook in which the user wants to edit a
         # note
         my_shared_notebook = None
         for nb in self.getEvernote().findLinkedNotebooks():
-            #case-insensitive
+            # case-insensitive
             if notebook.lower() in nb.shareName.lower():
                 my_shared_notebook = nb
                 break
@@ -975,24 +1099,25 @@ class Notes(GeekNoteConnector):
             out.failureMessage("Error: could not find specified Linked Notebook")
             return tools.exitErr()
 
-        
-        sharedNoteStoreClient   = THttpClient.THttpClient(my_shared_notebook.noteStoreUrl)
+        sharedNoteStoreClient = THttpClient.THttpClient(my_shared_notebook.noteStoreUrl)
         sharedNoteStoreProtocol = TBinaryProtocol.TBinaryProtocol(sharedNoteStoreClient)
-        sharedNoteStore         = NoteStore.Client(sharedNoteStoreProtocol)
-
-        sharedAuthResult        = sharedNoteStore.authenticateToSharedNotebook(my_shared_notebook.shareKey, self.getEvernote().authToken)
-       
-        sharedAuthToken         = sharedAuthResult.authenticationToken
-        sharedNotebook          = sharedNoteStore.getSharedNotebookByAuth(sharedAuthToken)
+        sharedNoteStore = NoteStore.Client(sharedNoteStoreProtocol)
+        sharedAuthResult = sharedNoteStore.authenticateToSharedNotebook(
+            my_shared_notebook.shareKey, self.getEvernote().authToken
+        )
+        sharedAuthToken = sharedAuthResult.authenticationToken
+        sharedNotebook = sharedNoteStore.getSharedNotebookByAuth(sharedAuthToken)
 
         self.getEvernote().sharedAuthToken = sharedAuthToken
         self.getEvernote().sharedNoteStore = sharedNoteStore
 
-        my_filter = NoteStore.NoteFilter(notebookGuid = sharedNotebook.notebookGuid)
+        my_filter = NoteStore.NoteFilter(notebookGuid=sharedNotebook.notebookGuid)
         noteList = sharedNoteStore.findNotes(sharedAuthToken, my_filter, 0, 50)
 
         if len(noteList.notes) == 0:
-            out.failureMessage("Error: Could not find any notes in the specified linked notebook.")
+            out.failureMessage(
+                "Error: Could not find any notes in the specified linked notebook."
+            )
             return tools.exitErr()
 
         candidate_notes = []
@@ -1001,33 +1126,58 @@ class Notes(GeekNoteConnector):
                 candidate_notes.append(n)
 
         if len(candidate_notes) == 0:
-            out.failureMessage("Error: Could not find specified note in the linked notebook.")
+            out.failureMessage(
+                "Error: Could not find specified note in the linked notebook."
+            )
             return tools.exitErr()
 
-        #TODO add ability to let user resolve ambiguity
+        # TODO add ability to let user resolve ambiguity
         if len(candidate_notes) > 1:
             out.failureMessage("Error: multiple notes match the specified note title.")
             for n in candidate_notes:
                 print n.title
             return tools.exitErr()
 
-        
         the_note = candidate_notes[0]
+        inputData = self._parseInput(
+            None, None, None, None, None, None, the_note, None, None, True
+        )
+        result = self._editWithEditorInThread(
+            inputData, the_note, raw=False, sharedNote=True, fake=True
+        )
+        pass
 
-        inputData = self._parseInput(None, None, None, None, None, None, the_note, None, None, True)
-
-        result = self._editWithEditorInThread(inputData, the_note, raw=False, sharedNote=True, fake=True)
-        pass 
-
-
-    def edit(self, note, title=None, content=None, tag=None, created=None, notebook=None, resource=None, reminder=None, url=None, raw=None, rawmd=None):
-
+    def edit(
+        self,
+        note,
+        title=None,
+        content=None,
+        tag=None,
+        created=None,
+        notebook=None,
+        resource=None,
+        reminder=None,
+        url=None,
+        raw=None,
+        rawmd=None,
+    ):
         self.connectToEvernote()
         note = self._searchNote(note)
 
-        inputData = self._parseInput(title, content, tag, created, notebook, resource, note, reminder, url, rawmd=rawmd)
+        inputData = self._parseInput(
+            title,
+            content,
+            tag,
+            created,
+            notebook,
+            resource,
+            note,
+            reminder,
+            url,
+            rawmd=rawmd,
+        )
 
-        if inputData['content'] == config.EDITOR_OPEN:
+        if inputData["content"] == config.EDITOR_OPEN:
             result = self._editWithEditorInThread(inputData, note, raw=raw, rawmd=rawmd)
         else:
             out.preloader.setMessage("Saving note...")
@@ -1045,10 +1195,15 @@ class Notes(GeekNoteConnector):
         if note:
             out.preloader.setMessage("Loading note...")
             self.getEvernote().loadNoteContent(note)
-            out.showNote(note, self.getEvernote().getUserInfo().id, self.getEvernote().getUserInfo().shardId)
+            out.showNote(
+                note,
+                self.getEvernote().getUserInfo().id,
+                self.getEvernote().getUserInfo().shardId,
+            )
 
-        if not force and not out.confirm('Are you sure you want to '
-                                         'delete this note: "%s"?' % note.title):
+        if not force and not out.confirm(
+            "Are you sure you want to " 'delete this note: "%s"?' % note.title
+        ):
             return tools.exit()
 
         out.preloader.setMessage("Deleting note...")
@@ -1071,9 +1226,26 @@ class Notes(GeekNoteConnector):
         if raw:
             out.showNoteRaw(note)
         else:
-            out.showNote(note, self.getEvernote().getUserInfo().id, self.getEvernote().getUserInfo().shardId)
+            out.showNote(
+                note,
+                self.getEvernote().getUserInfo().id,
+                self.getEvernote().getUserInfo().shardId,
+            )
 
-    def _parseInput(self, title=None, content=None, tags=[], created=None, notebook=None, resources=[], note=None, reminder=None, url=None, shared=False, rawmd=False):
+    def _parseInput(
+        self,
+        title=None,
+        content=None,
+        tags=[],
+        created=None,
+        notebook=None,
+        resources=[],
+        note=None,
+        reminder=None,
+        url=None,
+        shared=False,
+        rawmd=False,
+    ):
         result = {
             "title": title,
             "content": content,
@@ -1087,19 +1259,21 @@ class Notes(GeekNoteConnector):
         result = tools.strip(result)
 
         # if get note without params
-        if (note and
-            title is None and
-            content is None and
-            tags is None and
-            created is None and
-            notebook is None and
-            resources is None and
-            reminder is None and
-            url is None):
+        if (
+            note
+            and title is None
+            and content is None
+            and tags is None
+            and created is None
+            and notebook is None
+            and resources is None
+            and reminder is None
+            and url is None
+        ):
             content = config.EDITOR_OPEN
 
         if title is None and note:
-            result['title'] = note.title
+            result["title"] = note.title
 
         if content:
             if content != config.EDITOR_OPEN:
@@ -1109,15 +1283,25 @@ class Notes(GeekNoteConnector):
 
                 logging.debug("Convert content")
                 content = Editor.textToENML(content, rawmd=rawmd)
-            result['content'] = content
+            result["content"] = content
 
         if created:
             try:
-                result['created'] = self._getTimeFromDate(created)
+                result["created"] = self._getTimeFromDate(created)
             except ValueError:
-                out.failureMessage("Incorrect date format (%s) in --created attribute. 'Format: '%s' or '%s'" % (created,
-                                       time.strftime(config.DEF_DATE_FORMAT, time.strptime('20151231', "%Y%m%d")),
-                                       time.strftime(config.DEF_DATE_AND_TIME_FORMAT, time.strptime('201512311430', "%Y%m%d%H%M"))))
+                out.failureMessage(
+                    "Incorrect date format (%s) in --created attribute. 'Format: '%s' or '%s'"
+                    % (
+                        created,
+                        time.strftime(
+                            config.DEF_DATE_FORMAT, time.strptime("20151231", "%Y%m%d")
+                        ),
+                        time.strftime(
+                            config.DEF_DATE_AND_TIME_FORMAT,
+                            time.strptime("201512311430", "%Y%m%d%H%M"),
+                        ),
+                    )
+                )
                 return tools.exitErr()
 
         if notebook:
@@ -1126,31 +1310,46 @@ class Notes(GeekNoteConnector):
                 newNotebook = Notebooks().create(notebook)
                 notebookGuid = newNotebook.guid
 
-            result['notebook'] = notebookGuid
+            result["notebook"] = notebookGuid
             logging.debug("Search notebook")
 
         if reminder:
             then = config.REMINDER_SHORTCUTS.get(reminder)
             if then:
                 now = int(round(time.time() * 1000))
-                result['reminder'] = now + then
-            elif reminder not in [config.REMINDER_NONE, config.REMINDER_DONE, config.REMINDER_DELETE]:
+                result["reminder"] = now + then
+            elif reminder not in [
+                config.REMINDER_NONE,
+                config.REMINDER_DONE,
+                config.REMINDER_DELETE,
+            ]:
                 try:
-                    result['reminder'] = self._getTimeFromDate(reminder)
+                    result["reminder"] = self._getTimeFromDate(reminder)
                 except ValueError:
-                    out.failureMessage("Incorrect date format (%s) in --reminder attribute. 'Format: '%s' or '%s'" % (reminder,
-                                        time.strftime(config.DEF_DATE_FORMAT, time.strptime('20151231', "%Y%m%d")),
-                                        time.strftime(config.DEF_DATE_AND_TIME_FORMAT, time.strptime('201512311430', "%Y%m%d%H%M"))))
+                    out.failureMessage(
+                        "Incorrect date format (%s) in --reminder attribute. 'Format: '%s' or '%s'"
+                        % (
+                            reminder,
+                            time.strftime(
+                                config.DEF_DATE_FORMAT,
+                                time.strptime("20151231", "%Y%m%d"),
+                            ),
+                            time.strftime(
+                                config.DEF_DATE_AND_TIME_FORMAT,
+                                time.strptime("201512311430", "%Y%m%d%H%M"),
+                            ),
+                        )
+                    )
                     return tools.exitErr()
 
         if url is None and note:
             if note.attributes is not None:
-                result['url'] = note.attributes.sourceURL
+                result["url"] = note.attributes.sourceURL
 
         if shared:
             pass
             # TODO don't want to mess up dict structure...
-#            result['shared'] = True
+        #            result['shared'] = True
 
         return result
 
@@ -1176,7 +1375,11 @@ class Notes(GeekNoteConnector):
 
         else:
             result = self.getStorage().getSearch()
-            if result and tools.checkIsInt(note) and 1 <= int(note) <= len(result.notes):
+            if (
+                result
+                and tools.checkIsInt(note)
+                and 1 <= int(note) <= len(result.notes)
+            ):
                 note = result.notes[int(note) - 1]
             else:
                 request = self._createSearchRequest(search=note)
@@ -1197,15 +1400,34 @@ class Notes(GeekNoteConnector):
         note = self.getEvernote().getNote(note.guid)
         return note
 
-    def find(self, search=None, tag=None, notebook=None,
-             date=None, exact_entry=None, content_search=None,
-             with_url=None, with_tags=None, with_notebook=None,
-             count=None, ignore_completed=None, reminders_only=None, guid=None, deleted_only=None):
+    def find(
+        self,
+        search=None,
+        tag=None,
+        notebook=None,
+        date=None,
+        exact_entry=None,
+        content_search=None,
+        with_url=None,
+        with_tags=None,
+        with_notebook=None,
+        count=None,
+        ignore_completed=None,
+        reminders_only=None,
+        guid=None,
+        deleted_only=None,
+    ):
 
-        request = self._createSearchRequest(search, tag, notebook,
-                                            date, exact_entry,
-                                            content_search,
-                                            ignore_completed, reminders_only)
+        request = self._createSearchRequest(
+            search,
+            tag,
+            notebook,
+            date,
+            exact_entry,
+            content_search,
+            ignore_completed,
+            reminders_only,
+        )
 
         if not count:
             count = 20
@@ -1215,7 +1437,9 @@ class Notes(GeekNoteConnector):
         logging.debug("Search count: %s", count)
 
         createFilter = True if search == "*" else False
-        result = self.getEvernote().findNotes(request, count, createFilter, deletedOnly=deleted_only)
+        result = self.getEvernote().findNotes(
+            request, count, createFilter, deletedOnly=deleted_only
+        )
 
         if result.totalNotes == 0:
             out.failureMessage("Notes have not been found.")
@@ -1232,11 +1456,19 @@ class Notes(GeekNoteConnector):
             notebookNameFromGuid = dict()
             for note in result.notes:
                 if note.notebookGuid not in notebookNameFromGuid:
-                    notebookNameFromGuid[note.notebookGuid] = noteStore.getNotebook(self.getEvernote().authToken, note.notebookGuid).name
+                    notebookNameFromGuid[note.notebookGuid] = noteStore.getNotebook(
+                        self.getEvernote().authToken, note.notebookGuid
+                    ).name
                 note.notebookName = notebookNameFromGuid[note.notebookGuid]
 
-        out.SearchResult(result.notes, request, showUrl=with_url, showTags=with_tags,
-                         showNotebook=with_notebook, showGUID=guid)
+        out.SearchResult(
+            result.notes,
+            request,
+            showUrl=with_url,
+            showTags=with_tags,
+            showNotebook=with_notebook,
+            showGUID=guid,
+        )
 
     def dedup(self, notebook=None):
         logging.debug("Retrieving note metadata")
@@ -1248,7 +1480,9 @@ class Notes(GeekNoteConnector):
         result = evernote.findNotes(request, EDAM_USER_NOTES_MAX, False, 0)
         notes = result.notes
 
-        logging.debug("First pass, comparing metadata of " + str(len(result.notes)) + " notes")
+        logging.debug(
+            "First pass, comparing metadata of " + str(len(result.notes)) + " notes"
+        )
         notes_dict = {}
 
         for note in notes:
@@ -1259,21 +1493,43 @@ class Notes(GeekNoteConnector):
             # This will create false positives, which we resolve in another pass,
             # actually inspecting note content of a hopefully smaller
             # set of potential duplicates.
-            noteId = note.title + " (" + str(note.contentLength) + ") with " + str(note.largestResourceMime) + " (" + str(note.largestResourceSize) + ")"
+            noteId = (
+                note.title
+                + " ("
+                + str(note.contentLength)
+                + ") with "
+                + str(note.largestResourceMime)
+                + " ("
+                + str(note.largestResourceSize)
+                + ")"
+            )
             if noteId in notes_dict:
                 notes_dict[noteId].append(note)
-                logging.debug(" note:  " + noteId
-                              + "\" with guid " + note.guid
-                              + " potentially duplicated " + str(len(notes_dict[noteId])))
+                logging.debug(
+                    " note:  "
+                    + noteId
+                    + '" with guid '
+                    + note.guid
+                    + " potentially duplicated "
+                    + str(len(notes_dict[noteId]))
+                )
             else:
                 notes_dict[noteId] = [note]
-#                logging.debug(" note:  " + noteId
-#                              + "\" with guid " + note.guid)
+        #                logging.debug(" note:  " + noteId
+        #                              + "\" with guid " + note.guid)
 
-        all_dups = [dups for id, dups in notes_dict.iteritems() if len(dups) > 1]  # list of lists
+        all_dups = [
+            dups for id, dups in notes_dict.iteritems() if len(dups) > 1
+        ]  # list of lists
         total_dups = sum(map(len, all_dups))  # count total
 
-        logging.debug("Second pass, testing content among " + str(len(all_dups)) + " groups, " + str(total_dups) + " notes")
+        logging.debug(
+            "Second pass, testing content among "
+            + str(len(all_dups))
+            + " groups, "
+            + str(total_dups)
+            + " notes"
+        )
         notes_dict = {}
         for dup_group in all_dups:
             for note in dup_group:
@@ -1285,37 +1541,70 @@ class Notes(GeekNoteConnector):
                 noteId = md5.hexdigest() + " " + note.title
                 if noteId in notes_dict:
                     notes_dict[noteId].append(note)
-                    logging.debug("duplicate \"" + noteId
-                                  + "\" with guid " + note.guid
-                                  + ", duplicated " + str(len(notes_dict[noteId])))
+                    logging.debug(
+                        'duplicate "'
+                        + noteId
+                        + '" with guid '
+                        + note.guid
+                        + ", duplicated "
+                        + str(len(notes_dict[noteId]))
+                    )
                 else:
                     notes_dict[noteId] = [note]
-                    logging.debug("new note  \"" + noteId
-                                  + "\" with guid " + note.guid)
+                    logging.debug('new note  "' + noteId + '" with guid ' + note.guid)
 
-        all_dups = [dups for id, dups in notes_dict.iteritems() if len(dups) > 1]  # list of lists
+        all_dups = [
+            dups for id, dups in notes_dict.iteritems() if len(dups) > 1
+        ]  # list of lists
         total_dups = sum(map(len, all_dups))  # count total
 
-        logging.debug("Third pass, deleting " + str(len(all_dups)) + " groups, " + str(total_dups) + " notes")
+        logging.debug(
+            "Third pass, deleting "
+            + str(len(all_dups))
+            + " groups, "
+            + str(total_dups)
+            + " notes"
+        )
         removed_count = 0
         for dup_group in all_dups:
-            dup_group.pop() # spare the last one, delete the rest
+            dup_group.pop()  # spare the last one, delete the rest
             for note in dup_group:
                 removed_count += 1
-                logging.debug("Deleting \"" + note.title
-                              + "\" created " + out.printDate(note.created)
-                              + " with guid " + note.guid
-                              + " (" + str(removed_count) + "/" + str(total_dups) + ")")
+                logging.debug(
+                    'Deleting "'
+                    + note.title
+                    + '" created '
+                    + out.printDate(note.created)
+                    + " with guid "
+                    + note.guid
+                    + " ("
+                    + str(removed_count)
+                    + "/"
+                    + str(total_dups)
+                    + ")"
+                )
                 out.preloader.setMessage("Removing note...")
                 evernote.removeNote(note.guid)
 
-        out.successMessage("Removed " + str(removed_count) + " duplicates within " + str(len(result.notes)) + " total notes")
+        out.successMessage(
+            "Removed "
+            + str(removed_count)
+            + " duplicates within "
+            + str(len(result.notes))
+            + " total notes"
+        )
 
-
-    def _createSearchRequest(self, search=None, tags=None,
-                             notebook=None, date=None,
-                             exact_entry=None, content_search=None,
-                             ignore_completed=None, reminders_only=None):
+    def _createSearchRequest(
+        self,
+        search=None,
+        tags=None,
+        notebook=None,
+        date=None,
+        exact_entry=None,
+        content_search=None,
+        ignore_completed=None,
+        reminders_only=None,
+    ):
 
         request = ""
 
@@ -1324,24 +1613,24 @@ class Notes(GeekNoteConnector):
             expression = ""
 
             # if negated, prepend that to the expression before labe, not value
-            if value.startswith('-'):
-                expression += '-'
+            if value.startswith("-"):
+                expression += "-"
                 value = value[1:]
             value = tools.strip(value)
 
             # values with spaces must be quoted
-            if ' ' in value:
+            if " " in value:
                 value = '"%s"' % value
 
-            expression += '%s:%s ' % (label, value)
+            expression += "%s:%s " % (label, value)
             return expression
 
         if notebook:
-            request += _formatExpression('notebook', notebook)
+            request += _formatExpression("notebook", notebook)
 
         if tags:
             for tag in tags:
-                request += _formatExpression('tag', tag)
+                request += _formatExpression("tag", tag)
 
         if date:
             date = tools.strip(re.split(config.DEF_DATE_RANGE_DELIMITER, date))
@@ -1351,12 +1640,27 @@ class Notes(GeekNoteConnector):
             # Here we assume the user is specifying localized time, so we use _getTimeFromDate to
             # give us the UTC timestamp
             try:
-                request += 'created:%s ' % time.strftime("%Y%m%dT%H%M00Z", time.gmtime(self._getTimeFromDate(date[0])/1000))
+                request += "created:%s " % time.strftime(
+                    "%Y%m%dT%H%M00Z", time.gmtime(self._getTimeFromDate(date[0]) / 1000)
+                )
                 if len(date) == 2:
-                    request += '-created:%s ' % time.strftime("%Y%m%dT%H%M00Z", time.gmtime(self._getTimeFromDate(date[1])/1000 + 60 * 60 * 24))
+                    request += "-created:%s " % time.strftime(
+                        "%Y%m%dT%H%M00Z",
+                        time.gmtime(
+                            self._getTimeFromDate(date[1]) / 1000 + 60 * 60 * 24
+                        ),
+                    )
             except ValueError:
-                out.failureMessage('Incorrect date format (%s) in --date attribute. '
-                                   'Format: %s' % (date, time.strftime(config.DEF_DATE_FORMAT, time.strptime('20151231', "%Y%m%d"))))
+                out.failureMessage(
+                    "Incorrect date format (%s) in --date attribute. "
+                    "Format: %s"
+                    % (
+                        date,
+                        time.strftime(
+                            config.DEF_DATE_FORMAT, time.strptime("20151231", "%Y%m%d")
+                        ),
+                    )
+                )
                 return tools.exitErr()
 
         if search:
@@ -1370,17 +1674,17 @@ class Notes(GeekNoteConnector):
                 request += "intitle:%s" % search
 
         if reminders_only:
-            request += ' reminderOrder:* '
+            request += " reminderOrder:* "
         if ignore_completed:
-            request += ' -reminderDoneTime:* '
+            request += " -reminderDoneTime:* "
 
         logging.debug("Search request: %s", request)
         return request
 
 
 def main(args=None):
-    os.environ['TMP'] = '/tmp'
-    os.environ['TEMP'] = '/tmp'
+    os.environ["TMP"] = "/tmp"
+    os.environ["TEMP"] = "/tmp"
     try:
         exit_status_code = 0
 
@@ -1395,10 +1699,10 @@ def main(args=None):
         aparser = argparser(sys_argv)
         ARGS = aparser.parse()
 
-        if isinstance(ARGS, dict) and ARGS.get('content') == '-':
+        if isinstance(ARGS, dict) and ARGS.get("content") == "-":
             # content from stdin!
             content = sys.stdin.read()
-            ARGS['content'] = content
+            ARGS["content"] = content
 
         # error or help
         if COMMAND is None or ARGS is False:
@@ -1407,67 +1711,67 @@ def main(args=None):
         logging.debug("CLI options: %s", str(ARGS))
 
         # Users
-        if COMMAND == 'user':
+        if COMMAND == "user":
             User().user(**ARGS)
 
-        if COMMAND == 'login':
+        if COMMAND == "login":
             User().login(**ARGS)
 
-        if COMMAND == 'logout':
+        if COMMAND == "logout":
             User().logout(**ARGS)
 
-        if COMMAND == 'settings':
+        if COMMAND == "settings":
             User().settings(**ARGS)
 
         # Notes
-        if COMMAND == 'create':
+        if COMMAND == "create":
             Notes().create(**ARGS)
 
-        if COMMAND == 'create-linked':
+        if COMMAND == "create-linked":
             Notes().createLinked(**ARGS)
 
-        if COMMAND == 'edit':
+        if COMMAND == "edit":
             Notes().edit(**ARGS)
 
-        if COMMAND == 'edit-linked':
+        if COMMAND == "edit-linked":
             Notes().editLinked(**ARGS)
 
-        if COMMAND == 'remove':
+        if COMMAND == "remove":
             Notes().remove(**ARGS)
 
-        if COMMAND == 'show':
+        if COMMAND == "show":
             Notes().show(**ARGS)
 
-        if COMMAND == 'find':
+        if COMMAND == "find":
             Notes().find(**ARGS)
 
-        if COMMAND == 'dedup':
+        if COMMAND == "dedup":
             Notes().dedup(**ARGS)
 
         # Notebooks
-        if COMMAND == 'notebook-list':
+        if COMMAND == "notebook-list":
             Notebooks().list(**ARGS)
 
-        if COMMAND == 'notebook-create':
+        if COMMAND == "notebook-create":
             Notebooks().create(**ARGS)
 
-        if COMMAND == 'notebook-edit':
+        if COMMAND == "notebook-edit":
             Notebooks().edit(**ARGS)
 
-        if COMMAND == 'notebook-remove':
+        if COMMAND == "notebook-remove":
             Notebooks().remove(**ARGS)
 
         # Tags
-        if COMMAND == 'tag-list':
+        if COMMAND == "tag-list":
             Tags().list(**ARGS)
 
-        if COMMAND == 'tag-create':
+        if COMMAND == "tag-create":
             Tags().create(**ARGS)
 
-        if COMMAND == 'tag-edit':
+        if COMMAND == "tag-edit":
             Tags().edit(**ARGS)
 
-        if COMMAND == 'tag-remove':
+        if COMMAND == "tag-remove":
             Tags().remove(**ARGS)
 
     except (KeyboardInterrupt, SystemExit, tools.ExitException), e:
@@ -1479,7 +1783,7 @@ def main(args=None):
         logging.error("App error: %s", str(e))
 
     # exit preloader
-    tools.exit('exit', exit_status_code)
+    tools.exit("exit", exit_status_code)
 
 
 if __name__ == "__main__":

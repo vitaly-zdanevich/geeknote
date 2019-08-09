@@ -10,7 +10,11 @@ ERROR_LOG = os.path.join(APP_DIR, "error.log")
 ALWAYS_USE_YINXIANG = False  # for 印象笔记 (Yìnxiàng bǐjì), set to True
 
 # !!! DO NOT EDIT !!! >>>
-if ALWAYS_USE_YINXIANG or os.getenv("GEEKNOTE_BASE") == "yinxiang" or os.path.isfile(os.path.join(APP_DIR,"isyinxiang")):
+if (
+    ALWAYS_USE_YINXIANG
+    or os.getenv("GEEKNOTE_BASE") == "yinxiang"
+    or os.path.isfile(os.path.join(APP_DIR, "isyinxiang"))
+):
     USER_BASE_URL = "app.yinxiang.com"
 else:
     USER_BASE_URL = "www.evernote.com"
@@ -47,14 +51,14 @@ REMINDER_NONE = "NONE"
 REMINDER_DONE = "DONE"
 REMINDER_DELETE = "DELETE"
 # Shortcuts have a word and a number of seconds to add to the current time
-REMINDER_SHORTCUTS = {'TOMORROW': 86400000, 'WEEK': 604800000}
+REMINDER_SHORTCUTS = {"TOMORROW": 86400000, "WEEK": 604800000}
 
 # Default file extensions for editing markdown and raw ENML, respectively
-DEF_NOTE_EXT = ['.markdown', '.org']
+DEF_NOTE_EXT = [".markdown", ".org"]
 # Accepted markdown extensions
-MARKDOWN_EXTENSIONS = ['.md', '.markdown']
+MARKDOWN_EXTENSIONS = [".md", ".markdown"]
 # Accepted html extensions
-HTML_EXTENSIONS = ['.html', '.org']
+HTML_EXTENSIONS = [".html", ".org"]
 
 DEV_MODE = False
 DEBUG = False
@@ -74,7 +78,9 @@ if DEV_MODE:
     CONSUMER_KEY = CONSUMER_KEY_SANDBOX
     CONSUMER_SECRET = CONSUMER_SECRET_SANDBOX
     USER_BASE_URL = USER_BASE_URL_SANDBOX
-    APP_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config")
+    APP_DIR = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config"
+    )
     sys.stderr.write("Developer mode: using %s as application directory\n" % APP_DIR)
 
 ERROR_LOG = os.path.join(APP_DIR, "error.log")
@@ -93,5 +99,5 @@ if DEV_MODE:
     CONSUMER_SECRET = CONSUMER_SECRET_SANDBOX
     USER_BASE_URL = USER_BASE_URL_SANDBOX
 
-NOTE_WEBCLIENT_URL = NOTE_WEBCLIENT_URL.replace('%service%', USER_BASE_URL)
-NOTE_LINK = NOTE_LINK.replace('%service%', USER_BASE_URL)
+NOTE_WEBCLIENT_URL = NOTE_WEBCLIENT_URL.replace("%service%", USER_BASE_URL)
+NOTE_LINK = NOTE_LINK.replace("%service%", USER_BASE_URL)

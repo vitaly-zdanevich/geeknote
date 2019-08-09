@@ -9,6 +9,7 @@ import evernote.edam.userstore.UserStore as UserStore
 import thrift.protocol.TBinaryProtocol as TBinaryProtocol
 from thrift.Thrift import TType, TMessageType
 from thrift.transport import TTransport
+
 try:
     from thrift.protocol import fastbinary
 except:
@@ -21,14 +22,21 @@ class getNoteStoreUrl_args(object):
      - authenticationToken
     """
 
-    thrift_spec = (None, (1, TType.STRING, 'authenticationToken', None, None, ), )
+    thrift_spec = (None, (1, TType.STRING, "authenticationToken", None, None))
 
-    def __init__(self, authenticationToken=None,):
+    def __init__(self, authenticationToken=None):
         self.authenticationToken = authenticationToken
 
     def read(self, iprot):
-        if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
-            fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+        if (
+            iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+            and fastbinary is not None
+        ):
+            fastbinary.decode_binary(
+                self, iprot.trans, (self.__class__, self.thrift_spec)
+            )
             return
         iprot.readStructBegin()
         while True:
@@ -46,12 +54,18 @@ class getNoteStoreUrl_args(object):
         iprot.readStructEnd()
 
     def write(self, oprot):
-        if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
-            oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+        if (
+            oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated
+            and self.thrift_spec is not None
+            and fastbinary is not None
+        ):
+            oprot.trans.write(
+                fastbinary.encode_binary(self, (self.__class__, self.thrift_spec))
+            )
             return
-        oprot.writeStructBegin('getNoteStoreUrl_args')
+        oprot.writeStructBegin("getNoteStoreUrl_args")
         if self.authenticationToken is not None:
-            oprot.writeFieldBegin('authenticationToken', TType.STRING, 1)
+            oprot.writeFieldBegin("authenticationToken", TType.STRING, 1)
             oprot.writeString(self.authenticationToken)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -61,9 +75,8 @@ class getNoteStoreUrl_args(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.iteritems()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.iteritems()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
@@ -81,21 +94,38 @@ class getNoteStoreUrl_result(object):
     """
 
     thrift_spec = (
-        (0, TType.STRING, 'success', None, None,),
-        (1, TType.STRUCT, 'userException', (EDAMUserException,
-                                            EDAMUserException.thrift_spec), None,),
-        (2, TType.STRUCT, 'systemException', (EDAMSystemException, EDAMSystemException.thrift_spec), None,)
+        (0, TType.STRING, "success", None, None),
+        (
+            1,
+            TType.STRUCT,
+            "userException",
+            (EDAMUserException, EDAMUserException.thrift_spec),
+            None,
+        ),
+        (
+            2,
+            TType.STRUCT,
+            "systemException",
+            (EDAMSystemException, EDAMSystemException.thrift_spec),
+            None,
+        ),
     )
 
-    def __init__(self, success=None, userException=None, systemException=None,):
+    def __init__(self, success=None, userException=None, systemException=None):
         self.success = success
         self.userException = userException
         self.systemException = systemException
 
     def read(self, iprot):
-        if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
-            fastbinary.decode_binary(self, iprot.trans,
-                                     (self.__class__, self.thrift_spec))
+        if (
+            iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated
+            and isinstance(iprot.trans, TTransport.CReadableTransport)
+            and self.thrift_spec is not None
+            and fastbinary is not None
+        ):
+            fastbinary.decode_binary(
+                self, iprot.trans, (self.__class__, self.thrift_spec)
+            )
             return
         iprot.readStructBegin()
         while True:
@@ -127,20 +157,21 @@ class getNoteStoreUrl_result(object):
     def write(self, oprot):
         if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated:
             if self.thrift_spec is not None and fastbinary is not None:
-                oprot.trans.write(fastbinary.encode_binary(self, (self.__class__,
-                                                                  self.thrift_spec)))
+                oprot.trans.write(
+                    fastbinary.encode_binary(self, (self.__class__, self.thrift_spec))
+                )
                 return
-        oprot.writeStructBegin('getNoteStoreUrl_result')
+        oprot.writeStructBegin("getNoteStoreUrl_result")
         if self.success is not None:
-            oprot.writeFieldBegin('success', TType.STRING, 0)
+            oprot.writeFieldBegin("success", TType.STRING, 0)
             oprot.writeString(self.success)
             oprot.writeFieldEnd()
         if self.userException is not None:
-            oprot.writeFieldBegin('userException', TType.STRUCT, 1)
+            oprot.writeFieldBegin("userException", TType.STRUCT, 1)
             self.userException.write(oprot)
             oprot.writeFieldEnd()
         if self.systemException is not None:
-            oprot.writeFieldBegin('systemException', TType.STRUCT, 2)
+            oprot.writeFieldBegin("systemException", TType.STRUCT, 2)
             self.systemException.write(oprot)
             oprot.writeFieldEnd()
         oprot.writeFieldStop()
@@ -150,9 +181,8 @@ class getNoteStoreUrl_result(object):
         return
 
     def __repr__(self):
-        L = ['%s=%r' % (key, value)
-             for key, value in self.__dict__.iteritems()]
-        return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.iteritems()]
+        return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
@@ -162,9 +192,9 @@ class getNoteStoreUrl_result(object):
 
 
 class CustomClient(UserStore.Client):
-    '''
+    """
     Getting from old version API
-    '''
+    """
 
     def getNoteStoreUrl(self, authenticationToken):
         """
@@ -183,16 +213,14 @@ class CustomClient(UserStore.Client):
         return self.recv_getNoteStoreUrl()
 
     def send_getNoteStoreUrl(self, authenticationToken):
-        self._oprot.writeMessageBegin('getNoteStoreUrl',
-                                      TMessageType.CALL,
-                                      self._seqid)
+        self._oprot.writeMessageBegin("getNoteStoreUrl", TMessageType.CALL, self._seqid)
         args = getNoteStoreUrl_args()
         args.authenticationToken = authenticationToken
         args.write(self._oprot)
         self._oprot.writeMessageEnd()
         self._oprot.trans.flush()
 
-    def recv_getNoteStoreUrl(self, ):
+    def recv_getNoteStoreUrl(self,):
         (fname, mtype, rseqid) = self._iprot.readMessageBegin()
         if mtype == TMessageType.EXCEPTION:
             x = UserStore.TApplicationException()
@@ -210,7 +238,7 @@ class CustomClient(UserStore.Client):
             raise result.systemException
         raise UserStore.TApplicationException(
             UserStore.TApplicationException.MISSING_RESULT,
-            "getNoteStoreUrl failed: unknown result"
+            "getNoteStoreUrl failed: unknown result",
         )
 
 

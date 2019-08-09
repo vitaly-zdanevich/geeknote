@@ -12,13 +12,13 @@ from sqlalchemy.orm import sessionmaker
 import logging
 import config
 
-db_path = os.path.join(config.APP_DIR, 'database.db')
-engine = create_engine('sqlite:///' + db_path)
+db_path = os.path.join(config.APP_DIR, "database.db")
+engine = create_engine("sqlite:///" + db_path)
 Base = declarative_base()
 
 
 class Userprop(Base):
-    __tablename__ = 'user_props'
+    __tablename__ = "user_props"
 
     id = Column(Integer, primary_key=True)
     key = Column(String(255))
@@ -33,7 +33,7 @@ class Userprop(Base):
 
 
 class Setting(Base):
-    __tablename__ = 'settings'
+    __tablename__ = "settings"
 
     id = Column(Integer, primary_key=True)
     key = Column(String(255))
@@ -48,7 +48,7 @@ class Setting(Base):
 
 
 class Notebook(Base):
-    __tablename__ = 'notebooks'
+    __tablename__ = "notebooks"
 
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
@@ -65,7 +65,7 @@ class Notebook(Base):
 
 
 class Tag(Base):
-    __tablename__ = 'tags'
+    __tablename__ = "tags"
 
     id = Column(Integer, primary_key=True)
     tag = Column(String(255))
@@ -82,7 +82,7 @@ class Tag(Base):
 
 
 class Note(Base):
-    __tablename__ = 'notes'
+    __tablename__ = "notes"
 
     id = Column(Integer, primary_key=True)
     guid = Column(String(1000))
@@ -99,7 +99,7 @@ class Note(Base):
 
 
 class Search(Base):
-    __tablename__ = 'search'
+    __tablename__ = "search"
 
     id = Column(Integer, primary_key=True)
     search_obj = Column(PickleType())
@@ -117,6 +117,7 @@ class Storage(object):
     """
     Class for using database.
     """
+
     session = None
 
     def __init__(self):
@@ -132,6 +133,7 @@ class Storage(object):
             except Exception, e:
                 logging.error("%s : %s", func.__name__, str(e))
                 return False
+
         return wrapper
 
     @logging
@@ -152,8 +154,8 @@ class Storage(object):
         for item in self.session.query(Userprop).all():
             self.session.delete(item)
 
-        self.setUserprop('oAuthToken', oAuthToken)
-        self.setUserprop('info', info_obj)
+        self.setUserprop("oAuthToken", oAuthToken)
+        self.setUserprop("info", info_obj)
 
         return True
 
@@ -177,7 +179,7 @@ class Storage(object):
         return None if there is not oAuth token yet
         return False if something wrong
         """
-        return self.getUserprop('oAuthToken')
+        return self.getUserprop("oAuthToken")
 
     @logging
     def getUserInfo(self):
@@ -187,7 +189,7 @@ class Storage(object):
         return None if there is not oAuth token yet
         return False if something wrong
         """
-        return self.getUserprop('info')
+        return self.getUserprop("info")
 
     @logging
     def getUserprops(self):
