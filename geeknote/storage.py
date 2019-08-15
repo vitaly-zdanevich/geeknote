@@ -115,7 +115,7 @@ class Search(Base):
 
 class Storage(object):
     """
-    Class for using database.
+    Class for using database
     """
 
     session = None
@@ -139,11 +139,11 @@ class Storage(object):
     @logging
     def createUser(self, oAuthToken, info_obj):
         """
-        Create user. oAuthToken must be not empty string
+        Create a user
+        oAuthToken must be not empty string
         info_obj must be not empty string
         Previous user and user's properties will be removed
-        return True if all done
-        return False if something wrong
+        returns True if all done
         """
         if not oAuthToken:
             raise Exception("Empty oAuth token")
@@ -162,9 +162,8 @@ class Storage(object):
     @logging
     def removeUser(self):
         """
-        Remove user.
-        return True if all done
-        return False if something wrong
+        Remove user
+        returns True if all done
         """
         for item in self.session.query(Userprop).all():
             self.session.delete(item)
@@ -175,29 +174,26 @@ class Storage(object):
     def getUserToken(self):
         """
         Get user's oAuth token
-        return oAuth token if it exists
-        return None if there is not oAuth token yet
-        return False if something wrong
+        returns oAuth token if it exists
+        returns None if there is no oAuth token yet
         """
         return self.getUserprop("oAuthToken")
 
     @logging
     def getUserInfo(self):
         """
-        Get user's oAuth token
-        return oAuth token if it exists
-        return None if there is not oAuth token yet
-        return False if something wrong
+        Get user's "info" property value
+        returns info property value if it exists
+        returns None if there is no info property
         """
         return self.getUserprop("info")
 
     @logging
     def getUserprops(self):
         """
-        Get all user's properties
-        return list of dict if all done
-        return [] there are not any user's properties yet
-        return False if something wrong
+        Get all user properties
+        returns list of dict if all done
+        returns [] if there are not any user properties yet
         """
         props = self.session.query(Userprop).all()
         return [{item.key: pickle.loads(item.value)} for item in props]
@@ -205,9 +201,9 @@ class Storage(object):
     @logging
     def getUserprop(self, key):
         """
-        Get user's property by key
-        return property's value
-        return False if something wrong
+        Get user property by key
+        returns property's value if it the property exists
+        returns None if the property doesn't exist
         """
         instance = self.session.query(Userprop).filter_by(key=key).first()
         if instance:
@@ -218,9 +214,9 @@ class Storage(object):
     @logging
     def setUserprop(self, key, value):
         """
-        Set single user's property. User's property must have key and value
-        return True if all done
-        return False if something wrong
+        Set a single user property
+        User's property must have key and value
+        returns True if all done
         """
         value = pickle.dumps(value)
 
@@ -237,9 +233,10 @@ class Storage(object):
     @logging
     def delUserprop(self, key):
         """
-        Delete single user's property. User's property must have key
-        return True if done
-        return False if something wrong
+        Delete a single user property
+        User property must have key
+        returns True if all done
+        returns False if property didn't exist
         """
         instance = self.session.query(Userprop).filter_by(key=key).first()
         if instance:
@@ -250,9 +247,9 @@ class Storage(object):
     @logging
     def setSettings(self, settings):
         """
-        Set multuple settings. Settings must be an instanse dict
-        return True if all done
-        return False if something wrong
+        Set multiple settings
+        Settings must be an instance dict
+        returns True if all done
         """
         if not isinstance(settings, dict):
             raise Exception("Wrong settings")
@@ -275,9 +272,8 @@ class Storage(object):
     def getSettings(self):
         """
         Get all settings
-        return list of dict if all done
-        return [] there are not any settings yet
-        return False if something wrong
+        returns list of dict if all done
+        returns {} there are not any settings yet
         """
         settings = self.session.query(Setting).all()
         result = {}
@@ -288,9 +284,9 @@ class Storage(object):
     @logging
     def setSetting(self, key, value):
         """
-        Set single setting. Settings must have key and value
-        return True if all done
-        return False if something wrong
+        Set single setting
+        Setting must have key and value
+        returns True if all done
         """
         instance = self.session.query(Setting).filter_by(key=key).first()
         if instance:
@@ -305,9 +301,9 @@ class Storage(object):
     @logging
     def getSetting(self, key):
         """
-        Get setting by key
-        return setting's value
-        return False if something wrong
+        Get a setting by key
+        returns setting's value if setting exists
+        returns None if setting doesn't exist
         """
         instance = self.session.query(Setting).filter_by(key=key).first()
         if instance:
@@ -318,10 +314,10 @@ class Storage(object):
     @logging
     def setTags(self, tags):
         """
-        Set tags. Tags must be an instanse of dict
+        Set tags
+        Tags must be an instance of dict
         Previous tags items will be removed
-        return True if all done
-        return False if something wrong
+        returns True if all done
         """
         if not isinstance(tags, dict):
             raise Exception("Wrong tags")
@@ -343,9 +339,8 @@ class Storage(object):
     def getTags(self):
         """
         Get all tags
-        return list of dicts of tags if all done
-        return [] there are not any tags yet
-        return False if something wrong
+        returns list of dicts of tags if all done
+        returns {} if there are not any tags yet
         """
         tags = self.session.query(Tag).all()
         result = {}
@@ -356,10 +351,10 @@ class Storage(object):
     @logging
     def setNotebooks(self, notebooks):
         """
-        Set notebooks. Notebooks must be an instanse of dict
+        Set notebooks
+        Notebooks must be an instance of dict
         Previous notebooks items will be removed
-        return True if all done
-        return False if something wrong
+        returns True if all done
         """
         if not isinstance(notebooks, dict):
             raise Exception("Wrong notebooks")
@@ -381,9 +376,8 @@ class Storage(object):
     def getNotebooks(self):
         """
         Get all notebooks
-        return list of notebooks if all done
-        return [] there are not any notebooks yet
-        return False if something wrong
+        returns list of notebooks if all done
+        returns {} there are not any notebooks yet
         """
         notebooks = self.session.query(Notebook).all()
         result = {}
@@ -394,7 +388,9 @@ class Storage(object):
     @logging
     def setNote(self, obj):
         """
-        Set note.
+        Remembers a note, indexed by GUID
+        Note can be retrieved by GUID later
+        returns True
         """
         for item in self.session.query(Note).filter(Note.guid == obj.guid).all():
             self.session.delete(item)
@@ -409,7 +405,9 @@ class Storage(object):
     @logging
     def getNote(self, guid):
         """
-        Get note by GUID.
+        Get note by GUID
+        returns note if found by GUID
+        returns None if note is not found
         """
         note = self.session.query(Note).filter(Note.guid == guid).first()
         if note:
@@ -420,10 +418,9 @@ class Storage(object):
     @logging
     def setSearch(self, search_obj):
         """
-        Set searching.
+        Remembers a search
         Previous searching items will be removed
         return True if all done
-        return False if something wrong
         """
         for item in self.session.query(Search).all():
             self.session.delete(item)
@@ -438,10 +435,9 @@ class Storage(object):
     @logging
     def getSearch(self):
         """
-        Get last searching
-        return list of dicts of last searching if all done
-        return [] there are not any searching yet
-        return False if something wrong
+        Get last search
+        return last search if it exists
+        return None there are not any searches yet
         """
         search = self.session.query(Search).first()
         if search:
