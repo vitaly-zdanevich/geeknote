@@ -949,7 +949,7 @@ class Notes(GeekNoteConnector):
         result = True
         prevChecksum = editor.getTempfileChecksum()
         while True:
-            if prevChecksum != editor.getTempfileChecksum() and result:
+            if (prevChecksum != editor.getTempfileChecksum() or not note) and result:
                 newContent = open(editor.tempfile, "r").read()
                 ext = os.path.splitext(editor.tempfile)[1]
                 mapping = {
