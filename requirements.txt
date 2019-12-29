@@ -5,7 +5,6 @@ markdown2
 thrift
 beautifulsoup4
 proxyenv
-pysqlite
 lxml
 
 # Testing requirements
