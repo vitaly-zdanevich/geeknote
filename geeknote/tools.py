@@ -73,10 +73,6 @@ def exitErr(message="exit", code=1):
     _exit(message, code)
 
 
-def KeyboardInterruptSignalHendler(signal, frame):
-    exit()
-
-
 class Struct:
     def __init__(self, **entries):
         self.__dict__.update(entries)
