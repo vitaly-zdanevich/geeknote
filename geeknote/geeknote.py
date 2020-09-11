@@ -320,7 +320,7 @@ class GeekNote(object):
     @EdamException
     def loadNoteContent(self, note):
         """ modify Note object """
-        if not isinstance(note, object):
+        if not isinstance(note, Types.Note):
             raise Exception(
                 "Note content must be an " "instance of Note, '%s' given." % type(note)
             )
@@ -339,7 +339,7 @@ class GeekNote(object):
 
     @EdamException
     def loadLinkedNoteContent(self, note):
-        if not isinstance(note, object):
+        if not isinstance(note, Types.Note):
             raise Excetion(
                 "Note content must be an " "instance of Note, '%s' given." % type(note)
             )
@@ -1397,7 +1397,8 @@ class Notes(GeekNoteConnector):
                     note = out.SelectSearchResult(result.notes)
 
         logging.debug("Selected note: %s" % str(note))
-        note = self.getEvernote().getNote(note.guid)
+        if note:
+            note = self.getEvernote().getNote(note.guid)
         return note
 
     def find(
