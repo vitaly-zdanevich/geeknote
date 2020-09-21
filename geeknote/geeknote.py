@@ -303,7 +303,11 @@ class GeekNote(object):
         )
 
         # Reduces the count by the amount of notes already retrieved
-        count = max(count - len(result.notes), 0)
+        # In none are initially retrieved, presume no more exist to retrieve
+        if result.notes:
+            count = max(count - len(result.notes), 0)
+        else:
+            count = 0
 
         # Evernote api will only return so many notes in one go. Checks for more
         # notes to come whilst obeying count rules
@@ -312,8 +316,11 @@ class GeekNote(object):
             newresult = self.getNoteStore().findNotesMetadata(
                 self.authToken, noteFilter, offset, count, meta
             )
-            result.notes += newresult.notes
-            count = max(count - len(newresult.notes), 0)
+            if newresult.notes:
+                result.notes += newresult.notes
+                count = max(count - len(newresult.notes), 0)
+            else:
+                count = 0
 
         return result
 
