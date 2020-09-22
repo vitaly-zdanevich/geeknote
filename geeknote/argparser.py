@@ -680,7 +680,7 @@ class argparser(object):
         if self.CMD is None or self.CMD not in self.COMMANDS:
             tab = len(max(self.COMMANDS.keys(), key=len))
             out.printLine("Available commands:")
-            for cmd in self.COMMANDS:
+            for cmd in sorted(self.COMMANDS):
                 out.printLine(
                     "%s : %s" % (cmd.rjust(tab, " "), self.COMMANDS[cmd]["help"])
                 )
