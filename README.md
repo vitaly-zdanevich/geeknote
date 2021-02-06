@@ -503,7 +503,7 @@ geeknote notebook-list [--guid]
 | ‑‑guid             |                 | Show GUID of the notebook as substitute for result index. |
 
 ### Notebooks: creating a notebook
-With Geeknote you can create notebooks in Ever.0.0note right in console!
+With Geeknote you can create notebooks in Evernote right in console!
 
 ##### Synopsis
 
@@ -665,7 +665,7 @@ gnsync --path <path to directory which to sync>
 | ‑‑download-only    |                 | Normally *gnsync* will only upload files. Adding this flag will make it download notes, but not upload any files |
 
 ##### Description
-The application *gnsync* is very useful in system adminstration, because you can syncronize you local logs, statuses and any other production information with Evernote.
+The application *gnsync* is very useful in system administration, because you can syncronize you local logs, statuses and any other production information with Evernote.
 
 ##### Examples
 
