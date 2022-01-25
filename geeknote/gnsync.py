@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import codecs
@@ -16,17 +16,17 @@ import evernote.edam.type.ttypes as Types
 from evernote.edam.limits.constants import EDAM_USER_NOTES_MAX
 from bs4 import BeautifulSoup
 
-import config
-from geeknote import GeekNote
-from storage import Storage
-from editor import Editor
-import tools
+from . import config
+from .geeknote import GeekNote
+from .storage import Storage
+from .editor import Editor
+from . import tools
 
 # for prototyping...
 # refactor should move code depending on these modules elsewhere
 import thrift.protocol.TBinaryProtocol as TBinaryProtocol
 import thrift.transport.THttpClient as THttpClient
-import urlparse
+import urllib.parse
 import evernote.edam.notestore.NoteStore as NoteStore
 
 # set default logger (write log to file)
@@ -40,7 +40,7 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
 # http://en.wikipedia.org/wiki/Unicode_control_characters
-CONTROL_CHARS_RE = re.compile(u"[\x00-\x08\x0e-\x1f\x7f-\x9f]")
+CONTROL_CHARS_RE = re.compile("[\x00-\x08\x0e-\x1f\x7f-\x9f]")
 
 
 def remove_control_characters(s):
@@ -51,7 +51,7 @@ def log(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except Exception, e:
+        except Exception as e:
             logger.exception("%s", str(e))
 
     return wrapper
@@ -192,7 +192,7 @@ class GNSync:
                     if "tags" not in meta
                     else meta["tags"].replace("[", "").replace("]", "").split(",")
                 )
-                tags = None if not tags else map(lambda x: x.strip(), tags)
+                tags = None if not tags else [x.strip() for x in tags]
                 meta["tags"] = tags
                 meta["title"] = title
                 note = None
@@ -599,8 +599,8 @@ def main():
         if args.all_linked:
             my_map = {}
             for notebook in all_linked_notebooks():
-                print "Syncing notebook: " + notebook.shareName
-                notebook_url = urlparse.urlparse(notebook.noteStoreUrl)
+                print("Syncing notebook: " + notebook.shareName)
+                notebook_url = urllib.parse.urlparse(notebook.noteStoreUrl)
                 sharedNoteStoreClient = THttpClient.THttpClient(notebook.noteStoreUrl)
                 sharedNoteStoreProtocol = TBinaryProtocol.TBinaryProtocol(
                     sharedNoteStoreClient
@@ -621,9 +621,9 @@ def main():
 
                 noteList = sharedNoteStore.findNotes(sharedAuthToken, my_filter, 0, 10)
 
-                print "Found " + str(noteList.totalNotes) + " shared notes."
+                print("Found " + str(noteList.totalNotes) + " shared notes.")
 
-                print noteList.notes
+                print(noteList.notes)
 
                 filename = notebook.shareName + "-" + noteList.notes[0].title + ".html"
 
@@ -673,7 +673,7 @@ def main():
     except (KeyboardInterrupt, SystemExit, tools.ExitException):
         pass
 
-    except Exception, e:
+    except Exception as e:
         logger.error(str(e))
 
 

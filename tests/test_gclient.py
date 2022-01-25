@@ -9,7 +9,7 @@ from geeknote.geeknote import UserStore
 class testGclient(unittest.TestCase):
 
     def test_patched_client(self):
-        self.assertEquals(UserStore.Client, CustomClient)
+        self.assertEqual(UserStore.Client, CustomClient)
 
     def test_patched_client_contain_methods(self):
         METHODS = dir(UserStore.Client)

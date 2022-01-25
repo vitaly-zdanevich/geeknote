@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from geeknote.argparser import *
-from cStringIO import StringIO
+from io import StringIO
 import sys
 import unittest
 
