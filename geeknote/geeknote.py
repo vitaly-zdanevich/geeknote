@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 import traceback
@@ -19,16 +19,16 @@ from evernote.edam.notestore.ttypes import NotesMetadataResultSpec
 import evernote.edam.type.ttypes as Types
 from evernote.edam.limits.constants import EDAM_USER_NOTES_MAX
 
-from __init__ import __version__
-import config
-import tools
-import out
-from editor import Editor, EditorThread
-from gclient import GUserStore as UserStore
-from argparser import argparser
-from oauth import GeekNoteAuth, OAuthError
-from storage import Storage
-from log import logging
+from .__init__ import __version__
+from . import config
+from . import tools
+from . import out
+from .editor import Editor, EditorThread
+from .gclient import GUserStore as UserStore
+from .argparser import argparser
+from .oauth import GeekNoteAuth, OAuthError
+from .storage import Storage
+from .log import logging
 
 
 def GeekNoneDBConnectOnly(func):
@@ -108,7 +108,7 @@ class GeekNote(object):
             while True:
                 try:
                     result = func(wrapped_object, *args, **kwargs)
-                except Exception, e:
+                except Exception as e:
                     logging.error("Error: %s : %s", func.__name__, str(e))
 
                     if hasattr(e, "errorCode"):
@@ -133,13 +133,13 @@ class GeekNote(object):
                         # hammering the server on scripts
                         elif errorCode == 19:
                             if sleepOnRateLimit:
-                                print (
+                                print(
                                     "\nRate Limit Hit: Sleeping %s seconds before continuing"
                                     % str(e.rateLimitDuration)
                                 )
                                 time.sleep(e.rateLimitDuration)
                             else:
-                                print (
+                                print(
                                     "\nRate Limit Hit: Please wait %s seconds before continuing"
                                     % str(e.rateLimitDuration)
                                 )
@@ -182,7 +182,7 @@ class GeekNote(object):
         if GeekNote.noteStore:
             return GeekNote.noteStore
 
-        noteStoreUrl = self.getUserStore().getNoteStoreUrl(self.authToken)
+        noteStoreUrl = str(self.getUserStore().getNoteStoreUrl(self.authToken),'utf-8')
         noteStoreHttpClient = THttpClient.THttpClient(noteStoreUrl)
         noteStoreProtocol = TBinaryProtocol.TBinaryProtocol(noteStoreHttpClient)
         GeekNote.noteStore = NoteStore.Client(noteStoreProtocol)
@@ -212,7 +212,7 @@ class GeekNote(object):
             self.authToken = GNA.getToken()
         except OAuthError as exc:
             out.preloader.stop()
-            print exc.message
+            print(exc)
 
             import getpass
 
@@ -224,7 +224,7 @@ class GeekNote(object):
                 # few user would read the source code and moidfy setting in config.py
                 # so I add this option to make it friendly.
                 if (
-                    raw_input("Which service? [1]Evernote Global [2]Yinxiang China:  ")
+                    input("Which service? [1]Evernote Global [2]Yinxiang China:  ")
                     == "2"
                 ):
                     # yinxiang
@@ -386,7 +386,7 @@ class GeekNote(object):
 
         if resources:
             """ make EverNote API resources """
-            note.resources = map(make_resource, resources)
+            note.resources = list(map(make_resource, resources))
 
             """ add to content """
             resource_nodes = ""
@@ -425,6 +425,10 @@ class GeekNote(object):
                 note.attributes = Types.NoteAttributes()
             note.attributes.sourceURL = url
 
+        try:
+            note.content = note.content.decode('utf-8')
+        except (UnicodeDecodeError, AttributeError):
+            pass
         logging.debug("New note : %s", note)
 
         return self.getNoteStore().createNote(self.authToken, note)
@@ -464,7 +468,7 @@ class GeekNote(object):
 
         if resources:
             """ make EverNote API resources """
-            note.resources = map(make_resource, resources)
+            note.resources = list(map(make_resource, resources))
 
             """ add to content """
             resource_nodes = ""
@@ -518,6 +522,10 @@ class GeekNote(object):
                 note.attributes = Types.NoteAttributes()
             note.attributes.sourceURL = url
 
+        try:
+            note.content = note.content.decode('utf-8')
+        except (UnicodeDecodeError, AttributeError):
+            pass
         logging.debug("Update note : %s", note)
 
         if not shared:
@@ -963,7 +971,7 @@ class Notes(GeekNoteConnector):
                     "markdown": config.MARKDOWN_EXTENSIONS,
                     "html": config.HTML_EXTENSIONS,
                 }
-                fmt = filter(lambda k: ext in mapping[k], mapping)
+                fmt = [k for k in mapping if ext in mapping[k]]
                 if fmt:
                     fmt = fmt[0]
 
@@ -1142,7 +1150,7 @@ class Notes(GeekNoteConnector):
         if len(candidate_notes) > 1:
             out.failureMessage("Error: multiple notes match the specified note title.")
             for n in candidate_notes:
-                print n.title
+                print(n.title)
             return tools.exitErr()
 
         the_note = candidate_notes[0]
@@ -1527,7 +1535,7 @@ class Notes(GeekNoteConnector):
         #                              + "\" with guid " + note.guid)
 
         all_dups = [
-            dups for id, dups in notes_dict.iteritems() if len(dups) > 1
+            dups for id, dups in notes_dict.items() if len(dups) > 1
         ]  # list of lists
         total_dups = sum(map(len, all_dups))  # count total
 
@@ -1562,7 +1570,7 @@ class Notes(GeekNoteConnector):
                     logging.debug('new note  "' + noteId + '" with guid ' + note.guid)
 
         all_dups = [
-            dups for id, dups in notes_dict.iteritems() if len(dups) > 1
+            dups for id, dups in notes_dict.items() if len(dups) > 1
         ]  # list of lists
         total_dups = sum(map(len, all_dups))  # count total
 
@@ -1782,11 +1790,10 @@ def main(args=None):
         if COMMAND == "tag-remove":
             Tags().remove(**ARGS)
 
-    except (KeyboardInterrupt, SystemExit, tools.ExitException), e:
-        if e.message:
-            exit_status_code = e.message
+    except (KeyboardInterrupt, SystemExit, tools.ExitException) as e:
+        exit_status_code = e.args[0]
 
-    except Exception, e:
+    except Exception as e:
         traceback.print_exc()
         logging.error("App error: %s", str(e))
 
