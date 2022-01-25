@@ -75,7 +75,7 @@ class getNoteStoreUrl_args(object):
         return
 
     def __repr__(self):
-        L = ["%s=%r" % (key, value) for key, value in self.__dict__.iteritems()]
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
         return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):
@@ -181,7 +181,7 @@ class getNoteStoreUrl_result(object):
         return
 
     def __repr__(self):
-        L = ["%s=%r" % (key, value) for key, value in self.__dict__.iteritems()]
+        L = ["%s=%r" % (key, value) for key, value in self.__dict__.items()]
         return "%s(%s)" % (self.__class__.__name__, ", ".join(L))
 
     def __eq__(self, other):

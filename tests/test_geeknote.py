@@ -3,7 +3,7 @@
 import sys
 import time
 import unittest
-from cStringIO import StringIO
+from io import StringIO
 from geeknote.geeknote import *
 from geeknote import tools
 from geeknote.editor import Editor

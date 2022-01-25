@@ -2,15 +2,15 @@
 
 import getpass
 import threading
-import thread
+import _thread
 import time
 import datetime
 import sys
 import os.path
 
-from __init__ import __version__
-import tools
-import config
+from .__init__ import __version__
+from . import tools
+from . import config
 
 
 def preloaderPause(fn, *args, **kwargs):
@@ -58,7 +58,7 @@ class preloader(object):
             return
         preloader.counter = 0
         preloader.isLaunch = True
-        thread.start_new_thread(preloader.draw, ())
+        _thread.start_new_thread(preloader.draw, ())
 
     @staticmethod
     def stop():
@@ -75,7 +75,7 @@ class preloader(object):
         if threading.current_thread().__class__.__name__ == "_MainThread":
             sys.exit(code)
         else:
-            thread.exit()
+            _thread.exit()
 
     @staticmethod
     def draw():
@@ -110,7 +110,7 @@ def _getCredentialsFromFile():
             # execfile doesn't work reliably for assignments, see python docs
             with open(creds, "r") as f:
                 # this sets "credentials" if correctly formatted
-                exec f.read()
+                exec(f.read())
             try:
                 return credentials.split(":")
             except:
@@ -140,7 +140,7 @@ def GetUserCredentials():
 
         if password is None:
             password = rawInput("Password: ", True)
-    except (KeyboardInterrupt, SystemExit), e:
+    except (KeyboardInterrupt, SystemExit) as e:
         if e.message:
             tools.exit(e.message)
         else:
@@ -160,7 +160,7 @@ def GetUserAuthCode():
         code = None
         if code is None:
             code = rawInput("Two-Factor Authentication Code: ")
-    except (KeyboardInterrupt, SystemExit), e:
+    except (KeyboardInterrupt, SystemExit) as e:
         if e.message:
             tools.exit(e.message)
         else:
@@ -193,7 +193,7 @@ def confirm(message):
             if answer.lower() in ["no", "n"]:
                 return False
             failureMessage('Incorrect answer "%s", ' "please try again:\n" % answer)
-    except (KeyboardInterrupt, SystemExit), e:
+    except (KeyboardInterrupt, SystemExit) as e:
         if e.message:
             tools.exit(e.message)
         else:
@@ -211,7 +211,7 @@ def showNote(note, id, shardId):
     printLine("Notebook: %s" % note.notebookName)
     printLine("Created: %s" % printDate(note.created))
     printLine("Updated: %s" % printDate(note.updated))
-    for key, value in note.attributes.__dict__.items():
+    for key, value in list(note.attributes.__dict__.items()):
         if value and key not in ("reminderOrder", "reminderTime", "reminderDoneTime"):
             printLine("%s: %s" % (key, value))
     separator("|", "REMINDERS")
@@ -222,14 +222,14 @@ def showNote(note, id, shardId):
     if note.tagNames:
         printLine("Tags: %s" % ", ".join(note.tagNames))
 
-    from editor import Editor
+    from .editor import Editor
 
     printLine(Editor.ENMLtoText(note.content))
 
 
 @preloaderStop
 def showNoteRaw(note):
-    from editor import Editor
+    from .editor import Editor
 
     printLine(Editor.ENMLtoText(note.content, "pre"))
 
@@ -275,7 +275,7 @@ def failureMessage(message):
 def separator(symbol="", title=""):
     size = 40
     if title:
-        sw = (size - len(title) + 2) / 2
+        sw = int((size - len(title) + 2) / 2)
         printLine(
             "%s %s %s" % (symbol * sw, title, symbol * (sw - (len(title) + 1) % 2))
         )
@@ -324,7 +324,7 @@ def printList(
                 else item.name
                 if hasattr(item, "name")
                 else item.shareName,
-                "".join(map(lambda s: " #" + s, item.tagGuids))
+                "".join([" #" + s for s in item.tagGuids])
                 if showTags and hasattr(item, "tagGuids") and item.tagGuids
                 else "",
                 " " + (">>> " + config.NOTE_WEBCLIENT_URL % item.guid)
@@ -348,7 +348,7 @@ def printList(
                 if num == "0" or num == "q":
                     exit(1)
                 failureMessage('Incorrect number "%s", ' "please try again:\n" % num)
-        except (KeyboardInterrupt, SystemExit), e:
+        except (KeyboardInterrupt, SystemExit) as e:
             if e.message:
                 tools.exit(e.message)
             else:
@@ -359,7 +359,7 @@ def rawInput(message, isPass=False):
     if isPass:
         data = getpass.getpass(message)
     else:
-        data = raw_input(message)
+        data = input(message)
     return tools.stdinEncode(data)
 
 
@@ -377,6 +377,11 @@ def printLine(line, endLine="\n", out=None):
     # "out = sys.stdout" makes it hard to mock
     if out is None:
         out = sys.stdout
+
+    try:
+        line = line.decode()
+    except (UnicodeDecodeError, AttributeError):
+        pass
 
     message = line + endLine
     message = tools.stdoutEncode(message)

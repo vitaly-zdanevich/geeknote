@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 
-import httplib
+import http.client
 import time
-import Cookie
+import http.cookies
 import uuid
 import re
 import base64
-from urllib import urlencode, unquote, getproxies, proxy_bypass
-from urlparse import urlparse
+from urllib.request import getproxies
+from urllib.parse import urlencode, unquote
+from urllib.parse import urlparse
 from lxml import html
 
-import out
-import tools
-import config
-from log import logging
+from . import out
+from . import tools
+from . import config
+from .log import logging
 
 
 class OAuthError(Exception):
@@ -95,7 +96,7 @@ class GeekNoteAuth(object):
         }
 
         if kwargs:
-            params = dict(params.items() + kwargs.items())
+            params = dict(list(params.items()) + list(kwargs.items()))
 
         return params
 
@@ -108,7 +109,7 @@ class GeekNoteAuth(object):
             url = "https://" + url
         urlData = urlparse(url)
         if not uri:
-            url = "%s://%s"(urlData.scheme, urlData.netloc)
+            url = "%s://%s"%(urlData.scheme, urlData.netloc)
             uri = urlData.path + "?" + urlData.query
 
         # prepare params, append to uri
@@ -121,14 +122,14 @@ class GeekNoteAuth(object):
         # insert local cookies in request
         headers = {
             "Cookie": "; ".join(
-                [key + "=" + self.cookies[key] for key in self.cookies.keys()]
+                [key + "=" + self.cookies[key] for key in list(self.cookies.keys())]
             )
         }
 
         if method == "POST":
             headers["Content-type"] = "application/x-www-form-urlencoded"
 
-        if self._proxy is None or proxy_bypass(urlData.hostname):
+        if self._proxy is None:
             host = urlData.hostname
             port = urlData.port
             real_host = real_port = None
@@ -146,7 +147,7 @@ class GeekNoteAuth(object):
             headers["Cookie"],
         )
 
-        conn = httplib.HTTPSConnection(host, port)
+        conn = http.client.HTTPSConnection(host, port)
 
         if real_host is not None:
             conn.set_tunnel(real_host, real_port, headers=self._proxy_auth)
@@ -166,11 +167,11 @@ class GeekNoteAuth(object):
         )
 
         # update local cookies
-        sk = Cookie.SimpleCookie(response.getheader("Set-Cookie", ""))
+        sk = http.cookies.SimpleCookie(response.getheader("Set-Cookie", ""))
         for key in sk:
             self.cookies[key] = sk[key].value
         # delete cookies whose content is "deleteme"
-        for key in self.cookies.keys():
+        for key in list(self.cookies.keys()):
             if self.cookies[key] == "deleteme":
                 del self.cookies[key]
 

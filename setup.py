@@ -44,14 +44,14 @@ class full_install(install):
             try:
                 if os.path.exists(dst):
                     shutil.copy(src, dst)
-                    print ("copying %s -> %s" % (src, dst))
+                    print("copying %s -> %s" % (src, dst))
             except IOError:
-                print (
+                print(
                     "cannot copy autocomplete script %s to %s, got root ?" % (src, dst)
                 )
-                print (traceback.format_exc())
+                print(traceback.format_exc())
 
-        print ("installing autocomplete")
+        print("installing autocomplete")
         copy_autocomplete(
             "completion/bash_completion/_geeknote", self.bash_completion_dir
         )
@@ -85,7 +85,7 @@ setup(
         "Topic :: Utilities",
     ],
     install_requires=[
-        "evernote>=1.25",
+        "evernote3",
         "html2text",
         "sqlalchemy",
         "markdown2",

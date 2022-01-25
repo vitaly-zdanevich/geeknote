@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from log import logging
-import out
+from .log import logging
+from . import out
 
 
 COMMANDS_DICT = {
@@ -442,7 +442,7 @@ class argparser(object):
         self.INPUT = sys_argv
 
         # list of commands
-        self.CMD_LIST = self.COMMANDS.keys()
+        self.CMD_LIST = list(self.COMMANDS.keys())
         # command
         self.CMD = None if self.LVL == 0 else self.INPUT[0]
         # list of possible arguments of the command line
@@ -497,7 +497,7 @@ class argparser(object):
             return False
 
         # prepare data
-        for arg, params in self.CMD_ARGS.items() + self.CMD_FLAGS.items():
+        for arg, params in list(self.CMD_ARGS.items()) + list(self.CMD_FLAGS.items()):
             # set values by default
             if "default" in params:
                 self.INP_DATA[arg] = params["default"]
@@ -514,7 +514,7 @@ class argparser(object):
             if len(self.INP) > 0:
                 # Check that first argument is a default argument
                 # and another argument.
-                if self.INP[0] not in (self.CMD_ARGS.keys() + self.CMD_FLAGS.keys()):
+                if self.INP[0] not in (list(self.CMD_ARGS.keys()) + list(self.CMD_FLAGS.keys())):
                     self.INP = [firstArg] + self.INP
             else:
                 self.INP = [firstArg]
@@ -592,7 +592,7 @@ class argparser(object):
                 return False
 
         # check whether there is a necessary argument request
-        for arg, params in self.CMD_ARGS.items() + self.CMD_FLAGS.items():
+        for arg, params in list(self.CMD_ARGS.items()) + list(self.CMD_FLAGS.items()):
             if "required" in params and arg not in self.INP:
                 self.printErrorReqArgument(arg)
                 return False
@@ -600,7 +600,7 @@ class argparser(object):
         # trim -- and ->_
         self.INP_DATA = dict(
             [key.lstrip("-").replace("-", "_"), val]
-            for key, val in self.INP_DATA.items()
+            for key, val in list(self.INP_DATA.items())
         )
         return self.INP_DATA
 
@@ -608,7 +608,7 @@ class argparser(object):
         # checking later values
         LAST_VAL = self.INP[-1] if self.LVL > 1 else None
         PREV_LAST_VAL = self.INP[-2] if self.LVL > 2 else None
-        ARGS_FLAGS_LIST = self.CMD_ARGS.keys() + self.CMD_FLAGS.keys()
+        ARGS_FLAGS_LIST = list(self.CMD_ARGS.keys()) + list(self.CMD_FLAGS.keys())
 
         # print root grid
         if self.CMD is None:
@@ -649,7 +649,7 @@ class argparser(object):
 
             # processing of the arguments
             else:
-                print ""  # "Please_input_%s" % INP_ARG.replace('-', '')
+                print("")  # "Please_input_%s" % INP_ARG.replace('-', '')
 
     def printGrid(self, list):
         out.printLine(" ".join(list))
@@ -678,7 +678,7 @@ class argparser(object):
 
     def printHelp(self):
         if self.CMD is None or self.CMD not in self.COMMANDS:
-            tab = len(max(self.COMMANDS.keys(), key=len))
+            tab = len(max(list(self.COMMANDS.keys()), key=len))
             out.printLine("Available commands:")
             for cmd in sorted(self.COMMANDS):
                 out.printLine(
@@ -687,7 +687,7 @@ class argparser(object):
 
         else:
 
-            tab = len(max(self.CMD_ARGS.keys() + self.CMD_FLAGS.keys(), key=len))
+            tab = len(max(list(self.CMD_ARGS.keys()) + list(self.CMD_FLAGS.keys()), key=len))
 
             out.printLine("Options for: %s" % self.CMD)
             out.printLine("Available arguments:")

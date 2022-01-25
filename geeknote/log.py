@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import config
+from . import config
 
 if config.DEBUG:
     FORMAT = "%(filename)s %(funcName)s %(lineno)d : %(message)s"
