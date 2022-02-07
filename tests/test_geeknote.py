@@ -77,6 +77,7 @@ class testNotes(unittest.TestCase):
         )
         self.assertEqual(testData["tags"], ["tag1", "tag2"])
 
+    # this doesn't seem to work in Python 3 - need help
     def check_editWithEditorInThread(self, txt, expected):
         testNote = tools.Struct(title="note title",
                                 content=txt)

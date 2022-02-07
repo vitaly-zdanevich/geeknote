@@ -1003,7 +1003,7 @@ class Notes(GeekNoteConnector):
                 if result:
                     prevChecksum = editor.getTempfileChecksum()
 
-            if not thread.isAlive():
+            if not thread.is_alive():
                 # check if thread is alive here before sleep to avoid losing data saved during this 5 secs
                 break
             thread.join(timeout=5)

@@ -148,7 +148,7 @@ class Editor(object):
         content = content.replace(chr(160), " ")  # no-break space
         content = Editor.HTMLUnescape(content)
 
-        return content.encode("utf-8")
+        return content
 
     @staticmethod
     def wrapENML(contentHTML):
@@ -282,7 +282,8 @@ class Editor(object):
         if not noteExtension:
             noteExtension = config.DEF_NOTE_EXT
         (tempfileHandler, tempfileName) = tempfile.mkstemp(suffix=noteExtension)
-        os.write(tempfileHandler, content if raw else self.ENMLtoText(content))
+        content = content if raw else self.ENMLtoText(content)
+        os.write(tempfileHandler, content.encode('utf-8'))
         os.close(tempfileHandler)
 
         self.content = content
