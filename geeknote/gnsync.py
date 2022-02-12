@@ -409,9 +409,10 @@ class GNSync:
                     )
                     logger.info("Saving image to {}".format(filename))
                     binaryHash = binascii.unhexlify(imageInfo["hash"])
-                    GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).saveMedia(
+                    if not GeekNote(sleepOnRateLimit=self.sleep_on_ratelimit).saveMedia(
                         note.guid, binaryHash, filename
-                    )
+                    ):
+                        logger.warning("Failed to save image {}".format(filename))
 
         content = Editor.ENMLtoText(note.content, self.imageOptions)
         path = os.path.join(self.path, escaped_title + self.extension)
