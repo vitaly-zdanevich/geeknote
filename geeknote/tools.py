@@ -83,14 +83,15 @@ def decodeArgs(args):
 
 
 def stdoutEncode(data):
-    try:
-        return data.decode("utf8").encode(sys.stdout.encoding)
-    except:
+    # this is not for logging output, it is for output from geeknote queries to evernote
+    if isinstance(sys.stdout.encoding, str) and sys.stdout.encoding != 'utf-8':
+        return data.encode('utf-8').decode(sys.stdout.encoding)
+    else:
         return data
 
 
 def stdinEncode(data):
-    try:
-        return data.decode(sys.stdin.encoding).encode("utf8")
-    except:
+    if isinstance(sys.stdin.encoding, str) and sys.stdin.encoding.lower() != 'utf-8':
+        return data.encode(sys.stdin.encoding).decode('utf-8')
+    else:
         return data

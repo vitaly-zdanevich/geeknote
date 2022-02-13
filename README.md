@@ -149,7 +149,7 @@ obtaining the personal token.
 $ geeknote settings
 Geeknote
 ******************************
-Version: 2.0.21
+Version: 3.0
 App dir: /Users/username/.geeknote
 Error log: /Users/username/.geeknote/error.log
 Current editor: vim

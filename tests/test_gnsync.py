@@ -40,19 +40,19 @@ _한국어 입력입니다. 잘 되나요?_
             shutil.rmtree(self.test_dir)
 
     def test_strip_eng(self):
-        self.assertEqual(remove_control_characters(self.given_eng.decode('utf-8')).encode('utf-8'),
+        self.assertEqual(remove_control_characters(self.given_eng),
                          self.expected_eng)
 
     def test_strip_kor(self):
-        self.assertEqual(remove_control_characters(self.given_kor.decode('utf-8')).encode('utf-8'),
+        self.assertEqual(remove_control_characters(self.given_kor),
                          self.expected_kor)
 
     def test_strip_chn(self):
-        self.assertEqual(remove_control_characters(self.given_chn.decode('utf-8')).encode('utf-8'),
+        self.assertEqual(remove_control_characters(self.given_chn),
                          self.expected_chn)
 
     def test_strip_nochange(self):
-        self.assertEqual(remove_control_characters(self.given_combined.decode('utf-8')).encode('utf-8'),
+        self.assertEqual(remove_control_characters(self.given_combined),
                          self.expected_combined)
 
     @patch('geeknote.gnsync.logger', autospec=True)
@@ -86,5 +86,5 @@ _한국어 입력입니다. 잘 되나요?_
             AnyStringWith("codec can't decode byte")
         )
 
-        with open(self.test_dir + "/Test Note.txt", 'r') as f:
+        with open(self.test_dir + "/Test Note.txt", 'r', encoding='utf-8') as f:
             self.assertIn("œ ž © µ ¶ å õ ý þ ß Ü", f.read())

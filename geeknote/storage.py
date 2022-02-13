@@ -278,7 +278,7 @@ class Storage(object):
         settings = self.session.query(Setting).all()
         result = {}
         for item in settings:
-            result[item.key] = item.value
+            result[item.key] = pickle.loads(item.value)
         return result
 
     @logging
@@ -307,7 +307,7 @@ class Storage(object):
         """
         instance = self.session.query(Setting).filter_by(key=key).first()
         if instance:
-            return str(instance.value)
+            return instance.value
         else:
             return None
 

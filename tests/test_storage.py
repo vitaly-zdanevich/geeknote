@@ -71,7 +71,7 @@ class storageTest(unittest.TestCase):
     def test_set_settings_success(self):
         self.storage.setSettings({'editor': 'vim'})
         self.assertEqual(self.storage.getSettings(),
-                          {'editor': "S'vim'\np0\n."})
+                         {'editor': "vim"})
 
     def test_set_setting_error_type_fail(self):
         self.assertFalse(self.storage.setSettings('editor'))
@@ -83,7 +83,7 @@ class storageTest(unittest.TestCase):
         self.storage.setSettings({'editor': 'vim'})
         self.assertTrue(self.storage.setSettings({'editor': 'nano'}))
         self.assertEqual(self.storage.getSettings(),
-                          {'editor': "S'nano'\np0\n."})
+                          {'editor': 'nano'})
 
     def test_get_setting_exist_success(self):
         self.storage.setSettings({'editor': 'vim'})
