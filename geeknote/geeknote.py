@@ -18,6 +18,7 @@ import evernote.edam.notestore.NoteStore as NoteStore
 from evernote.edam.notestore.ttypes import NotesMetadataResultSpec
 import evernote.edam.type.ttypes as Types
 from evernote.edam.limits.constants import EDAM_USER_NOTES_MAX
+from evernote.edam.error.ttypes import EDAMNotFoundException
 
 from .__init__ import __version__
 from . import config
@@ -148,6 +149,10 @@ class GeekNote(object):
                             out.failureMessage("Unknown error")
                             tools.exitErr()
 
+                    elif isinstance(e, EDAMNotFoundException):
+                        out.failureMessage("EDAMNotFoundException on %s with key %s"
+                                           % (e.identifier, e.key))
+                        return None
                     else:
                         out.failureMessage("Operation failed")
                         traceback.print_exc()
@@ -327,7 +332,7 @@ class GeekNote(object):
     @EdamException
     def loadNoteContent(self, note):
         """ modify Note object """
-        if not isinstance(note, Types.Note):
+        if not isinstance(note, object):
             raise Exception(
                 "Note content must be an " "instance of Note, '%s' given." % type(note)
             )
@@ -346,7 +351,7 @@ class GeekNote(object):
 
     @EdamException
     def loadLinkedNoteContent(self, note):
-        if not isinstance(note, Types.Note):
+        if not isinstance(note, object):
             raise Excetion(
                 "Note content must be an " "instance of Note, '%s' given." % type(note)
             )
@@ -623,6 +628,8 @@ class GeekNote(object):
         resource = self.getNoteStore().getResourceByHash(
             self.authToken, guid, mediaHash, True, False, False
         )
+        if resource == None:
+            return False
         open(filename, "w").write(resource.data.body)
         return True
 
