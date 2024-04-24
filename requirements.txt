@@ -1,4 +1,4 @@
-evernote3
+evernote2
 html2text
 sqlalchemy
 markdown2
