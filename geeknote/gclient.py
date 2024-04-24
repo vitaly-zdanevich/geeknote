@@ -4,8 +4,8 @@
 From old version API
 """
 
-from evernote.edam.error.ttypes import EDAMSystemException, EDAMUserException
-import evernote.edam.userstore.UserStore as UserStore
+from evernote2.edam.error.ttypes import EDAMSystemException, EDAMUserException
+import evernote2.edam.userstore.UserStore as UserStore
 import thrift.protocol.TBinaryProtocol as TBinaryProtocol
 from thrift.Thrift import TType, TMessageType
 from thrift.transport import TTransport

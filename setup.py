@@ -85,7 +85,7 @@ setup(
         "Topic :: Utilities",
     ],
     install_requires=[
-        "evernote3",
+        "evernote2",
         "html2text",
         "sqlalchemy",
         "markdown2",

@@ -13,12 +13,12 @@ import traceback
 import thrift.protocol.TBinaryProtocol as TBinaryProtocol
 import thrift.transport.THttpClient as THttpClient
 
-import evernote.edam.userstore.constants as UserStoreConstants
-import evernote.edam.notestore.NoteStore as NoteStore
-from evernote.edam.notestore.ttypes import NotesMetadataResultSpec
-import evernote.edam.type.ttypes as Types
-from evernote.edam.limits.constants import EDAM_USER_NOTES_MAX
-from evernote.edam.error.ttypes import EDAMNotFoundException
+import evernote2.edam.userstore.constants as UserStoreConstants
+import evernote2.edam.notestore.NoteStore as NoteStore
+from evernote2.edam.notestore.ttypes import NotesMetadataResultSpec
+import evernote2.edam.type.ttypes as Types
+from evernote2.edam.limits.constants import EDAM_USER_NOTES_MAX
+from evernote2.edam.error.ttypes import EDAMNotFoundException
 
 from .__init__ import __version__
 from . import config
@@ -187,7 +187,7 @@ class GeekNote(object):
         if GeekNote.noteStore:
             return GeekNote.noteStore
 
-        noteStoreUrl = str(self.getUserStore().getNoteStoreUrl(self.authToken),'utf-8')
+        noteStoreUrl = self.getUserStore().getNoteStoreUrl(self.authToken)
         noteStoreHttpClient = THttpClient.THttpClient(noteStoreUrl)
         noteStoreProtocol = TBinaryProtocol.TBinaryProtocol(noteStoreHttpClient)
         GeekNote.noteStore = NoteStore.Client(noteStoreProtocol)
