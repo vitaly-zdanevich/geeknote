@@ -28,6 +28,12 @@ brew install --HEAD https://raw.githubusercontent.com/jeffkowalski/geeknote/mast
 # This is from the previous repo owner - not tested
 ```
 
+#### Gentoo Guru
+
+```sh
+emerge -a geeknote
+```
+
 ##### Downloading and installing from source
 
 ``` sh
