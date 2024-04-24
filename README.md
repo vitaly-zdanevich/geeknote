@@ -1,6 +1,5 @@
-Important Note
+I did this fork to fix - so it the only fork of Geekntoe that WORKS, on Python 3.
 ===
-This is an updated version of geeknote for Python 3 using evernote-sdk-python3 (which is also in beta). Even though things are not throughly tested, basic functionality works.
 
 Geeknote for Evernote (or 印象笔记)  [![Travis CI](https://travis-ci.org/jeffkowalski/geeknote.svg?branch=master)](https://travis-ci.org/jeffkowalski/geeknote) [![Circle CI](https://circleci.com/gh/jeffkowalski/geeknote.svg?&style=shield)](https://circleci.com/gh/jeffkowalski/geeknote)
 ===
