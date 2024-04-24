@@ -1,7 +1,7 @@
 I did this fork to fix blocking error - so it is the only fork of Geeknote that WORKS, on Python 3. Looks like nobody else is interested in Geeknote anymore, so I declare this repo as main. Feel free to contribute.
 ===
 
-Geeknote for Evernote (or 印象笔记)  [![Travis CI](https://travis-ci.org/jeffkowalski/geeknote.svg?branch=master)](https://travis-ci.org/jeffkowalski/geeknote) [![Circle CI](https://circleci.com/gh/jeffkowalski/geeknote.svg?&style=shield)](https://circleci.com/gh/jeffkowalski/geeknote)
+Geeknote for Evernote (or 印象笔记)
 ===
 
 Geeknote is a command line client for Evernote that can be use on Linux, FreeBSD and OS X.
