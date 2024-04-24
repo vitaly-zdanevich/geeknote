@@ -44,7 +44,7 @@ sudo apt-get update; sudo apt-get -y install python-setuptools
 pip install wheel
 
 # Download the repository.
-git clone git://github.com/jeffkowalski/geeknote.git
+git clone git@github.com:vitaly-zdanevich/geeknote.git
 
 cd geeknote
 
