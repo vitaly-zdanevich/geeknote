@@ -30,6 +30,8 @@ brew install --HEAD https://raw.githubusercontent.com/jeffkowalski/geeknote/mast
 
 #### Gentoo Guru
 
+https://github.com/gentoo/guru/tree/master/app-doc/geeknote
+
 ```sh
 emerge -a geeknote
 ```
