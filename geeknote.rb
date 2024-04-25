@@ -1,13 +1,13 @@
 class Geeknote < Formula
   include Language::Python::Virtualenv
 
-  desc "Console client for Evernote."
-  homepage ""
+  desc "Console client for Evernote"
+  homepage "https://github.com/vitaly-zdanevich/geeknote"
   url "https://github.com/vitaly-zdanevich/geeknote/archive/refs/tags/v3.0.0.tar.gz"
   sha256 "a22b375f54d2ca533181da9c8e110fe00cb30f6c0e58fbd374c4b34ab945eb36"
   license "GPL-3.0"
 
-  depends_on "python"
+  depends_on "python@3"
 
   resource "beautifulsoup4" do
     url "https://files.pythonhosted.org/packages/b3/ca/824b1195773ce6166d388573fc106ce56d4a805bd7427b624e063596ec58/beautifulsoup4-4.12.3.tar.gz"
