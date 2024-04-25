@@ -1,11 +1,11 @@
 class Geeknote < Formula
   include Language::Python::Virtualenv
 
-  desc "Command-line client for Evernote"
-  homepage 'https://github.com/jeffkowalski/geeknote'
-  head 'https://github.com/jeffkowalski/geeknote.git'
+  desc "Command-line client for Evernote (without local cache - so you must be online to use it)"
+  homepage 'https://github.com/vitaly-zdanevich/geeknote'
+  head 'https://github.com/vitaly-zdanevich/geeknote.git'
 
-  depends_on "python@2"
+  depends_on "python@3"
 
   resource "websocket-client" do
     url "https://files.pythonhosted.org/packages/a7/2b/0039154583cb0489c8e18313aa91ccd140ada103289c5c5d31d80fd6d186/websocket_client-0.40.0.tar.gz"
