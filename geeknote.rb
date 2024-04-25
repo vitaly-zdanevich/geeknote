@@ -33,7 +33,7 @@ class Geeknote < Formula
   end
 
   resource "evernote2" do
-    url "https://github.com/JackonYang/evernote2/archive/refs/heads/master.zip"
+    url "https://github.com/JackonYang/evernote2/archive/1b2780e92cc1dbdea0da71aab3588933b04f21f6.zip"
     sha256 "69212c161e2538db13dd34e749125ff970f6c88aaa5f52f6925ffcf883107302"
   end
 
