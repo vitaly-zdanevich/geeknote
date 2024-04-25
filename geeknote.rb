@@ -32,8 +32,8 @@ class Geeknote < Formula
     sha256 "e404d3b7bd86c1bc931906098e7c1305d6a3a6dcef141b8bb1059903abb3ceeb"
   end
 
-  resource "evernote" do
-    url "https://files.pythonhosted.org/packages/3b/8e/dba34913e7dbccd868cdf228c5104f97ad97d4618994f0c5dd456496ae81/evernote-1.25.2.tar.gz"
+  resource "evernote2" do
+    url "https://github.com/JackonYang/evernote2/archive/refs/heads/master.zip"
     sha256 "69212c161e2538db13dd34e749125ff970f6c88aaa5f52f6925ffcf883107302"
   end
 
@@ -62,11 +62,6 @@ class Geeknote < Formula
     sha256 "b7f6c09155321169af03f9fb20dc15a4a0c7481e7c334a5ba8f7f0d864633209"
   end
 
-  resource "future" do
-    url "https://files.pythonhosted.org/packages/00/2b/8d082ddfed935f3608cc61140df6dcbf0edea1bc3ab52fb6c29ae3e81e85/future-0.16.0.tar.gz"
-    sha256 "e39ced1ab767b5936646cedba8bcce582398233d6a627067d4c6a454c90cfedb"
-  end
-
   # for proxyenv
   resource "docker-py" do
     url "https://files.pythonhosted.org/packages/fa/2d/906afc44a833901fc6fed1a89c228e5c88fbfc6bd2f3d2f0497fdfb9c525/docker-py-1.10.6.tar.gz"
@@ -86,11 +81,6 @@ class Geeknote < Formula
   resource "lxml" do
     url "https://files.pythonhosted.org/packages/39/e8/a8e0b1fa65dd021d48fe21464f71783655f39a41f218293c1c590d54eb82/lxml-3.7.3.tar.gz"
     sha256 "aa502d78a51ee7d127b4824ff96500f0181d3c7826e6ee7b800d068be79361c7"
-  end
-
-  resource "backports.ssl_match_hostname" do
-    url "https://files.pythonhosted.org/packages/76/21/2dc61178a2038a5cb35d14b61467c6ac632791ed05131dda72c20e7b9e23/backports.ssl_match_hostname-3.5.0.1.tar.gz"
-    sha256 "502ad98707319f4a51fa2ca1c677bd659008d27ded9f6380c79e8932e38dcdf2"
   end
 
   resource "docker-pycreds" do
