@@ -24,7 +24,7 @@ You can install Geeknote using [Homebrew](http://brew.sh/)/[Linuxbrew](https://g
 ##### Homebrew installation TODO publish to public cask
 
 ``` sh
-brew install --HEAD ./geeknote.rb
+brew install --HEAD https://raw.githubusercontent.com/vitaly-zdanevich/geeknote/master/geeknote.rb
 ```
 
 #### Gentoo Guru
