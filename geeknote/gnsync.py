@@ -12,8 +12,8 @@ import hashlib
 import binascii
 import mimetypes
 
-import evernote.edam.type.ttypes as Types
-from evernote.edam.limits.constants import EDAM_USER_NOTES_MAX
+import evernote2.edam.type.ttypes as Types
+from evernote2.edam.limits.constants import EDAM_USER_NOTES_MAX
 from bs4 import BeautifulSoup
 
 from . import config
@@ -27,7 +27,7 @@ from . import tools
 import thrift.protocol.TBinaryProtocol as TBinaryProtocol
 import thrift.transport.THttpClient as THttpClient
 import urllib.parse
-import evernote.edam.notestore.NoteStore as NoteStore
+import evernote2.edam.notestore.NoteStore as NoteStore
 
 # set default logger (write log to file)
 def_logpath = os.path.join(config.APP_DIR, "gnsync.log")
