@@ -58,8 +58,8 @@ python2 setup.py build
 pip2 install --upgrade .
 ```
 
-Autocompletion plugin is already bundled in oh-my-zsh. To enable just configure plugin definition
-`plugins=( ... geeknote ...)`
+Autocompletion plugin is already bundled in oh-my-zsh. To enable just configure plugin definition  
+`plugins=( ... geeknote ...)`  
 see more at https://github.com/s7anley/zsh-geeknote
 
 ##### Testing
