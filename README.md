@@ -49,18 +49,8 @@ cd geeknote
 
 # Installation
 
-# - if you have only a python2 environment,
 python setup.py build
 pip install --upgrade .
-
-# - or, to force python2 in python3 environments
-python2 setup.py build
-pip2 install --upgrade .
-```
-
-Autocompletion plugin is already bundled in oh-my-zsh. To enable just configure plugin definition  
-`plugins=( ... geeknote ...)`  
-see more at https://github.com/s7anley/zsh-geeknote
 
 ##### Testing
 Geeknote has a non-destructive unit test suite with fair coverage.
@@ -698,4 +688,3 @@ gnsync --path /home/project/xmpp/logs/
 * Roman Gladkov
 * Greg V
 * Ilya Shmygol
-* [@jeffkowalski](https://github.com/jeffkowalski) - previous maintainer of Geeknote, did a lot for the project, thanks!
