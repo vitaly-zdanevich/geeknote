@@ -698,3 +698,4 @@ gnsync --path /home/project/xmpp/logs/
 * Roman Gladkov
 * Greg V
 * Ilya Shmygol
+* [@jeffkowalski](https://github.com/jeffkowalski) - previous maintainer of Geeknote, did a lot for the project, thanks!
