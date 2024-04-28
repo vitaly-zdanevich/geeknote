@@ -24,7 +24,7 @@ jobs:
     - name: Install Geeknote
       run: |
         pip install .
-        python -c 'import evernote2' # TODO Debug line
+        python -c 'import evernote2; print("------------------------ hi ---------------")' # TODO Debug line
     - name: Running unit tests with pytest
       run: |
         pytest
