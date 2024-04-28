@@ -1,4 +1,4 @@
-name: Pylint
+name: lint-and-test
 
 on: [push]
 
@@ -17,7 +17,10 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint
+        pip install pylint pytest
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
+    - name: Running unit tests with pytest
+      run: |
+        pytest
