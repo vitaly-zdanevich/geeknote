@@ -21,7 +21,9 @@ jobs:
     # - name: Analysing the code with pylint
       # run: |
         # pylint $(git ls-files '*.py')
-    - name: Running unit tests with pytest
+    - name: Install Geeknote
       run: |
         pip install .
+    - name: Running unit tests with pytest
+      run: |
         pytest
