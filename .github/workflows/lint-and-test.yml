@@ -23,4 +23,5 @@ jobs:
         # pylint $(git ls-files '*.py')
     - name: Running unit tests with pytest
       run: |
+        pip install --upgrade .
         pytest
