@@ -28,3 +28,7 @@ jobs:
     - name: Running unit tests with pytest
       run: |
         pytest
+
+    - name: ChatGPT CodeReviewer
+      uses: anc95/ChatGPT-CodeReview@v1.0.13
+            
