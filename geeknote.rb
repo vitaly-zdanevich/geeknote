@@ -1,16 +1,14 @@
 class Geeknote < Formula
   include Language::Python::Virtualenv
 
-  desc "Console client for Evernote"
-  homepage "https://github.com/vitaly-zdanevich/geeknote"
-  url "https://github.com/vitaly-zdanevich/geeknote/archive/refs/tags/v3.0.0.tar.gz"
-  sha256 "a22b375f54d2ca533181da9c8e110fe00cb30f6c0e58fbd374c4b34ab945eb36"
+  desc "Console client for Evernote. This is the current alive fork (in 2024)"
+  homepage ""
+  url "https://github.com/vitaly-zdanevich/geeknote/archive/refs/tags/v3.0.1.tar.gz"
+  version "3.0.1"
+  sha256 "cb7443555fa9235691ab588c5d054926e2d7fe21470eae5106322383c7fb7d27"
   license "GPL-3.0"
-  depends_on "python"
 
-  head do
-    url "https://github.com/vitaly-zdanevich/geeknote.git"
-  end
+  depends_on "python"
 
   resource "beautifulsoup4" do
     url "https://files.pythonhosted.org/packages/b3/ca/824b1195773ce6166d388573fc106ce56d4a805bd7427b624e063596ec58/beautifulsoup4-4.12.3.tar.gz"
@@ -38,8 +36,8 @@ class Geeknote < Formula
   end
 
   resource "evernote2" do
-    url "https://files.pythonhosted.org/packages/5d/ce/a32d2620fb0b267f7c586f15921b33ee1c3a53c04cc78d1acc148922c24b/evernote2-1.0.0.tar.gz"
-    sha256 "97804a4171047944fec66c1b45c41693bfa924600ab6ac619595ddb28e79a67f"
+    url "https://files.pythonhosted.org/packages/c8/6e/40779917747775c78a568c063eea541f90908b76b132938e0a069846e5a7/evernote2-1.0.3.tar.gz"
+    sha256 "7ef41f139974744e9ff1e22dee25938e1cb9ce4e8229e9c5ba93a0115a10643a"
   end
 
   resource "greenlet" do
@@ -57,19 +55,14 @@ class Geeknote < Formula
     sha256 "565f0b647a32549c663ccfddd1f501891daaf29242bbc6174bdd448120383e3d"
   end
 
-  resource "httplib2" do
-    url "https://files.pythonhosted.org/packages/3d/ad/2371116b22d616c194aa25ec410c9c6c37f23599dcd590502b74db197584/httplib2-0.22.0.tar.gz"
-    sha256 "d7a10bc5ef5ab08322488bde8c726eeee5c8618723fdb399597ec58f3d82df81"
-  end
-
   resource "idna" do
     url "https://files.pythonhosted.org/packages/21/ed/f86a79a07470cb07819390452f178b3bef1d375f2ec021ecfc709fc7cf07/idna-3.7.tar.gz"
     sha256 "028ff3aadf0609c1fd278d8ea3089299412a7a8b9bd005dd08b9f8285bcb5cfc"
   end
 
   resource "lxml" do
-    url "https://files.pythonhosted.org/packages/ea/e2/3834472e7f18801e67a3cd6f3c203a5456d6f7f903cfb9a990e62098a2f3/lxml-5.2.1.tar.gz"
-    sha256 "3f7765e69bbce0906a7c74d5fe46d2c7a7596147318dbc08e4a2431f3060e306"
+    url "https://files.pythonhosted.org/packages/63/f7/ffbb6d2eb67b80a45b8a0834baa5557a14a5ffce0979439e7cd7f0c4055b/lxml-5.2.2.tar.gz"
+    sha256 "bb2dc4898180bea79863d5487e5f9c7c34297414bad54bcd0f0852aee9cfdb87"
   end
 
   resource "markdown2" do
@@ -77,9 +70,9 @@ class Geeknote < Formula
     sha256 "18ceb56590da77f2c22382e55be48c15b3c8f0c71d6398def387275e6c347a9f"
   end
 
-  resource "oauth2" do
-    url "https://files.pythonhosted.org/packages/64/19/8b9066e94088e8d06d649e10319349bfca961e87768a525aba4a2627c986/oauth2-1.9.0.post1.tar.gz"
-    sha256 "c006a85e7c60107c7cc6da1b184b5c719f6dd7202098196dfa6e55df669b59bf"
+  resource "oauthlib" do
+    url "https://files.pythonhosted.org/packages/6d/fa/fbf4001037904031639e6bfbfc02badfc7e12f137a8afa254df6c4c8a670/oauthlib-3.2.2.tar.gz"
+    sha256 "9859c40929662bec5d64f34d01c99e093149682a3f38915dc0655d5a633dd918"
   end
 
   resource "orderedmultidict" do
@@ -90,11 +83,6 @@ class Geeknote < Formula
   resource "proxyenv" do
     url "https://files.pythonhosted.org/packages/69/98/46baccf9ce353828726e0d302dad201e634fe4b50f6f61891f0721f40789/proxyenv-0.5.1.tar.gz"
     sha256 "e73caf8b063b7fbfb93b67e725a71469768262a9dddb4d9dfb79bb1e84cab4b9"
-  end
-
-  resource "pyparsing" do
-    url "https://files.pythonhosted.org/packages/46/3a/31fd28064d016a2182584d579e033ec95b809d8e220e74c4af6f0f2e8842/pyparsing-3.1.2.tar.gz"
-    sha256 "a1bac0ce561155ecc3ed78ca94d3c9378656ad4c94c1270de543f621420f94ad"
   end
 
   resource "requests" do
@@ -113,8 +101,8 @@ class Geeknote < Formula
   end
 
   resource "sqlalchemy" do
-    url "https://files.pythonhosted.org/packages/99/04/59971bfc2f192e3b52376ca8d1e134c78d04bc044ef7e04cf10c42d2ce17/SQLAlchemy-2.0.29.tar.gz"
-    sha256 "bd9566b8e58cabd700bc367b60e90d9349cd16f0984973f98a9a09f9c64e86f0"
+    url "https://files.pythonhosted.org/packages/36/d0/0137ebcf0dc230c2e82a621b3af755b8788a2a9dd6fd1b8cd6d5e7f6b00d/SQLAlchemy-2.0.30.tar.gz"
+    sha256 "2b1708916730f4830bc69d6f49d37f7698b5bd7530aca7f04f785f8849e95255"
   end
 
   resource "thrift" do
@@ -139,12 +127,18 @@ class Geeknote < Formula
 
   def install
     virtualenv_install_with_resources
-
-    bash_completion.install "completion/bash_completion/_geeknote" => "geeknote"
-    zsh_completion.install "completion/zsh_completion/_geeknote" => "_geeknote"
   end
 
   test do
-    system "py.test"
+    # `test do` will create, run in and delete a temporary directory.
+    #
+    # This test will fail and we won't accept that! For Homebrew/homebrew-core
+    # this will need to be a test that verifies the functionality of the
+    # software. Run the test with `brew test geeknote`. Options passed
+    # to `brew install` such as `--HEAD` also need to be provided to `brew test`.
+    #
+    # The installed folder is not in the path, so use the entire path to any
+    # executables being tested: `system "#{bin}/program", "do", "something"`.
+    system "false"
   end
 end

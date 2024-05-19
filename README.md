@@ -21,6 +21,8 @@ In this document we'll show how to work with Evernote's notes, notebooks, and ta
 ## Installation
 You can install Geeknote using [Homebrew](http://brew.sh/)/[Linuxbrew](https://github.com/Homebrew/linuxbrew), or from its source.
 
+(Generate formula by `brew create --python  --set-version 3.0.1 https://github.com/vitaly-zdanevich/geeknote/archive/refs/tags/v3.0.1.tar.gz`)
+
 ##### Homebrew installation TODO publish to public cask
 
 ``` sh
