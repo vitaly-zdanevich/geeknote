@@ -10,4 +10,3 @@ lxml
 # Testing requirements
 pytest
 pytest-runner
-mock

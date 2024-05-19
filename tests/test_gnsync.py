@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from mock import patch, ANY, Mock
+from unittest.mock import patch, ANY, Mock
 import os
 import unittest
 import shutil
