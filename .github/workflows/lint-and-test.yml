@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
@@ -24,7 +24,6 @@ jobs:
     - name: Install Geeknote
       run: |
         pip install .
-        python -c 'import evernote2; print("------------------------ hi ---------------")' # TODO Debug line
     - name: Running unit tests with pytest
       run: |
         pytest
