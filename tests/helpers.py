@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from mock import Mock
+from unittest.mock import Mock
 
 
 # See https://stackoverflow.com/a/16976500/1299271
