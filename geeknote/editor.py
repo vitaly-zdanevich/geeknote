@@ -84,7 +84,7 @@ class Editor(object):
         imageOptions={"saveImages": False},
         imageFilename="",
     ):
-        soup = BeautifulSoup(contentENML, "html.parser")
+        soup = BeautifulSoup(contentENML, "xml")
 
         if format == "pre":
             #
