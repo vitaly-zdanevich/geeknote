@@ -3,6 +3,7 @@
 import os
 import sys
 import tempfile
+
 from bs4 import BeautifulSoup, NavigableString
 import threading
 import hashlib
@@ -15,6 +16,11 @@ from . import config
 from .storage import Storage
 from .log import logging
 from xml.sax.saxutils import escape, unescape
+
+import warnings
+from bs4.builder import XMLParsedAsHTMLWarning
+
+warnings.filterwarnings('ignore', category=XMLParsedAsHTMLWarning)
 
 
 class EditorThread(threading.Thread):
@@ -84,7 +90,7 @@ class Editor(object):
         imageOptions={"saveImages": False},
         imageFilename="",
     ):
-        soup = BeautifulSoup(contentENML, "xml")
+        soup = BeautifulSoup(contentENML, "html.parser")
 
         if format == "pre":
             #
