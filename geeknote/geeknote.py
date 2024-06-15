@@ -1798,7 +1798,8 @@ def main(args=None):
             Tags().remove(**ARGS)
 
     except (KeyboardInterrupt, SystemExit, tools.ExitException) as e:
-        exit_status_code = e.args[0]
+        exit_status_code = 1
+        print(type(e))
 
     except Exception as e:
         traceback.print_exc()
