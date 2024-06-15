@@ -1799,7 +1799,6 @@ def main(args=None):
 
     except (KeyboardInterrupt, SystemExit, tools.ExitException) as e:
         exit_status_code = 1
-        print(type(e))
 
     except Exception as e:
         traceback.print_exc()
