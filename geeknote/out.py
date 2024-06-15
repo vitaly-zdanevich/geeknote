@@ -340,20 +340,13 @@ def printList(
 
     if showSelector:
         printLine("  0 : -Cancel-")
-        try:
-            while True:
-                num = rawInput(": ")
-                if tools.checkIsInt(num) and 1 <= int(num) <= total:
-                    return listItems[int(num) - 1]
-                if num == "0" or num == "q":
-                    exit(1)
-                failureMessage('Incorrect number "%s", ' "please try again:\n" % num)
-        except (KeyboardInterrupt, SystemExit) as e:
-            if e.message:
-                tools.exit(e.message)
-            else:
-                tools.exit
-
+        while True:
+            num = rawInput(": ")
+            if tools.checkIsInt(num) and 1 <= int(num) <= total:
+                return listItems[int(num) - 1]
+            if num == "0" or num == "q":
+                exit(1)
+            failureMessage('Incorrect number "%s", ' "please try again:\n" % num)
 
 def rawInput(message, isPass=False):
     if isPass:
