@@ -16,7 +16,7 @@ It allows you to:
 
 Geeknote is free and open source and written in Python. Geeknote can be used anywhere you have Python installed (even in Windows if you like).
 
-In this document we'll show how to work with Evernote's notes, notebooks, and tags using Geeknote and how to use Geeknote sync.
+In this document we will show how to work with Evernote notes, notebooks, and tags using Geeknote and how to use Geeknote sync.
 
 ## Installation
 You can install Geeknote using [Homebrew](http://brew.sh/)/[Linuxbrew](https://github.com/Homebrew/linuxbrew), or from its source.
