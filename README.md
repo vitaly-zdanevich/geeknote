@@ -14,7 +14,7 @@ It allows you to:
 * synchronize your local files and directories with Evernote;
 * use Evernote with cron or any scripts.
 
-Geeknote is open source and written in Python. Geeknote can be used anywhere you have Python installed (even in Windows if you like).
+Geeknote is free and open source and written in Python. Geeknote can be used anywhere you have Python installed (even in Windows if you like).
 
 In this document we'll show how to work with Evernote's notes, notebooks, and tags using Geeknote and how to use Geeknote sync.
 
