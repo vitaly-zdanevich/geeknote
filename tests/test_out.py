@@ -97,11 +97,11 @@ Use geeknote --help to read documentation.\n''' % __version__
         self.assertEqual(sys.stdout.read(), '\n\n')
 
     def test_failure_message_success(self):
-        sav = sys.stderr
+        save = sys.stderr
         buf = StringIO()
         sys.stderr = buf
         failureMessage('fail')
-        sys.stderr = sav
+        sys.stderr = save
         buf.seek(0)
         self.assertEqual(buf.read(), 'fail\n')
 

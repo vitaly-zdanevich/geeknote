@@ -410,7 +410,7 @@ geeknote edit --note "Naughty List" --title "Nice List" --content "WRITE"
 
 ### Notes: Showing note content
 
-You can output any note in console using command *show* either independently or as a subsequent command to *find*. When you use *show* on a search made previously in which there was more than one result, Geeknote will ask you to make a choise.
+You can output any note in console using command *show* either independently or as a subsequent command to *find*. When you use *show* on a search made previously in which there was more than one result, Geeknote will ask you to make a choice.
 
 ##### Synopsis
 
@@ -665,14 +665,14 @@ gnsync --path <path to directory which to sync>
 | ‑‑path             | directory to sync | The directory you want to sync with Evernote. It should be the directory with text content files. |
 | ‑‑mask             | unix shell-style wildcards to select the files | You can tell *gnsync* what filetypes to sync. By default *gnsync* tries to open every file in the directory. But you can set the mask like: &#042;.txt, &#042;.log, &#042;.md, &#042;.markdown. |
 | ‑‑format           | in what format to save the note - plain or markdown | Set the engine which to use while files uploading. *gnsync* supports markdown and plain text formats. By default it uses plain text engine. |
-| ‑‑notebook         | notebook where to save | You can set the notebook which will be syncronized with local directory. But if you won't set this option, *gnsync* will create new notebook with the name of the directory that you want to sync. |
+| ‑‑notebook         | notebook where to save | You can set the notebook which will be synchronized with local directory. But if you won't set this option, *gnsync* will create new notebook with the name of the directory that you want to sync. |
 | ‑‑all              |                 | You can specify to synchronize all notebooks already on the server, into subdirectories of the path. Useful with --download to do a backup of all notes. |
 | ‑‑logpath          | path to logfile | *gnsync* can log information about syncing and with that option you can set the logfile. |
 | ‑‑two-way          |                 | Normally *gnsync* will only upload files. Adding this flag will also make it download any notes not present as files in the notebook directory (after uploading any files not present as notes) |
 | ‑‑download-only    |                 | Normally *gnsync* will only upload files. Adding this flag will make it download notes, but not upload any files |
 
 ##### Description
-The application *gnsync* is very useful in system administration, because you can syncronize you local logs, statuses and any other production information with Evernote.
+The application *gnsync* is very useful in system administration, because you can synchronize you local logs, statuses and any other production information with Evernote.
 
 ##### Examples
 

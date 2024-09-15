@@ -323,7 +323,7 @@ class Editor(object):
             editor = os.environ.get("EDITOR")
 
         if not editor:
-            # If default editor is not finded, then use nano as a default.
+            # If default editor is not found, then use nano as a default.
             if sys.platform == "win32":
                 editor = config.DEF_WIN_EDITOR
             else:

@@ -352,7 +352,7 @@ class GeekNote(object):
     @EdamException
     def loadLinkedNoteContent(self, note):
         if not isinstance(note, object):
-            raise Excetion(
+            raise Exception(
                 "Note content must be an " "instance of Note, '%s' given." % type(note)
             )
 
