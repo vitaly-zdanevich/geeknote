@@ -1,6 +1,8 @@
 I did this fork to fix blocking error - so it is the only fork of Geeknote that WORKS, on Python 3. Looks like nobody else is interested in Geeknote anymore, so I declare this repo as main. Feel free to contribute.
 ===
 
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=vitaly-zdanevich_geeknote&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=vitaly-zdanevich_geeknote)
+
 Geeknote for Evernote (or 印象笔记)
 ===
 
