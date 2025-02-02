@@ -148,7 +148,7 @@ class Editor(object):
             for section in soup.find_all("en-media"):
                 section.replace_with(str(section))
 
-        content = html2text.html2text(str(soup), "")
+        content = html2text.html2text(str(soup), "", 300)
 
         content = re.sub(r" *\n", os.linesep, content)
         content = content.replace(chr(160), " ")  # no-break space
