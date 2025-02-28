@@ -96,7 +96,6 @@ setup(
         "lxml",
     ],
     setup_requires=["pytest-runner"],
-    tests_require=["mock", "pytest"],
     entry_points={
         "console_scripts": [
             "geeknote = geeknote.geeknote:main",
