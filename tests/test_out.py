@@ -74,7 +74,8 @@ class outTestsWithHackedStdout(unittest.TestCase):
     def test_print_about_success(self):
         about = '''Version: %s
 Geeknote - a command line client for Evernote.
-Use geeknote --help to read documentation.\n''' % __version__
+Use geeknote --help to read documentation.
+Main repo: https://github.com/vitaly-zdanevich/geeknote\n''' % __version__
         printAbout()
         sys.stdout.seek(0)
         self.assertEqual(sys.stdout.read(), about)
