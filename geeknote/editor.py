@@ -63,7 +63,7 @@ class Editor(object):
         """
         soup = BeautifulSoup(contentENML.decode("utf-8"), features='lxml')
         imageList = []
-        for section in soup.findAll("en-media"):
+        for section in soup.find_all("en-media"):
             if "type" in section.attrs and "hash" in section.attrs:
                 imageType, imageExtension = section["type"].split("/")
                 if imageType == "image":
@@ -80,7 +80,7 @@ class Editor(object):
         for section in soup.find_all("en-todo", checked="true"):
             section.replace_with("<br />* [x]")
 
-        for section in soup.findAll("en-todo"):
+        for section in soup.find_all("en-todo"):
             section.replace_with("<br />* [ ]")
 
     @staticmethod
@@ -131,7 +131,7 @@ class Editor(object):
 
             # change <en-media> tags to <img> tags
             if "saveImages" in imageOptions and imageOptions["saveImages"]:
-                for section in soup.findAll("en-media"):
+                for section in soup.find_all("en-media"):
                     if "type" in section.attrs and "hash" in section.attrs:
                         imageType, imageExtension = section["type"].split("/")
                         if imageType == "image":
@@ -243,7 +243,7 @@ class Editor(object):
                     "tabindex",
                 ]
 
-                for tag in soup.findAll():
+                for tag in soup.find_all():
                     if hasattr(tag, "attrs"):
                         for k in list(tag.attrs.keys()):
                             if k in ATTR_2_REMOVE or k.find("on") == 0:
