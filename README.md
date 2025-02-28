@@ -78,7 +78,7 @@ If you see errors "No module named 'geeknote'":
 PYTHONPATH=$(pwd) pytest
 ```
 
-For manual run after your local changes (in case if you tried `./geeknote` and got
+For manual run after your local changes without installation (in case if you tried `./geeknote` and got
 
 > ImportError: attempted relative import with no known parent package
 
