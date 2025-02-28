@@ -77,7 +77,7 @@ class Editor(object):
         """
         Transforms Evernote checklist elements to github `* [ ]` task list style
         """
-        for section in soup.findAll("en-todo", checked="true"):
+        for section in soup.find_all("en-todo", checked="true"):
             section.replace_with("<br />* [x]")
 
         for section in soup.findAll("en-todo"):
