@@ -59,14 +59,21 @@ pip install --upgrade .
 ##### Testing
 Geeknote has a non-destructive unit test suite with fair coverage.
 
-Ensure pytest framework is installed
+Ensure [pytest](https://repology.org/project/python%3Apytest/versions) framework is installed
 ``` sh
 pip install --upgrade pytest
 ```
 
+or by using your system package manager (Portage, apt, yum, ...)
+
 Execute the tests
 ``` sh
-py.test
+pytest
+```
+
+If you see errors "No module named 'geeknote'":
+```
+PYTHONPATH=$(pwd) pytest
 ```
 
 ##### Un-installation
