@@ -31,7 +31,7 @@ COMMANDS_DICT = {
         "help": "Show and edit current settings.",
         "arguments": {
             "--editor": {
-                "help": "Set the editor, which use to " "edit and create notes.",
+                "help": "Set the editor, which use to edit and create notes.",
                 "emptyValue": "#GET#",
             },
             "--note_ext": {
@@ -115,7 +115,7 @@ COMMANDS_DICT = {
             "--title": {"altName": "-t", "help": "The note title.", "required": True},
             "--notebook": {
                 "alt-name": "-nb",
-                "help": "Name of the linked notebook in " "which to create this note.",
+                "help": "Name of the linked notebook in which to create this note.",
                 "required": True,
             },
         },
@@ -267,7 +267,7 @@ COMMANDS_DICT = {
         "arguments": {
             "--notebook": {
                 "altName": "-nb",
-                "help": "Name of the linked Notebook in which" "the note resides.",
+                "help": "Name of the linked Notebook in which the note resides.",
                 "required": True,
             },
             "--note": {
@@ -332,7 +332,7 @@ COMMANDS_DICT = {
         "flags": {
             "--guid": {
                 "altName": "-id",
-                "help": "Replace ID with GUID " "of each notebook in results.",
+                "help": "Replace ID with GUID of each notebook in results.",
                 "value": True,
                 "default": False,
             }
