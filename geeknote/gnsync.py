@@ -255,7 +255,7 @@ class GNSync:
         two way sync will need your additional work!
         """
         metaBlock = re.compile("---(.*?)---", re.DOTALL)
-        metaInfo = re.compile("(\w+):\s*?(.*)")
+        metaInfo = re.compile(r"(\w+):\s*?(.*)")
         block = metaBlock.search(content)
         if block is not None:
             info = metaInfo.findall(block.group(0))
