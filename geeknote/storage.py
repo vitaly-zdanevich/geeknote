@@ -3,8 +3,8 @@
 import os
 import datetime
 import pickle
+import sqlalchemy
 
-from sqlalchemy import *
 from sqlalchemy.orm import *
 from sqlalchemy.orm import sessionmaker
 
@@ -12,16 +12,16 @@ import logging
 from . import config
 
 db_path = os.path.join(config.APP_DIR, "database.db")
-engine = create_engine("sqlite:///" + db_path)
+engine = sqlalchemy.create_engine("sqlite:///" + db_path)
 Base = declarative_base()
 
 
 class Userprop(Base):
     __tablename__ = "user_props"
 
-    id = Column(Integer, primary_key=True)
-    key = Column(String(255))
-    value = Column(PickleType())
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    key = sqlalchemy.Column(sqlalchemy.String(255))
+    value = sqlalchemy.Column(sqlalchemy.PickleType())
 
     def __init__(self, key, value):
         self.key = key
@@ -34,9 +34,9 @@ class Userprop(Base):
 class Setting(Base):
     __tablename__ = "settings"
 
-    id = Column(Integer, primary_key=True)
-    key = Column(String(255))
-    value = Column(String(1000))
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    key = sqlalchemy.Column(sqlalchemy.String(255))
+    value = sqlalchemy.Column(sqlalchemy.String(1000))
 
     def __init__(self, key, value):
         self.key = key
@@ -49,10 +49,10 @@ class Setting(Base):
 class Notebook(Base):
     __tablename__ = "notebooks"
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(255))
-    guid = Column(String(1000))
-    timestamp = Column(DateTime(), nullable=False)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    name = sqlalchemy.Column(sqlalchemy.String(255))
+    guid = sqlalchemy.Column(sqlalchemy.String(1000))
+    timestamp = sqlalchemy.Column(sqlalchemy.DateTime(), nullable=False)
 
     def __init__(self, guid, name):
         self.guid = guid
@@ -66,10 +66,10 @@ class Notebook(Base):
 class Tag(Base):
     __tablename__ = "tags"
 
-    id = Column(Integer, primary_key=True)
-    tag = Column(String(255))
-    guid = Column(String(1000))
-    timestamp = Column(DateTime(), nullable=False)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    tag = sqlalchemy.Column(sqlalchemy.String(255))
+    guid = sqlalchemy.Column(sqlalchemy.String(1000))
+    timestamp = sqlalchemy.Column(sqlalchemy.DateTime(), nullable=False)
 
     def __init__(self, guid, tag):
         self.guid = guid
@@ -83,10 +83,10 @@ class Tag(Base):
 class Note(Base):
     __tablename__ = "notes"
 
-    id = Column(Integer, primary_key=True)
-    guid = Column(String(1000))
-    obj = Column(PickleType())
-    timestamp = Column(DateTime(), nullable=False)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    guid = sqlalchemy.Column(sqlalchemy.String(1000))
+    obj = sqlalchemy.Column(sqlalchemy.PickleType())
+    timestamp = sqlalchemy.Column(sqlalchemy.DateTime(), nullable=False)
 
     def __init__(self, guid, obj):
         self.guid = guid
@@ -100,9 +100,9 @@ class Note(Base):
 class Search(Base):
     __tablename__ = "search"
 
-    id = Column(Integer, primary_key=True)
-    search_obj = Column(PickleType())
-    timestamp = Column(DateTime(), nullable=False)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    search_obj = sqlalchemy.Column(sqlalchemy.PickleType())
+    timestamp = sqlalchemy.Column(sqlalchemy.DateTime(), nullable=False)
 
     def __init__(self, search_obj):
         self.search_obj = search_obj
