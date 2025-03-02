@@ -42,23 +42,23 @@ class testArgparser(unittest.TestCase):
 
     def testErrorArg(self):
         parser = argparser(["testing", "test_def_val", "--test_arg_err"])
-        self.assertEqual(parser.parse(), False)
+        self.assertFalse(parser.parse())
 
     def testErrorNoArg(self):
         parser = argparser(["testing"])
-        self.assertEqual(parser.parse(), False)
+        self.assertFalse(parser.parse())
 
     def testErrorReq(self):
         parser = argparser(["testing", "--test_arg", "test_val"])
-        self.assertEqual(parser.parse(), False)
+        self.assertFalse(parser.parse())
 
     def testErrorVal(self):
         parser = argparser(["testing", "--test_req_arg", '--test_arg'])
-        self.assertEqual(parser.parse(), False)
+        self.assertFalse(parser.parse())
 
     def testErrorFlag(self):
         parser = argparser(["testing", "--test_flag", 'test_val'])
-        self.assertEqual(parser.parse(), False)
+        self.assertFalse(parser.parse())
 
     def testSuccessCommand1(self):
         parser = argparser(["testing", "--test_req_arg", "test_req_val",
