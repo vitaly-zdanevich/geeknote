@@ -11,7 +11,7 @@ class testArgparser(unittest.TestCase):
     def setUp(self):
         sys.stdout = StringIO()  # set fake stdout
 
-        # добавляем тестовые данные
+        # add test data
         COMMANDS_DICT['testing'] = {
             "help": "Create note",
             "firstArg": "--test_req_arg",
