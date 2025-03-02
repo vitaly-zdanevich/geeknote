@@ -87,7 +87,7 @@ class testNotes(unittest.TestCase):
                                           txt,
                                           ["tag1", "tag2"],
                                           None, None, testNote)
-        result = self.notes._editWithEditorInThread(testData, testNote)
+        self.notes._editWithEditorInThread(testData, testNote)
         self.assertEqual(Editor.ENMLtoText(testNote.content), expected)
 
     # def test_editWithEditorInThread(self):
