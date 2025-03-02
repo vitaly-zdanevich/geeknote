@@ -104,7 +104,6 @@ class Editor(object):
                 content = ""
                 for c in sections[0].contents:
                     content = "".join((content, c))
-                pass
             else:
                 format = "default"
 

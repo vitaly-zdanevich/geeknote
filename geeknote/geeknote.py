@@ -360,7 +360,6 @@ class GeekNote(object):
             self.sharedAuthToken, note.guid
         )
         # TODO
-        pass
 
     @EdamException
     def createNote(
@@ -1165,7 +1164,6 @@ class Notes(GeekNoteConnector):
         self._editWithEditorInThread(
             inputData, the_note, raw=False, sharedNote=True, fake=True
         )
-        pass
 
     def edit(
         self,
