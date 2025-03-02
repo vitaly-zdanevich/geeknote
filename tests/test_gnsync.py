@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 from unittest.mock import patch, ANY, Mock
 import os
 import unittest

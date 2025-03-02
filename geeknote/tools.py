@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from . import out
 import sys
 import time

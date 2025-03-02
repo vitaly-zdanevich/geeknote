@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 from geeknote import config
 from geeknote.geeknote import User, Notebooks, Notes, GeekNote, GeekNoteConnector

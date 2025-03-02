@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from geeknote.argparser import *
 from io import StringIO
 import sys

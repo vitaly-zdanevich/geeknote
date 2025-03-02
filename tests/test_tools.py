@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import unittest
 from geeknote.tools import checkIsInt, strip, decodeArgs,\
     stdinEncode, stdoutEncode, Struct

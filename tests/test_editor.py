@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from geeknote.editor import Editor
 import unittest
 

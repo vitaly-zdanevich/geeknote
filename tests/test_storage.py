@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import unittest
 from sqlalchemy.engine import create_engine
 from sqlalchemy.orm.session import sessionmaker
