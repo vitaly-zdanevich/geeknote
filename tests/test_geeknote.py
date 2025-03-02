@@ -55,7 +55,7 @@ class testNotes(unittest.TestCase):
 
     def test_parseInput1(self):
         testData = self.notes._parseInput("title", "test body", ["tag1"], None, None, ["res 1", "res 2"])
-        self.assertTrue(isinstance(testData, dict))
+        self.assertIsInstance(testData, dict)
         if not isinstance(testData, dict):
             return
 
@@ -66,7 +66,7 @@ class testNotes(unittest.TestCase):
 
     def test_parseInput2(self):
         testData = self.notes._parseInput("title", "WRITE", ["tag1", "tag2"], None, None, self.testNote)
-        self.assertTrue(isinstance(testData, dict))
+        self.assertIsInstance(testData, dict)
         if not isinstance(testData, dict):
             return
 
