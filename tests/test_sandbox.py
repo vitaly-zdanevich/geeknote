@@ -68,7 +68,7 @@ class TestSandbox(unittest.TestCase):
     def test15_findNotebook(self):
         all = self.Geeknote.findNotebooks()
         nb = [nb for nb in all if nb.name == self.notebook]
-        self.assertTrue(len(nb) == 1)
+        self.assertEqual(len(nb), 1)
         self.nbs.add(nb[0].guid)
 
     @skipUnlessDevMode()
@@ -85,7 +85,7 @@ This is the note text.
     def test31_findNote(self):
         self.Notes.find(notebooks=self.notebook, tags=self.tag)
         result = self.storage.getSearch()
-        self.assertTrue(len(result.notes) == 1)
+        self.assertEqual(len(result.notes), 1)
         self.notes.add(result.notes[0].guid)
 
     @skipUnlessDevMode()
