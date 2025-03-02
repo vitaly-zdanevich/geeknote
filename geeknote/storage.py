@@ -5,8 +5,7 @@ import datetime
 import pickle
 import sqlalchemy
 
-from sqlalchemy.orm import *
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 import logging
 from . import config
