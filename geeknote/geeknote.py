@@ -952,9 +952,7 @@ class Notes(GeekNoteConnector):
         self.findExactOnUpdate = bool(findExactOnUpdate)
         self.selectFirstOnUpdate = bool(selectFirstOnUpdate)
 
-    def _editWithEditorInThread(
-        self, inputData, note=None, raw=None, rawmd=None, sharedNote=False, fake=False
-    ):
+    def _editWithEditorInThread(self, inputData, note=None, raw=None, rawmd=None, sharedNote=False):
         editor_userprop = getEditor(self.getStorage())
         noteExt_userprop = getNoteExt(self.getStorage())[bool(raw)]
         if note:
