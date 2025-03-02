@@ -1162,7 +1162,7 @@ class Notes(GeekNoteConnector):
         inputData = self._parseInput(
             None, None, None, None, None, None, the_note, None, None, True
         )
-        result = self._editWithEditorInThread(
+        self._editWithEditorInThread(
             inputData, the_note, raw=False, sharedNote=True, fake=True
         )
         pass
@@ -1558,7 +1558,6 @@ class Notes(GeekNoteConnector):
                 self.getEvernote().loadNoteContent(note)
                 md5 = hashlib.md5()
                 md5.update(note.content)
-                noteHash = md5.hexdigest()
                 noteId = md5.hexdigest() + " " + note.title
                 if noteId in notes_dict:
                     notes_dict[noteId].append(note)
