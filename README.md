@@ -711,3 +711,7 @@ gnsync --path /home/project/xmpp/logs/
 * Roman Gladkov
 * Greg V
 * Ilya Shmygol
+
+## Evernote related projects worth mentioning
+* [NixNote: GUI, storing notes in SQLite, on C++](https://github.com/robert7/nixnote2)
+* [CLInote: cli, written in faster Go](https://github.com/TcM1911/clinote)
