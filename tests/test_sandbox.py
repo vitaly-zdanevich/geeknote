@@ -1,4 +1,7 @@
 import unittest
+
+import pytest
+
 from geeknote import config
 from geeknote.geeknote import User, Notebooks, Notes, GeekNote, GeekNoteConnector
 from geeknote.storage import Storage
@@ -9,20 +12,10 @@ if config.DEV_MODE:
     from proxyenv.proxyenv import ProxyFactory
 
 
-# see https://docs.python.org/2.7/library/unittest.html §25.3.6
-# http://thecodeship.com/patterns/guide-to-python-function-decorators/
-# (decorator with empty argument list)
-def skipUnlessDevMode():
-    if config.DEV_MODE:
-        return lambda x: x
-    else:
-        return unittest.skip("Test only active with DEV_MODE=True")
-
-
 class TestSandbox(unittest.TestCase):
 
     @classmethod
-    @skipUnlessDevMode()
+    @pytest.mark.dev
     def setUpClass(cls):
         storage = Storage()
 
@@ -53,24 +46,25 @@ class TestSandbox(unittest.TestCase):
         self.user = User()
         self.tag = "geeknote_unittest_1"
 
-    @skipUnlessDevMode()
+    @pytest.mark.dev
     def test01_userLogin(self):
         # This is an implicit test. The GeekNote() call in setUp() will perform
         # an automatic login.
         self.assertTrue(self.Geeknote.checkAuth())
 
-    @skipUnlessDevMode()
+
+    @pytest.mark.dev
     def test10_createNotebook(self):
         self.assertTrue(self.Notebooks.create(self.notebook))
 
-    @skipUnlessDevMode()
+    @pytest.mark.dev
     def test15_findNotebook(self):
         all = self.Geeknote.findNotebooks()
         nb = [nb for nb in all if nb.name == self.notebook]
         self.assertEqual(len(nb), 1)
         self.nbs.add(nb[0].guid)
 
-    @skipUnlessDevMode()
+    @pytest.mark.dev
     def test30_createNote(self):
         self.Notes.create("note title 01",
                           content="""\
@@ -80,14 +74,14 @@ This is the note text.
                           notebook=self.notebook,
                           tags=self.tag)
 
-    @skipUnlessDevMode()
+    @pytest.mark.dev
     def test31_findNote(self):
         self.Notes.find(notebooks=self.notebook, tags=self.tag)
         result = self.storage.getSearch()
         self.assertEqual(len(result.notes), 1)
         self.notes.add(result.notes[0].guid)
 
-    @skipUnlessDevMode()
+    @pytest.mark.dev
     def test90_removeNotes(self):
         while self.notes:
             self.assertTrue(self.Geeknote.removeNote(self.notes.pop()))
@@ -95,13 +89,13 @@ This is the note text.
     # EXPECTED FAILURE
     # "This function is generally not available to third party applications"
     # https://dev.evernote.com/doc/reference/NoteStore.html#Fn_NoteStore_expungeNotebook
-    @skipUnlessDevMode()
+    @pytest.mark.dev
     def test95_removeNotebooks(self):
         while self.nbs:
             # self.assertTrue(self.Geeknote.removeNotebook(self.nbs.pop()))
             self.assertRaises(SystemExit, self.Geeknote.removeNotebook, self.nbs.pop())
 
-    @skipUnlessDevMode()
+    @pytest.mark.dev
     def test99_userLogout(self):
         self.user.logout(force=True)
         self.assertFalse(self.Geeknote.checkAuth())
@@ -110,7 +104,7 @@ This is the note text.
 class TestSandboxWithProxy(TestSandbox):
 
     @classmethod
-    @skipUnlessDevMode()
+    @pytest.mark.dev
     def setUpClass(cls):
         cls.proxy = ProxyFactory()()
         cls.proxy.start()
