@@ -1161,7 +1161,7 @@ class Notes(GeekNoteConnector):
             None, None, None, None, None, None, the_note, None, None, True
         )
         self._editWithEditorInThread(
-            inputData, the_note, raw=False, sharedNote=True, fake=True
+            inputData, the_note, raw=False, sharedNote=True
         )
 
     def edit(
