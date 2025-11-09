@@ -25,8 +25,6 @@ You can install Geeknote using [Homebrew](http://brew.sh/)/[Linuxbrew](https://g
 
 (Generate formula by `brew create --python  --set-version 3.0.1 https://github.com/vitaly-zdanevich/geeknote/archive/refs/tags/v3.0.1.tar.gz`)
 
-Python 3.12 and higher is not supported - because `key_file` was removed from http.client - [this is the problem of Apache Thrift dependency](https://github.com/apache/thrift/commit/6f8c99e98170dcd4f311e755b79f7013868c64c5#diff-bab746be55672d7a0831fb851304aafcaf3634fe124eaa75a2253ba885147796R114).
-
 ##### Homebrew installation TODO publish to public cask
 
 ``` sh
