@@ -6,7 +6,7 @@ I did this fork to fix blocking error - so it is the only fork of Geeknote that 
 Geeknote for Evernote (or 印象笔记)
 ===
 
-Geeknote is a command line client for Evernote that can be used on Linux, FreeBSD, macOS or other systems with Python.
+Geeknote is a command line client for Evernote that can be used on Linux, FreeBSD, macOS or other systems with Python, even Windows.
 
 It allows you to:
 * create notes in your Evernote account;
@@ -15,8 +15,6 @@ It allows you to:
 * edit notes directly in the console using any editor, such as nano, vim or mcedit;
 * synchronize your local files and directories with Evernote;
 * use Evernote with cron or any scripts.
-
-Geeknote is free and open source and written in Python. Geeknote can be used anywhere you have Python installed (even in Windows if you like).
 
 In this document we will show how to work with Evernote notes, notebooks, and tags using Geeknote and how to use Geeknote sync.
 
