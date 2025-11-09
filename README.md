@@ -6,7 +6,7 @@ I did this fork to fix blocking error - so it is the only fork of Geeknote that 
 Geeknote for Evernote (or 印象笔记)
 ===
 
-Geeknote is a command line client for Evernote that can be use on Linux, FreeBSD and OS X.
+Geeknote is a command line client for Evernote that can be used on Linux, FreeBSD, macOS or other systems with Python.
 
 It allows you to:
 * create notes in your Evernote account;
