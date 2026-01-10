@@ -2,7 +2,7 @@ class Geeknote < Formula
   include Language::Python::Virtualenv
 
   desc "Console client for Evernote. This is the current alive fork (in 2024)"
-  homepage ""
+  homepage "https://github.com/vitaly-zdanevich/geeknote"
   url "https://github.com/vitaly-zdanevich/geeknote/archive/refs/tags/v3.0.1.tar.gz"
   version "3.0.7"
   sha256 "cb7443555fa9235691ab588c5d054926e2d7fe21470eae5106322383c7fb7d27"
