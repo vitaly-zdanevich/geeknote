@@ -596,10 +596,10 @@ class argparser(object):
                 return False
 
         # trim -- and ->_
-        self.INP_DATA = dict(
-            [key.lstrip("-").replace("-", "_"), val]
-            for key, val in list(self.INP_DATA.items())
-        )
+        self.INP_DATA = {
+            key.lstrip('-').replace('-', '_'): val
+            for key, val in self.INP_DATA.items()
+        }
         return self.INP_DATA
 
     def printAutocomplete(self):
