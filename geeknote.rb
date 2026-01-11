@@ -5,7 +5,7 @@ class Geeknote < Formula
   homepage "https://github.com/vitaly-zdanevich/geeknote"
   url "https://github.com/vitaly-zdanevich/geeknote/archive/refs/tags/v3.0.7.tar.gz"
   version "3.0.7"
-  sha256 "cb7443555fa9235691ab588c5d054926e2d7fe21470eae5106322383c7fb7d27"
+  sha256 "8c914fac2e14da12d9a0eee6dbaecc4f8a3c3b8538314f04a501ec6225d32b13"
   license "GPL-3.0"
 
   depends_on "python"
