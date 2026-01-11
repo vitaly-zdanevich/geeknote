@@ -39,7 +39,7 @@ class Editor(object):
 
     @staticmethod
     def getHtmlUnescapeTable():
-        return dict((v, k) for k, v in list(Editor.getHtmlEscapeTable().items()))
+        return {v: k for k, v in Editor.getHtmlEscapeTable().items()}
 
     @staticmethod
     def HTMLEscape(text):
