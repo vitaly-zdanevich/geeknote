@@ -91,9 +91,9 @@ setup(
         "markdown2",
         "beautifulsoup4",
         "thrift",
-        "proxyenv",
         "lxml",
     ],
+    extras_require={"dev": ["proxyenv"]},
     setup_requires=["pytest-runner"],
     entry_points={
         "console_scripts": [

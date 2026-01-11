@@ -4,9 +4,9 @@ sqlalchemy
 markdown2
 thrift
 beautifulsoup4
-proxyenv
 lxml
 
 # Testing requirements
+proxyenv
 pytest
 pytest-runner
