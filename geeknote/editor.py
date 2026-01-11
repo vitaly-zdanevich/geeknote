@@ -242,7 +242,7 @@ class Editor(object):
 
                 for tag in soup.find_all():
                     if hasattr(tag, "attrs"):
-                        for k in list(tag.attrs.keys()):
+                        for k in tag.attrs.keys():
                             if k in ATTR_2_REMOVE or k.find("on") == 0:
                                 tag.attrs.pop(k, None)
                 contentHTML = str(soup)
