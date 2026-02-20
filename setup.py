@@ -70,7 +70,7 @@ setup(
     author="Vitaly Zdanevich",
     # author_email='',
     description="Geeknote - is a command line client for Evernote, "
-    "that can be used on Linux, FreeBSD and OS X.",
+    "that can be used on Linux, FreeBSD and macOS.",
     long_description=read("README.md"),
     url="http://github.com/vitaly-zdanevich/geeknote",
     packages=["geeknote"],

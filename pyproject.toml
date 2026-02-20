@@ -1,0 +1,59 @@
+[build-system]
+requires = ['setuptools>=61', 'wheel']
+build-backend = 'setuptools.build_meta'
+
+[project]
+name = 'geeknote'
+dynamic = ['version']
+description = 'Geeknote - is a command line client for Evernote, that can be used on Linux, FreeBSD and macOS.'
+readme = { file = 'README.md', content-type = 'text/markdown' }
+license = { file = 'COPYING' }
+authors = [{ name = 'Vitaly Zdanevich' }]
+requires-python = '>=3.8'
+keywords = ['evernote', 'console']
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: End Users/Desktop',
+    'License :: OSI Approved :: GNU General Public License (GPL)',
+    'Environment :: Console',
+    'Natural Language :: English',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Topic :: Utilities',
+]
+dependencies = [
+    'evernote2',
+    'html2text',
+    'sqlalchemy',
+    'markdown2',
+    'beautifulsoup4',
+    'thrift',
+    'lxml',
+]
+
+[project.optional-dependencies]
+dev = ['proxyenv']
+
+[project.urls]
+Homepage = 'https://github.com/vitaly-zdanevich/geeknote'
+Repository = 'https://github.com/vitaly-zdanevich/geeknote'
+Issues = 'https://github.com/vitaly-zdanevich/geeknote/issues'
+
+[project.scripts]
+geeknote = 'geeknote.geeknote:main'
+gnsync = 'geeknote.gnsync:main'
+
+[tool.setuptools]
+packages = ['geeknote']
+zip-safe = true
+
+[tool.setuptools.dynamic]
+version = { attr = 'geeknote.__version__' }
