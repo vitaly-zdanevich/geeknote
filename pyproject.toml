@@ -1,5 +1,5 @@
 [build-system]
-requires = ['setuptools>=61', 'wheel']
+requires = ['setuptools>=77', 'wheel']
 build-backend = 'setuptools.build_meta'
 
 [project]
@@ -7,14 +7,14 @@ name = 'geeknote'
 dynamic = ['version']
 description = 'Geeknote - is a command line client for Evernote, that can be used on Linux, FreeBSD and macOS.'
 readme = { file = 'README.md', content-type = 'text/markdown' }
-license = { file = 'COPYING' }
+license = 'GPL-3.0-only'
+license-files = ['COPYING']
 authors = [{ name = 'Vitaly Zdanevich' }]
 requires-python = '>=3.8'
 keywords = ['evernote', 'console']
 classifiers = [
     'Development Status :: 5 - Production/Stable',
     'Intended Audience :: End Users/Desktop',
-    'License :: OSI Approved :: GNU General Public License (GPL)',
     'Environment :: Console',
     'Natural Language :: English',
     'Operating System :: OS Independent',
