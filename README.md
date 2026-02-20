@@ -23,13 +23,13 @@ You can install Geeknote using [Homebrew](http://brew.sh/)/[Linuxbrew](https://g
 
 (Generate formula by `brew create --python  --set-version 3.0.1 https://github.com/vitaly-zdanevich/geeknote/archive/refs/tags/v3.0.1.tar.gz`)
 
-##### Homebrew installation TODO publish to public cask
+## Homebrew installation TODO publish to public cask
 
 ``` sh
 brew install --HEAD https://raw.githubusercontent.com/vitaly-zdanevich/geeknote/master/geeknote.rb
 ```
 
-#### Gentoo Guru
+## Gentoo Guru
 
 https://github.com/gentoo/guru/tree/master/app-doc/geeknote
 
@@ -37,37 +37,26 @@ https://github.com/gentoo/guru/tree/master/app-doc/geeknote
 emerge -a geeknote
 ```
 
-##### Downloading and installing from source
+## From [PyPI](https://pypi.org/project/geeknote/):
+
+```bash
+pip install geeknote
+`
+
+## From source
 
 ``` sh
 # Install dependencies. (This example for Debian-based systems):
 sudo apt-get update; sudo apt-get -y install python-setuptools
 pip install wheel
-
-# Download the repository.
 git clone git@github.com:vitaly-zdanevich/geeknote.git
-
 cd geeknote
-
-# Installation
-
-From [PyPI](https://pypi.org/project/geeknote/):
-
-```bash
-pip install geeknote
-```
-
-Or after `git clone`:
-
-```bash
 python setup.py build
 pip install --upgrade .
+
 ```
 
-Also on ::guru https://github.com/gentoo/guru/tree/master/app-doc/geeknote
-
-
-##### Testing
+## Testing
 Geeknote has a non-destructive unit test suite with fair coverage.
 
 Ensure [pytest](https://repology.org/project/python%3Apytest/versions) framework is installed
