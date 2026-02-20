@@ -51,8 +51,21 @@ cd geeknote
 
 # Installation
 
+From [PyPI](https://pypi.org/project/geeknote/):
+
+```bash
+pip install geeknote
+```
+
+Or after `git clone`:
+
+```bash
 python setup.py build
 pip install --upgrade .
+```
+
+Also on ::guru https://github.com/gentoo/guru/tree/master/app-doc/geeknote
+
 
 ##### Testing
 Geeknote has a non-destructive unit test suite with fair coverage.
