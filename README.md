@@ -83,7 +83,7 @@ For manual run after your local changes without installation (in case if you tri
 try this:
 
 ```
-python3.11 -m geeknote.geeknote
+python -m geeknote.geeknote
 ```
 
 ##### Un-installation
