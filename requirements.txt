@@ -9,4 +9,3 @@ lxml
 # Testing requirements
 proxyenv
 pytest
-pytest-runner

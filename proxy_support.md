@@ -22,7 +22,7 @@ curl https://issues.apache.org/jira/secure/attachment/12801233/0001-python-THttp
 curl https://issues.apache.org/jira/secure/attachment/12801234/0002-Python-THttpClient-Support-proxy-authorization.patch | git am
 
 # Install thrift from the patched tree
-(cd lib/py; python setup.py install)
+(cd lib/py; python -m pip install .)
 cd ..
 
 # Install evernote
@@ -30,7 +30,7 @@ pip install evernote
 
 # Install geeknote
 cd geeknote
-python setup.py install
+python -m pip install .
 ```
 
 Now `geeknote login`, `geeknote find`, etc. should work behind a proxy if the `http_proxy` environment variable is correctly set. You can now generate a script to activate the virtual environment:

@@ -47,12 +47,12 @@ pip install geeknote
 
 ``` sh
 # Install dependencies. (This example for Debian-based systems):
-sudo apt-get update; sudo apt-get -y install python-setuptools
-pip install wheel
+sudo apt-get update; sudo apt-get -y install python3-pip
+python -m pip install --upgrade pip build wheel
 git clone git@github.com:vitaly-zdanevich/geeknote.git
 cd geeknote
-python setup.py build
-pip install --upgrade .
+python -m build
+python -m pip install --upgrade .
 
 ```
 
