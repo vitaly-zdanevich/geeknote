@@ -14,7 +14,7 @@ jobs:
   publish:
     if: >
       github.event.workflow_run.conclusion == 'success' &&
-      startsWith(github.event.workflow_run.head_branch, 'v')
+      github.event.workflow_run.event == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,28 +22,36 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Verify tested tag ref
+      - name: Detect release tag for tested commit
+        id: release_tag
         run: |
           git fetch --force --tags origin
-          TAG="${{ github.event.workflow_run.head_branch }}"
           SHA="${{ github.event.workflow_run.head_sha }}"
-          if ! git tag --points-at "$SHA" | grep -Fx "$TAG" >/dev/null; then
-            echo "Expected tag '$TAG' to point at '$SHA', but no such tag exists."
-            exit 1
+          TAG="$(git tag --points-at "$SHA" | grep -E '^v[0-9].*' | head -n1 || true)"
+          if [ -n "$TAG" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+            echo "Release tag detected: $TAG"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "No v* tag points at tested commit $SHA; skipping publish."
           fi
 
       - name: Set up Python
+        if: steps.release_tag.outputs.found == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.13"
 
       - name: Build package
+        if: steps.release_tag.outputs.found == 'true'
         run: |
           python -m pip install --upgrade pip
           python -m pip install build
           python -m build
 
       - name: Publish to PyPI
+        if: steps.release_tag.outputs.found == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           attestations: false
