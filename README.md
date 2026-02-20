@@ -41,7 +41,7 @@ emerge -a geeknote
 
 ```bash
 pip install geeknote
-`
+```
 
 ## From source
 
