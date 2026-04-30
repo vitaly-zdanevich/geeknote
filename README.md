@@ -713,3 +713,4 @@ gnsync --path /home/project/xmpp/logs/
 ## Evernote related projects worth mentioning
 * [NixNote: GUI, storing notes in SQLite, on C++](https://github.com/robert7/nixnote2)
 * [CLInote: cli, written in faster Go](https://github.com/TcM1911/clinote)
+* [Reeknote: rewrite of Geeknote to Rust, by gpt-5.5 xhigh](https://gitlab.com/vitaly-zdanevich/reeknote)
