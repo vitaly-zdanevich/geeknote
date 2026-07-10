@@ -710,7 +710,23 @@ gnsync --path /home/project/xmpp/logs/
 * Greg V
 * Ilya Shmygol
 
-## Evernote related projects worth mentioning
-* [NixNote: GUI, storing notes in SQLite, on C++](https://github.com/robert7/nixnote2)
+## Evernote related projects
+
+### My
+* [geeknote: cli in Python](https://github.com/vitaly-zdanevich/geeknote)
+* [reeknote: rewrite of Geeknote to Rust, by gpt-5.5 xhigh](https://gitlab.com/vitaly-zdanevich/reeknote)
+* [NixNote: GUI, storing notes in SQLite, on C++](https://github.com/vitaly-zdanevich/nixnote2)
+* [Official client repack for Linux](https://github.com/vitaly-zdanevich/evernote-linux-repackage)
+* [bot_telegram_evernote](https://gitlab.com/vitaly-zdanevich/bot_telegram_evernote)
+* [Black minimal userstyle](https://gitlab.com/vitaly-zdanevich-styles/evernote)
+* [userscript for hotkeys](https://gitlab.com/vitaly-zdanevich-userscripts/evernote/hotkey)
+* [evernote-direct-link-opening-without-you-are-leaving](https://gitlab.com/vitaly-zdanevich-userscripts/evernote/evernote-direct-link-opening-without-you-are-leaving)
+
+### For GitHub Actions
+* [pinterest-saves-to-evernote - GitHub Action](https://github.com/vitaly-zdanevich/pinterest-saves-to-evernote)
+* [wikipedia_diffs_to_evernote](https://github.com/vitaly-zdanevich/wikipedia_diffs_to_evernote)
+* [yandex-music-likes-to-evernote](https://github.com/vitaly-zdanevich/yandex-music-likes-to-evernote)
+
+### Not my
+
 * [CLInote: cli, written in faster Go](https://github.com/TcM1911/clinote)
-* [Reeknote: rewrite of Geeknote to Rust, by gpt-5.5 xhigh](https://gitlab.com/vitaly-zdanevich/reeknote)
