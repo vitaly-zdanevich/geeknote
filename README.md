@@ -714,6 +714,7 @@ gnsync --path /home/project/xmpp/logs/
 
 ### My
 * [geeknote: cli in Python](https://github.com/vitaly-zdanevich/geeknote)
+* [Evernote PWA: view and edit the latest notes in an installable offline-capable web app](https://github.com/vitaly-zdanevich/evernote-pwa)
 * [reeknote: rewrite of Geeknote to Rust, by gpt-5.5 xhigh](https://gitlab.com/vitaly-zdanevich/reeknote)
 * [NixNote: GUI, storing notes in SQLite, on C++](https://github.com/vitaly-zdanevich/nixnote2)
 * [Official client repack for Linux](https://github.com/vitaly-zdanevich/evernote-linux-repackage)
